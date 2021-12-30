@@ -1,3 +1,4 @@
+;APS00000000000000000000000000000000000000000000000000000000000000000000000000000000
 
 ; Lezione3c.s	; BARRETTA CHE SCENDE FATTA CON MOVE&WAIT DEL COPPER
 		; (PER FARLA SCENDERE USATE IL TASTO DESTRO DEL MOUSE)
@@ -76,7 +77,7 @@ Aspetta:			; se siamo sempre alla linea $ff che abbiamo
 
 	move.l	4.w,a6
 	jsr	-$7e(a6)	; Enable - riabilita il Multitasking
-	move.l	gfxbase(PC),a1	; Base della libreria da chiudere
+	move.l	GfxBase(PC),a1	; Base della libreria da chiudere
 				; (le librerie vanno aperte e chiuse !!!)
 	jsr	-$19e(a6)	; Closelibrary - chiudo la graphics lib
 	rts
@@ -95,7 +96,7 @@ Aspetta:			; se siamo sempre alla linea $ff che abbiamo
 ;	      se si esegue un ulteriore ADDQ.B #1,BARRA si riparte da 0,
 ;             fino a ritornare a $ff e cosi' via.
 
-Muovicopper:
+MuoviCopper:
 	addq.b	#1,BARRA	; WAIT 1 cambiato, la barra scende di 1 linea
 	rts
 
