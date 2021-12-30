@@ -1,237 +1,236 @@
 ;APS00000000000000000000000000000000000000000000000000000000000000000000000000000000
 
-; Lezione3c.s	; BARRETTA CHE SCENDE FATTA CON MOVE&WAIT DEL COPPER
-		; (PER FARLA SCENDERE USATE IL TASTO DESTRO DEL MOUSE)
+; Lezione3c.s	; DROP DOWN BAR MADE WITH COPPER MOVE & WAIT
+				; (TO LET IT DOWN USE THE RIGHT BUTTON OF THE MOUSE)
 
-	SECTION	SECONDCOP,CODE	; anche in Fast va bene
+	SECTION	SECONDCOP,CODE	; also in Fast is fine for our code
 
 Inizio:
 	move.l	4.w,a6		; Execbase in a6
-	jsr	-$78(a6)	; Disable - ferma il multitasking
-	lea	GfxName(PC),a1	; Indirizzo del nome della lib da aprire in a1
-	jsr	-$198(a6)	; OpenLibrary, routine della EXEC che apre
-				; le librerie, e da in uscita l'indirizzo
-				; di base di quella libreria da cui fare le
-				; distanze di indirizzamento (Offset)
-	move.l	d0,GfxBase	; salvo l'indirizzo base GFX in GfxBase
+	jsr	-$78(a6)		; Disable multitasking
+	lea	GfxName(PC),a1	; Address of the name of the lib to open in a1
+	jsr	-$198(a6)	; OpenLibrary, EXEC routine that opens
+				; the libraries, and outputs the address
+				; base of that library to make the
+				; addressing distances (Offset)
+	move.l	d0,GfxBase	; save the GFX base address in GfxBase
 	move.l	d0,a6
-	move.l	$26(a6),OldCop	; salviamo l'indirizzo della copperlist
-				; di sistema
-	move.l	#COPPERLIST,$dff080	; COP1LC - Puntiamo la nostra COP
-	move.w	d0,$dff088		; COPJMP1 - Facciamo partire la COP
+	move.l	$26(a6),OldCop	; we save the address of the system copperlist
+					
+	move.l	#COPPERLIST,$dff080	; COP1LC - set special register to point to our COP
+	move.w	d0,$dff088		; COPJMP1 - Start our COP
 
 mouse:
-	cmpi.b	#$ff,$dff006	; VHPOSR - Siamo alla linea 255?
-	bne.s	mouse		; Se non ancora, non andare avanti
+	cmpi.b	#$ff,$dff006	; VHPOSR - Are we on line 255?
+	bne.s	mouse		; If not yet, don't move on
 
-	btst	#2,$dff016	; POTINP - Tasto destro del mouse premuto?
-	bne.s	Aspetta		; Se no, non eseguire Muovicopper
+	btst	#2,$dff016	; POTINP - Right mouse button pressed?
+	bne.s	WaitUp		; If not, don't run MoveCopper
 
-	bsr.s	MuoviCopper	; Il primo movimento sullo schermo!!!!!
-				; Questa subroutine fa scendere il WAIT!
-				; e viene eseguita 1 volta ogni schermata video
-				; infatti bsr.s Muovicopper fa si che venga
-				; eseguita la routine nominata Muovicopper,
-				; al termine della quale, con RTS, il 68000
-				; torna qua ad eseguire la routine Aspetta,
-				; e cosi' via.
-
-
-Aspetta:			; se siamo sempre alla linea $ff che abbiamo
-				; aspettato prima, non andare avanti.
-
-	cmpi.b	#$ff,$dff006	; siamo a $FF ancora? se si, aspetta la linea
-	beq.s	Aspetta		; seguente ($00), altrimenti MuoviCopper viene
-				; rieseguito. Questo problema c'e' solo per
-				; le routine molto corte che possono essere
-				; eseguite in meno di "una linea del pennello
-				; elettronico", detta "linea raster": il
-				; ciclo mouse: aspetta la linea $FF, dopodiche'
-				; esegue MuoviCopper, ma se la esegue troppo
-				; in fretta ci troviamo sempre alla linea $FF
-				; e quando torniamo al mouse, alla linea $FF
-				; ci siamo gia', e riesegue Muovicopper,
-				; dunque la routine e' eseguita piu' di una
-				; volta al FRAME!!! Specialmente su A4000!
-				; questo controllo evita il problema aspettando
-				; la linea dopo, per cui tornando al mouse:
-				; per raggiungere la linea $ff e' necessario
-				; il classico cinquantesimo di secondo.
-				; NOTA: Tutti i monitor e i televisori
-				; disegnano lo schermo alla stessa velocita',
-				; mentre da computer a computer puo' variare
-				; la velocita' del processore. E' per questo
-				; che un programma temporizzato col $dff006
-				; va alla stessa velocita' su un A500 e su
-				; un A4000. La temporizzazione verra'
-				; affrontata meglio in seguito, per ora
-				; preoccupatevi di capire il copper e il
-				; funzionamento.
+	bsr.s	MoveCopper	; The first movement on the screen !!!!!
+				; This subroutine drops the WAIT!
+				; and runs 1 time every frame
+				; in fact bsr.s MoveCopper
+				; performs the routine named MoveCopper,
+				; at the end, with RTS, the 68000
+				; come back here to execute the WaitUp routine,
+				; and so on.
 
 
-	btst	#6,$bfe001	; tasto sinistro del mouse premuto?
-	bne.s	mouse		; se no, torna a mouse:
+WaitUp:			; if we are always on the $ff line we have
+				; WaitUpto first, don't go ahead.
 
-	move.l	OldCop(PC),$dff080	; Puntiamo la cop di sistema
-	move.w	d0,$dff088		; facciamo partire la cop
+	cmpi.b	#$ff,$dff006	; are we at $FF yet? if yes, WaitUp the line
+	beq.s	WaitUp		; following ($00), otherwise MoveCopper comes
+						; rerun. This problem is only for
+						; the very short routines that can be
+						; performed in less than "one brush line
+						; electronic ", called" raster line ": the
+						; mouse loop: WaitUp the $ FF line, then '
+						; runs MoveCopper, but if it runs too much
+						; quickly we are always on the $ FF line
+						; and when we go back to the mouse, to the $ FF line
+						; we are already there, and re-runs MoveCopper,
+						; therefore the routine is executed more than one
+						; time to the FRAME !!! Especially on A4000!
+						; this check avoids the WaitUpndo problem
+						; the line after, so returning to the mouse:
+						; to reach the line $ ff it is necessary
+						; the classic fiftieth of a second.
+						; NOTE: All monitors and TVs
+						; draw the screen at the same speed,
+						; while from computer to computer it can vary
+						; the speed of the processor. And for this
+						; than a timed program with $ dff006
+						; it goes at the same speed on an A500 and up
+						; an A4000. The timing will come
+						; better addressed later, for now
+						; take care to understand the copper and the
+						; operation.
+
+
+	btst	#6,$bfe001	; left mouse button pressed?
+	bne.s	mouse		; if not, back to mouse:
+
+	move.l	OldCop(PC),$dff080	; We target the system cop
+	move.w	d0,$dff088		; let's start the cop
 
 	move.l	4.w,a6
-	jsr	-$7e(a6)	; Enable - riabilita il Multitasking
-	move.l	GfxBase(PC),a1	; Base della libreria da chiudere
-				; (le librerie vanno aperte e chiuse !!!)
-	jsr	-$19e(a6)	; Closelibrary - chiudo la graphics lib
+	jsr	-$7e(a6)	; Enable - re-enable Multitasking
+	move.l	GfxBase(PC),a1	; Base of the library to close
+				; (libraries must be opened and closed !!!)
+	jsr	-$19e(a6)	; Closelibrary - close the graphics lib
 	rts
 
 ;
-;	Questa piccola routine fa scendere il wait del copper aumentandolo,
-;	infatti la prima volta che sara' eseguito cambiera' il
+; This little routine brings down the copper wait by increasing it,
+; in fact the first time it will be executed it will change the
 ;
-;	dc.w	$2007,$FFFE	; aspetto la linea $20
+;	dc.w	$2007,$FFFE	; I wait for line $20
 ;
 ;	in:
 ;
-;	dc.w	$2107,$FFFE	; aspetto la linea $21! (poi $22,$23 ecc.)
+;	dc.w	$2107,$FFFE	; wait for line $21! (then $22, $23 etc.)
 ;
-;	NOTA: una volta raggiunto il valore massimo per un byte, ossia $FF,
-;	      se si esegue un ulteriore ADDQ.B #1,BARRA si riparte da 0,
-;             fino a ritornare a $ff e cosi' via.
+; NOTE: once the maximum value for one byte, that is $ FF, is reached,
+; if a further ADDQ.B # 1 is performed, BARRA restarts from 0,
+; until you return to $ ff and so on.
 
-MuoviCopper:
-	addq.b	#1,BARRA	; WAIT 1 cambiato, la barra scende di 1 linea
+MoveCopper:
+	addq.b	#1,BARRA	; WAIT 1 changed, the bar drops 1 line
 	rts
 
-; Provate a modificare questo ADDQ in SUBQ e la barretta salira'!!!!
+; Try to change this ADDQ to SUBQ and the bar will go up !!!!
 
-; Provate a cambiare l'addq/subq #1,BARRA in #2 , #3 o piu' e la velocita'
-; aumentera', dato che ogni FRAME il wait si spostera' di 2,3 o piu' linee.
-; (se il numero e' maggiore di 8 invece di ADDQ.B bisogna usare ADD.B)
+; Try changing the addq / subq # 1, BAR to # 2, # 3 or more and the speed
+; it will increase, as each FRAME the wait will move by 2,3 or more lines.
+; (if the number is greater than 8 instead of ADDQ.B you must use ADD.B)
 
 
-;	DATI...
+;	DATA...
 
 
 GfxName:
-	dc.b	"graphics.library",0,0	; NOTA: per mettere in memoria
-					; dei caratteri usare sempre il dc.b
-					; e metterli tra "", oppure ''
+	dc.b	"graphics.library",0,0	; NOTE: to put in memory
+									; characters always use the dc.b
+									; and put them between "", or ''
 
-GfxBase:		; Qua ci va l'indirizzo di base per gli Offset
-	dc.l	0	; della graphics.library
+GfxBase:		; Here goes the base address for
+	dc.l	0	; the graphics.library Offset
 
-OldCop:			; Qua ci va l'indirizzo della vecchia COP di sistema
+OldCop:			; Here goes the address of the old system COP
 	dc.l	0
 
 
-;	DATI GRAFICI...
+;	GRAPHICS DATA...
 
 
-	SECTION	GRAPHIC,DATA_C	; Questo comando fa caricare dal sistema
-				; operativo questo segmento di dati
-				; in CHIP RAM, obbligatoriamente
-				; Le copperlist DEVONO essere in CHIP RAM!
+	SECTION	GRAPHIC,DATA_C	; This command causes the system to load
+							; this data segment
+							; in CHIP RAM,
+							; Copperlists MUST be in CHIP RAM!
 
 COPPERLIST:
-	dc.w	$100,$200	; BPLCON0 - no bitplanes, solo sfondo.
+	dc.w	$100,$200	; BPLCON0 - no bitplanes, only background.
 
-	dc.w	$180,$004	; COLOR0 - Inizio la cop col colore BLU SCURO
+	dc.w	$180,$004	; COLOR0 - I start the copy with the DARK BLUE color
 
 BARRA:
-	dc.w	$7907,$FFFE	; WAIT - aspetto la linea $79
+	dc.w	$7907,$FFFE	; WAIT - wait for line $79
 
-	dc.w	$180,$600	; COLOR0 - inizio la zona rossa: rosso a 6
+	dc.w	$180,$600	; COLOR0 - I start the red zone: red at 6
 
-	dc.w	$FFFF,$FFFE	; FINE DELLA COPPERLIST
+	dc.w	$FFFF,$FFFE	; END OF COPPERLIST
 
 	end
 
 
-Ahh! Mi ero dimenticato di mettere il (PC) a "lea GfxName,a1", ma ora c'e'.
-Chi si era accorto che ci si poteva mettere ha preso una nota positiva.
-In questo programma viene eseguito un movimento sincronizzato con il
-pennello elettronico, infatti la barra scende fluidamente.
+Ahh! I forgot to put the (PC) to "lea GfxName, a1", but now it's there.
+Those who realized that it could be put in took a positive note.
+In this program, a movement synchronized with the
+electronic brush, in fact the bar goes down smoothly.
 
-NOTA1: In questo listato puo' confondere la struttura del ciclo con il test
-del mouse piu' il test della posizione del pennello elettronico; quello
-che dovete aver chiaro e' che le routines, o subroutines che si trovano tra
-il loop mouse: e quello aspetta: sono eseguite 1 volta ogni fotogramma video:
-provate infatti a sostituire il bsr.s Muovicopper con la subroutine stessa,
-senza l'RTS finale ovviamente:
+NOTE1: In this listing you can confuse the loop structure with the test
+of the mouse plus the test of the position of the electron brush; that
+what you must be clear about is that the routines, or subroutines that are between
+the mouse loop: and the WaitUp loop: are executed once every video frame:
+in fact try to replace the bsr.s MoveCopper with the subroutine itself,
+without the final RTS of course:
 
 mouse:
-	cmpi.b	#$ff,$dff006	; VHPOSR - Siamo alla linea 255?
-	bne.s	mouse		; Se non ancora, non andare avanti
+	cmpi.b	#$ff,$dff006	; VHPOSR - Are we on line 255?
+	bne.s	mouse		; If not yet, don't move on
 
-;	bsr.s	MuoviCopper	; Una routine eseguita ogni fotogramma
-;				; (Per la fluidita')
+;	bsr.s	MoveCopper	; A routine performed every frame
+;				;(For fluidity)
 
-	addq.b	#1,BARRA	; WAIT 1 cambiato, la barra scende di 1 linea
+	addq.b	#1,BARRA	; WAIT 1 changed, the bar drops 1 line
 
-Aspetta:
-	cmpi.b	#$ff,$dff006	; VHPOSR - Siamo alla linea 255?
-	beq.s	Aspetta		; Se si, non andare avanti, aspetta la linea
-				; seguente, altrimenti MuoviCopper viene
-				; rieseguito
+WaitUp:
+	cmpi.b	#$ff,$dff006	; VHPOSR - Are we on line 255?
+	beq.s	WaitUp		; If yes, don't go ahead, WaitUp the line
+				; following, otherwise MoveCopper is re-run
 
-In questo caso il risultato non cambia perche' anziche' eseguire l'ADDQ come
-subroutine la eseguiamo direttamente, e forse in questo caso e' anche piu'
-comodo; ma quando le subroutine sono piu' lunghe conviene fare vari BSR per
-orientarsi. Per esempio se duplicate i bsr.s Muovicopper la routine sara'
-eseguita 2 volte per fotogramma, e raddoppiera' la velocita':
+In this case the result does not change because instead of performing the ADDQ as
+subroutine we execute it directly, and perhaps in this case it is even more
+comfortable; but when the subroutines are longer it is worth doing several BSRs for
+orient yourself. For example if you duplicate the MoveCopper bsr.s the routine will be
+performed 2 times per frame, and it will double the speed:
 
-	bsr.s	MuoviCopper	; Una routine eseguita ogni fotogramma
-	bsr.s	MuoviCopper	; Una routine eseguita ogni fotogramma
+	bsr.s	MoveCopper	; A routine performed every frame
+	bsr.s	MoveCopper	; A routine performed every frame
 
-L'utilita' delle subroutine sta proprio nella maggior chiarezza del programma,
-immaginatevi se le nostre routines da mettere tra mouse: e aspetta: fossero di
-migliaia di linee! il susseguirsi delle cose apparirebbe meno chiaro. Invece
-se chiamiamo per nome ogni singola routine il tutto apparira' piu' facile.
+The utility of subroutines lies in the greater clarity of the program,
+imagine if our routines to put between mouse: and WaitUp: were of
+thousands of lines! the succession of things would appear less clear. Instead
+if we call each single routine by name, everything will appear easier.
 
 *
 
-Per far scendere la barra basta cambiare la COPPERLIST, in particolare
-in questo esempio viene cambiato i WAIT, nel suo primo byte, ossia quello
-che definisce la linea verticale da attendere:
+To make the bar go down just change the COPPERLIST, in particular
+in this example the WAIT is changed, in its first byte, that is
+which defines the vertical line to wait:
 
 BARRA:
-	dc.w	$2007,$FFFE	; WAIT - aspetto la linea $20
-	dc.w	$180,$600	; COLOR0 - inizio la zona rossa: rosso a 6
+	dc.w	$2007,$FFFE	; WAIT - I wait for line $20
+	dc.w	$180,$600	; COLOR0 - I start the red zone: red at 6
 
-Mettendo una label a quel byte, si puo' cambiare quel byte agendo sulla
-label stessa, in questo caso BARRA.
+By putting a label on that byte, you can change that byte by acting on the
+label itself, in this case BAR.
 
-MODIFICHE:
-Provate a cambiare il colore anziche' il wait: basta mettere una label
-dove volete nella copperlist e potete cambiare quello che vi pare.
-Mettete barra al colore in questo modo:
+CHANGES:
+Try to change the color instead of the wait: just put a label
+where you want in the copperlist and you can change what you like.
+Bar the color like this:
 
 COPPERLIST:
-	dc.w	$100,$200	; BPLCON0 - no bitplanes, solo sfondo.
+	dc.w	$100,$200	; BPLCON0 - no bitplanes, only background.
 
-	dc.w	$180,$004	; COLOR0 - Inizio la cop col colore BLU SCURO
+	dc.w	$180,$004	; COLOR0 - I start the copy with the DARK BLUE color
 
-;;;;BARRA:			; ** ANNULLO LA LABEL VECCHIA coi ;;
-	dc.w	$7907,$FFFE	; WAIT - aspetto la linea $79
+;;;;BARRA:			; ** CANCEL THE OLD LABEL with ;;
+	dc.w	$7907,$FFFE	; WAIT - I wait for line $79
 
 	dc.w	$180		; COLOR0
-BARRA:				; ** METTO LA LABEL NUOVA AL VALORE DEL COLORE.
-	dc.w	$600	; inizio la zona rossa: rosso a 6
+BARRA:				; ** I PUT THE NEW LABEL TO THE VALUE OF COLOR.
+	dc.w	$600	; I start the red zone: red at 6
 
 	dc.w	$FFFF,$FFFE	; FINE DELLA COPPERLIST
 
-Otterrete una variazione dell'intensita' del rosso, infatti cambiamo il
-primo byte a sinistra del colore: $0RGB, ossia il $0R, ossia il ROSSO!!!!
+You will get a variation of the intensity of the red, in fact we change the
+first byte to the left of the color: $ 0RGB, that is the $ 0R, that is the RED !!!!
 
-Provate ora ad agire sull'intera WORD del colore: cambiate la routine cosi':
+Now try to act on the entire color WORD: change the routine like this:
 
-	addq.w	#1,BARRA	; invece di .b operiamo sulla .w
+	addq.w	#1,BARRA	; instead of .b we operate on .w
 	rts
 
-Provatelo e verificherete che i colori si susseguono irregolarmente, infatti
-sono il frutto del numero che aumenta: $601,$602... $631,$632... generando
-dei colori non ordinatamente.
+Try it and we will verify that the colors follow each other irregularly, 
+in fact they are the result of the number 
+that increases: $ 601, $ 602 ... $ 631, $ 632 ... generating colors not neatly.
 
-NOTA:	il comando dc.w mette in memoria dei bytes, delle word o delle long,
-	dunque si puo' ottenere lo stesso risultato scrivendo:
+NOTE: the dc.w command stores bytes, words or longs in memory,
+therefore the same result can be obtained by writing:
 
 	dc.w	$180,$600	; Color0
 
@@ -240,5 +239,5 @@ NOTA:	il comando dc.w mette in memoria dei bytes, delle word o delle long,
 	dc.w	$180	; Registro Color0
 	dc.w	$600	; valore del color0
 
-	Non ci sono problemi di sintassi come con i MOVE.
+There are no syntax problems like with MOVE
 
