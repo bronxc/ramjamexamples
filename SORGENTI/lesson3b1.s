@@ -55,7 +55,7 @@ OldCop:                 ; Where we will store the address of the old system COP
 COPPERLIST:
         dc.w    $100,$200	;turn off bitplanes
         dc.w    $180,$000	;set a black color to background, draws some black until
-        dc.w    $4907,$FFFE     ;wait for this screen position
+        dc.w    $4907,$FFFE     ;wait for this screen position ($FFFE == WAIT command)
         dc.w    $180,$001       ;change the colour and then repeat wait for line/change colour
         dc.w    $4a07,$FFFE
         dc.w    $180,$002
@@ -109,6 +109,6 @@ COPPERLIST:
         dc.w    $180,$00a	;draw bottom blue line	
         dc.w    $feff,$FFFE 	;$FFFE = copper wait command
         dc.w    $180,$00f	;set blue colour for rest of bottom bar
-        dc.w    $FFFF,$FFFE 	;END OF COPPER
+        dc.w    $FFFF,$FFFE 	;END OF COPPER (WAIT for unreachable rasterline)
 
         end
