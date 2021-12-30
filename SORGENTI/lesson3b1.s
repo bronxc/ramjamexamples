@@ -1,6 +1,6 @@
 ;APS00000000000000000000000000000000000000000000000000000000000000000000000000000000
         SECTION MyCode,CODE     ; This command causes the system to load
-                                ; operating this piece of code
+                                ; the following code
                                 ; in FAST ram, if it is free, or if there is
                                 ; only CHIP loads it in CHIP.
 
@@ -10,19 +10,19 @@ Inizio:
         lea     GfxName,a1      ; Address of the name of the lib to open in a1
         jsr     -$198(a6)       ; OpenLibrary, EXEC routine that opens
                                 ; the libraries, and the address is output to d0
-                                ; base of that library to make the
+                                ; as the base of that library to make the
                                 ; addressing distances (Offset)
         move.l  d0,GfxBase      ; save the GFX base address in GfxBase
         move.l  d0,a6
-        move.l  $26(a6),OldCop  ; we save the address of the copperlist
-                                ; system (still $26 from GfxBase)
-        move.l  #COPPERLIST,$dff080     ; COP1LC - We point to our COP
-        move.w  d0,$dff088              ; COPJMP1 - Start the COP
+        move.l  $26(a6),OldCop  ; save the address of the current system copperlist
+                                ; (offset $26 from GfxBase)
+        move.l  #COPPERLIST,$dff080     ; COP1LC - We point to our COP, $080 is the special register used for this
+        move.w  d0,$dff088              ; COPJMP1 - Start the COP, you can write anything to this register to start running the chosen copper
 mouse:
         btst    #6,$bfe001      ; left mouse button pressed?
         bne.s   mouse           ; if not, go back to mouse:
 
-        move.l  OldCop(PC),$dff080      ; COP1LC - Point to the saved system COP
+        move.l  OldCop(PC),$dff080      ; COP1LC - Point to the saved system COP (restore copper to what it was)
         move.w  d0,$dff088              ; COPJMP1 - let's start the COP
 
         move.l  4.w,a6
@@ -33,10 +33,10 @@ mouse:
         rts
 
 GfxName:
-        dc.b    "graphics.library",0,0  ; NOTE: to put in memory
-                                        ; characters always use the dc.b
-                                        ; and put them between "", or ''
-                                        ; ending with ,0
+        dc.b    "graphics.library",0,0  ; NOTE: to store in memory
+                                        ; a string of characters always use dc.b
+                                        ; and must put them between "", or ''
+                                        ; ending with ,0,0
 
 
 GfxBase:                ; Where we will store the base address for Offsets
@@ -44,7 +44,7 @@ GfxBase:                ; Where we will store the base address for Offsets
 
 
 
-OldCop:                 ; Here goes the address of the old system COP
+OldCop:                 ; Where we will store the address of the old system COP
         dc.l    0
 
         SECTION GRAPHICS,DATA_C  ; This command causes the system to load
