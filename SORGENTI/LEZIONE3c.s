@@ -5,7 +5,7 @@
 
 	SECTION	MyCode,CODE	; also in Fast is fine for our code
 
-Inizio:
+Init:
 	move.l	4.w,a6		; Execbase in a6
 	jsr	-$78(a6)		; Disable multitasking
 	lea	GfxName(PC),a1	; Address of the name of the lib to open in a1
@@ -44,26 +44,25 @@ WaitUp:			; if we are always on the $ff line we have
 	beq.s	WaitUp		; following ($00), otherwise MoveCopper comes
 				; rerun. This problem is only for
 				; the very short routines that can be
-				; performed in less than "one brush line
-				; electronic ", called" raster line ": the
-				; mouse loop: WaitUp the $ FF line, then '
-				; runs MoveCopper, but if it runs too much
-				; quickly we are always on the $ FF line
-				; and when we go back to the mouse, to the $ FF line
-				; we are already there, and re-runs MoveCopper,
+				; performed in less than "one scan line", called" raster line ": the
+				; mouse loop: WaitUp the $FF line, then '
+				; runs MoveCopper, but if it runs too 
+				; quickly we are always on the $FF line
+				; and when we go back to the mouse, to the $FF line
+				; we are already there and re-runs MoveCopper,
 				; therefore the routine is executed more than one
 				; time to the FRAME !!! Especially on A4000!
 				; this check avoids the WaitUpndo problem
 				; the line after, so returning to the mouse:
-				; to reach the line $ ff it is necessary
+				; to reach the line $ff it is necessary
 				; the classic fiftieth of a second.
 				; NOTE: All monitors and TVs
 				; draw the screen at the same speed,
 				; while from computer to computer it can vary
 				; the speed of the processor. And for this
-				; than a timed program with $dff006
-				; it goes at the same speed on an A500 and up
-				; an A4000. The timing will come
+				; with a timed program using $dff006
+				; it goes at the same speed on an A500 and
+				; an A4000. The timing will be
 				; better addressed later, for now
 				; take care to understand the copper and the
 				; operation.
