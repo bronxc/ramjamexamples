@@ -92,11 +92,11 @@ WaitUp:			; if we are always on the $ff line we have
 ;	dc.w	$2107,$FFFE	; wait for line $21! (then $22, $23 etc.)
 ;
 ; NOTE: once the maximum value for one byte, that is $ FF, is reached,
-; if a further ADDQ.B # 1 is performed, BARRA restarts from 0,
+; if a further ADDQ.B # 1 is performed, BAR restarts from 0,
 ; until you return to $ ff and so on.
 
 MoveCopper:
-	addq.b	#1,BARRA	; WAIT 1 changed, the bar drops 1 line
+	addq.b	#1,BAR	; WAIT 1 changed, the bar drops 1 line
 	rts
 
 ; Try to change this ADDQ to SUBQ and the bar will go up !!!!
@@ -134,7 +134,7 @@ COPPERLIST:
 
 	dc.w	$180,$004	; COLOR0 - I start the copy with the DARK BLUE color
 
-BARRA:
+BAR:
 	dc.w	$7907,$FFFE	; WAIT - wait for line $79
 
 	dc.w	$180,$600	; COLOR0 - I start the red zone: red at 6
@@ -163,7 +163,7 @@ mouse:
 ;	bsr.s	MoveCopper	; A routine performed every frame
 ;				;(For fluidity)
 
-	addq.b	#1,BARRA	; WAIT 1 changed, the bar drops 1 line
+	addq.b	#1,BAR	; WAIT 1 changed, the bar drops 1 line
 
 WaitUp:
 	cmpi.b	#$ff,$dff006	; VHPOSR - Are we on line 255?
@@ -190,7 +190,7 @@ To make the bar go down just change the COPPERLIST, in particular
 in this example the WAIT is changed, in its first byte, that is
 which defines the vertical line to wait:
 
-BARRA:
+BAR:
 	dc.w	$2007,$FFFE	; WAIT - I wait for line $20
 	dc.w	$180,$600	; COLOR0 - I start the red zone: red at 6
 
@@ -207,11 +207,11 @@ COPPERLIST:
 
 	dc.w	$180,$004	; COLOR0 - I start the copy with the DARK BLUE color
 
-;;;;BARRA:			; ** CANCEL THE OLD LABEL with ;;
+;;;;BAR:			; ** CANCEL THE OLD LABEL with ;;
 	dc.w	$7907,$FFFE	; WAIT - I wait for line $79
 
 	dc.w	$180		; COLOR0
-BARRA:				; ** I PUT THE NEW LABEL TO THE VALUE OF COLOR.
+BAR:				; ** I PUT THE NEW LABEL TO THE VALUE OF COLOR.
 	dc.w	$600	; I start the red zone: red at 6
 
 	dc.w	$FFFF,$FFFE	; FINE DELLA COPPERLIST
@@ -221,7 +221,7 @@ first byte to the left of the color: $ 0RGB, that is the $ 0R, that is the RED !
 
 Now try to act on the entire color WORD: change the routine like this:
 
-	addq.w	#1,BARRA	; instead of .b we operate on .w
+	addq.w	#1,BAR	; instead of .b we operate on .w
 	rts
 
 Try it and we will verify that the colors follow each other irregularly, 
