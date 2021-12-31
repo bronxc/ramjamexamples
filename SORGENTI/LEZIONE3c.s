@@ -73,7 +73,7 @@ WaitUp:			; if we are always on the $ff line we have
 	bne.s	mouse		; if not, back to mouse:
 
 	move.l	OldCop(PC),$dff080	; We target the system cop
-	move.w	d0,$dff088		; let's start the cop
+	move.w	d0,$dff088	; let's start the cop
 
 	move.l	4.w,a6
 	jsr	-$7e(a6)	; Enable - re-enable Multitasking
