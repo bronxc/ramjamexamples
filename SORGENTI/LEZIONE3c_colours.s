@@ -97,7 +97,7 @@ WaitUp:			; if we are always on the $ff line we have
 
 MoveCopper:
 	addq.b	#1,BAR	; WAIT 1 changed, the bar drops 1 line
-	addq.w	#1,COLOUR ;chnage the colour each time also
+	add.w	#1,COLOUR ;change the colour each time also
 	rts
 
 ; Try to change this ADDQ to SUBQ and the bar will go up !!!!
