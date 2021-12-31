@@ -4,6 +4,8 @@
 
 ### Compiler stuff:
 
+*Q* How do these 2 examples have the same effect as putting red in the background colour?
+
 Why is 
 
 ```
