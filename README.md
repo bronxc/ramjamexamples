@@ -6,3 +6,6 @@ Google translated source files for the book, lightly tweaked as I make sense of 
 * [lesson3b1.s](https://github.com/matthewdeaves/ramjamexamples/blob/main/SORGENTI/lesson3b1.s)
 * [leson3c.s](https://github.com/matthewdeaves/ramjamexamples/blob/main/SORGENTI/LEZIONE3c.s)
 * [LEZIONE3c_colours.s](https://github.com/matthewdeaves/ramjamexamples/blob/main/SORGENTI/LEZIONE3c_colours.s)
+
+## Questions 
+Documenting questions as I go [here](https://github.com/matthewdeaves/ramjamexamples/blob/main/questions.md)
