@@ -87,16 +87,17 @@ WaitUp:			; if we are always on the $ff line we have
 ;
 ;	dc.w	$2007,$FFFE	; I wait for line $20
 ;
-;	in:
+;	to:
 ;
 ;	dc.w	$2107,$FFFE	; wait for line $21! (then $22, $23 etc.)
 ;
 ; NOTE: once the maximum value for one byte, that is $ FF, is reached,
-; if a further ADDQ.B # 1 is performed, BAR restarts from 0,
-; until you return to $ ff and so on.
+; if a further ADDQ.B #1 is performed, BAR restarts from 0,
+; until you return to $ff and so on.
 
 MoveCopper:
 	addq.b	#1,BAR	; WAIT 1 changed, the bar drops 1 line
+	addq.w	#1,COLOUR ;chnage the colour each time also
 	rts
 
 ; Try to change this ADDQ to SUBQ and the bar will go up !!!!
@@ -137,7 +138,10 @@ COPPERLIST:
 BAR:
 	dc.w	$7907,$FFFE	; WAIT - wait for line $79
 
-	dc.w	$180,$600	; COLOR0 - I start the red zone: red at 6
+	dc.w 	$180
+
+COLOUR:
+	dc.w	$600	; COLOR0 - I start the red zone: red at 6
 
 	dc.w	$FFFF,$FFFE	; END OF COPPERLIST
 
@@ -150,7 +154,7 @@ In this program, a movement synchronized with the
 electronic brush, in fact the bar goes down smoothly.
 
 NOTE1: In this listing you can confuse the loop structure with the test
-of the mouse plus the test of the position of the electron brush; that
+of the mouse plus the test of the position of the electron beam that
 what you must be clear about is that the routines, or subroutines that are between
 the mouse loop: and the WaitUp loop: are executed once every video frame:
 in fact try to replace the bsr.s MoveCopper with the subroutine itself,
@@ -188,7 +192,7 @@ if we call each single routine by name, everything will appear easier.
 
 To make the bar go down just change the COPPERLIST, in particular
 in this example the WAIT is changed, in its first byte, that is
-which defines the vertical line to wait:
+which defines the vertical line to wait for:
 
 BAR:
 	dc.w	$2007,$FFFE	; WAIT - I wait for line $20
@@ -226,7 +230,7 @@ Now try to act on the entire color WORD: change the routine like this:
 
 Try it and we will verify that the colors follow each other irregularly, 
 in fact they are the result of the number 
-that increases: $ 601, $ 602 ... $ 631, $ 632 ... generating colors not neatly.
+that increases: $601, $602 ... $631, $632 ... generating colors not neatly.
 
 NOTE: the dc.w command stores bytes, words or longs in memory,
 therefore the same result can be obtained by writing:
