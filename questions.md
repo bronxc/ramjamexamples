@@ -4,6 +4,8 @@
 
 ### Compiler stuff:
 
+---
+
 *Q* How do these 2 examples have the same effect as putting red in the background colour?
 
 Why is 
@@ -28,3 +30,9 @@ dc.w	$600
 ```
 
 The notes mention the equivalence [here](https://github.com/matthewdeaves/ramjamexamples/blob/f665095b002e28c2c511a8b7fb6a9d244eb8f473/SORGENTI/LEZIONE3c_colours.s#L235)
+
+*Answer*
+
+It just.... is.
+
+---
