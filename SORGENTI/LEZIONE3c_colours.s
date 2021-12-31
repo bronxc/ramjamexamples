@@ -237,7 +237,7 @@ therefore the same result can be obtained by writing:
 
 	dc.w	$180,$600	; Color0
 
-	oppure:
+	OR:
 
 	dc.w	$180	; Registro Color0
 	dc.w	$600	; valore del color0
