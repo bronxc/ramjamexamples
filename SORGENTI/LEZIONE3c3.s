@@ -1,152 +1,153 @@
+;APS00000000000000000000000000000000000000000000000000000000000000000000000000000000
 
-; Lezione3c3.s	; BARRETTA CHE SCENDE FATTA CON MOVE&WAIT DEL COPPER
-		; (PER FARLA SCENDERE USATE IL TASTO DESTRO DEL MOUSE)
+; Lesson3c3.s; DROP DOWN BAR MADE WITH COPPER MOVE & WAIT
+; (TO LET IT DOWN USE THE RIGHT BUTTON OF THE MOUSE)
 
 
-	SECTION	SfumaCop,CODE	; anche in Fast va bene
+	SECTION	SfumaCop,CODE	; also in Fast is fine
 
 Inizio:
 	move.l	4.w,a6		; Execbase in a6
-	jsr	-$78(a6)	; Disable - ferma il multitasking
-	lea	GfxName(PC),a1	; Indirizzo del nome della lib da aprire in a1
-	jsr	-$198(a6)	; OpenLibrary, routine della EXEC che apre
-				; le librerie, e da in uscita l'indirizzo
-				; di base di quella libreria da cui fare le
-				; distanze di indirizzamento (Offset)
-	move.l	d0,GfxBase	; salvo l'indirizzo base GFX in GfxBase
+	jsr	-$78(a6)	; Disable - stop multitasking
+	lea	GfxName(PC),a1	; Address of the name of the lib to open in a1
+	jsr	-$198(a6)	; OpenLibrary, EXEC routine that opens
+				; the libraries, and outputs the address
+				; of that library to make the
+				; addressing distances (Offset)
+	move.l	d0,GfxBase	; save the GFX base address in GfxBase
 	move.l	d0,a6
-	move.l	$26(a6),OldCop	; salviamo l'indirizzo della copperlist
+	move.l	$26(a6),OldCop	; we save the address of the copperlist
 				; di sistema
-	move.l	#COPPERLIST,$dff080	; COP1LC - Puntiamo la nostra COP
+	move.l	#COPPERLIST,$dff080	; COP1LC - We pont to our COP
 	move.w	d0,$dff088		; COPJMP1 - Facciamo partire la COP
 mouse:
-	cmpi.b	#$ff,$dff006	; VHPOSR - Siamo alla linea 255?
-	bne.s	mouse		; Se non ancora, non andare avanti
+	cmpi.b	#$ff,$dff006	; VHPOSR - Are we on line 255?
+	bne.s	mouse		; If not yet, don't move on
 
-	btst	#2,$dff016	; POTINP - Tasto destro del mouse premuto?
-	bne.s	Aspetta		; Se no, non eseguire Muovicopper
+	btst	#2,$dff016	; POTINP - Right mouse button pressed?
+	bne.s	Wait		; If not, don't run Muovicopper
 
-	bsr.s	MuoviCopper	; Routine temporizzata ad 1 frame
+	bsr.s	MuoviCopper	; 1 frame timed routine
 
-Aspetta:
-	cmpi.b	#$ff,$dff006	; VHPOSR - Siamo alla linea 255?
-	beq.s	Aspetta		; Se si, non andare avanti, aspetta la linea
-				; seguente, altrimenti MuoviCopper viene
-				; rieseguito
+Wait:
+	cmpi.b	#$ff,$dff006	; VHPOSR - Are we on line 255?
+	beq.s	Wait		; If yes, don't go ahead, wait for the line
+				; following, otherwise MoveCopper comes
+				; rerun
 
-	btst	#6,$bfe001	; tasto sinistro del mouse premuto?
-	bne.s	mouse		; se no, torna a mouse:
+	btst	#6,$bfe001	; left mouse button pressed?
+	bne.s	mouse		; if not, back to mouse:
 
-	move.l	OldCop(PC),$dff080	; COP1LC - Puntiamo la cop di sistema
-	move.w	d0,$dff088		; COPJMP1 - facciamo partire la cop
+	move.l	OldCop(PC),$dff080	; COP1LC - We target the system cop
+	move.w	d0,$dff088		; COPJMP1 - let's start the cop
 
 	move.l	4.w,a6
-	jsr	-$7e(a6)	; Enable - riabilita il Multitasking
-	move.l	gfxbase(PC),a1	; Base della libreria da chiudere
-				; (vanno aperte e chiuse le librerie!!!)
-	jsr	-$19e(a6)	; Closelibrary - chiudo la graphics lib
+	jsr	-$7e(a6)	; Enable - re-enable Multitasking
+	move.l	GfxBase(PC),a1	; Base of the library to close
+					; (libraries must be opened and closed !!!)
+	jsr	-$19e(a6)	; Closelibrary - I close the graphics lib
 	rts
 
 
-;	Questa routine sposta in basso una barra composta da 10 wait
+;	This routine moves down a bar consisting of 10 waits
 
 MuoviCopper:
-	cmpi.b	#$fa,BARRA10	; siamo arrivati alla linea $fa?
-	beq.s	Finito		; se si, siamo in fondo e non continuiamo
-	addq.b	#1,BARRA	; WAIT 1 cambiato
-	addq.b	#1,BARRA2	; WAIT 2 cambiato
-	addq.b	#1,BARRA3	; WAIT 3 cambiato
-	addq.b	#1,BARRA4	; WAIT 4 cambiato
-	addq.b	#1,BARRA5	; WAIT 5 cambiato
-	addq.b	#1,BARRA6	; WAIT 6 cambiato
-	addq.b	#1,BARRA7	; WAIT 7 cambiato
-	addq.b	#1,BARRA8	; WAIT 8 cambiato
-	addq.b	#1,BARRA9	; WAIT 9 cambiato
-	addq.b	#1,BARRA10	; WAIT 10 cambiato
+	cmpi.b	#$fa,BARRA10	; are we at the bottom of the screen?
+	beq.s	Finito		; if yes, we are at the bottom and we do not continue
+	addq.b	#1,BARRA	; WAIT 1 changed
+	addq.b	#1,BARRA2	; WAIT 2 changed
+	addq.b	#1,BARRA3	; WAIT 3 changed
+	addq.b	#1,BARRA4	; WAIT 4 changed
+	addq.b	#1,BARRA5	; WAIT 5 changed
+	addq.b	#1,BARRA6	; WAIT 6 changed
+	addq.b	#1,BARRA7	; WAIT 7 changed
+	addq.b	#1,BARRA8	; WAIT 8 changed
+	addq.b	#1,BARRA9	; WAIT 9 changed
+	addq.b	#1,BARRA10	; WAIT 10 changed
 Finito:
 	rts
 
-	; Da qua mettiamo i dati...
+	; From here we put the data ...
 
 
 GfxName:
-	dc.b	"graphics.library",0,0	; NOTA: per mettere in memoria
-					; dei caratteri usare sempre il dc.b
-					; e metterli tra "", oppure ''
+	dc.b	"graphics.library",0,0	; NOTE: to put in memory
+							; characters always use the dc.b
+							; and put them between "", or ''
 
-GfxBase:		; Qua ci va l'indirizzo di base per gli Offset
-	dc.l	0	; della graphics.library
+GfxBase:		; The base address for Offsets
+	dc.l	0	; of graphics.library
 
-OldCop:			; Qua ci va l'indirizzo della vecchia COP di sistema
+OldCop:			; The address of the old system COP
 	dc.l	0
 
 
-; Qua c'e' la COPPERLIST, fate attenzione alle label BARRA!!!!
+; Here is the COPPERLIST, pay attention to the BARRA labels !!!!
 
 
-	SECTION	CoppyMagic,DATA_C ; Le copperlist DEVONO essere in CHIP RAM!
+	SECTION	CoppyMagic,DATA_C ; Copperlists MUST be in CHIP RAM!
 
 COPPERLIST:
-	dc.w	$100,$200	; BPLCON0 - solo colore di sfondo
-	dc.w	$180,$000	; COLOR0 - Inizio la cop col colore NERO
+	dc.w	$100,$200	; BPLCON0 - background color only
+	dc.w	$180,$000	; COLOR0 - I start the copy with the color BLACK
 
 BARRA:
-	dc.w	$7907,$FFFE	; WAIT - aspetto la linea $79
-	dc.w	$180,$300	; COLOR0 - inizio la barra rossa: rosso a 3
+	dc.w	$7907,$FFFE	; WAIT - Wait for the $79 line
+	dc.w	$180,$300	; COLOR0 - Start the red bar: red at 3
 BARRA2:
-	dc.w	$7a07,$FFFE	; WAIT - linea seguente
-	dc.w	$180,$600	; COLOR0 - rosso a 6
+	dc.w	$7a07,$FFFE	; WAIT - next line
+	dc.w	$180,$600	; COLOR0 - red at 6
 BARRA3:
 	dc.w	$7b07,$FFFE
-	dc.w	$180,$900	; rosso a 9
+	dc.w	$180,$900	; red at 9
 BARRA4:
 	dc.w	$7c07,$FFFE
-	dc.w	$180,$c00	; rosso a 12
+	dc.w	$180,$c00	; red at 12
 BARRA5:
 	dc.w	$7d07,$FFFE
-	dc.w	$180,$f00	; rosso a 15 (al massimo)
+	dc.w	$180,$f00	; red at 15 (at highest)
 BARRA6:
 	dc.w	$7e07,$FFFE
-	dc.w	$180,$c00	; rosso a 12
+	dc.w	$180,$c00	; red at 12
 BARRA7:
 	dc.w	$7f07,$FFFE
-	dc.w	$180,$900	; rosso a 9
+	dc.w	$180,$900	; red at 9
 BARRA8:
 	dc.w	$8007,$FFFE
-	dc.w	$180,$600	; rosso a 6
+	dc.w	$180,$600	; red at 6
 BARRA9:
 	dc.w	$8107,$FFFE
-	dc.w	$180,$300	; rosso a 3
+	dc.w	$180,$300	; red at 3
 BARRA10:
 	dc.w	$8207,$FFFE
-	dc.w	$180,$000	; colore NERO
+	dc.w	$180,$000	; colore black
 
-	dc.w	$FFFF,$FFFE	; FINE DELLA COPPERLIST
+	dc.w	$FFFF,$FFFE	; END OF COPPER LIST
 
 
 	end
 
-Per far scendere la barra basta cambiare la COPPERLIST, in particolare
-in questo esempio vengono cambiati i vari WAIT che compongono la barra, nel
-loro primo byte, ossia quello che definisce la linea verticale da attendere:
+To make the bar go down just change the COPPERLIST, in particular
+in this example the various WAITs that make up the bar are changed to
+their first byte, i.e. the one that defines the vertical line to wait:
 
 BARRA:
 	dc.w	$7907,$FFFE	; WAIT - aspetto la linea $79
-	dc.w	$180,$300	; COLOR0 - inizio la barra rossa: rosso a 3
+	dc.w	$180,$300	; COLOR0 - inizio la barra rossa: red at 3
 BARRA2:
 	dc.w	$7a07,$FFFE	; linea seguente
-	dc.w	$180,$600	; rosso a 6
+	dc.w	$180,$600	; red at 6
 	...
 
-Mettendo una label a quel byte, si puo' cambiare quel byte agendo sulla
-label stessa, in questo caso BARRA.
+By putting a label on that byte, you can change that byte by acting on the
+label itself, in this case BAR.
 
 *******************************************************************************
 
-Vi consiglio di fare molte modifiche, anche le piu' casuali, per
-prendere familiarita' col COPPER: Ve ne consiglio alcune:
+I advise you to make many changes, even the most random, for
+get familiar with COPPER: I recommend some of them:
 
-MODIFICA1: provate a mettere dei ; ai primi 5 ADDQ.b in questo modo:
+EDIT1: try to put some; to the first 5 ADDQ.b in this way:
 
 ;	addq.b	#1,BARRA	; WAIT 1 cambiato
 ;	addq.b	#1,BARRA2	; WAIT 2 cambiato
@@ -157,13 +158,13 @@ MODIFICA1: provate a mettere dei ; ai primi 5 ADDQ.b in questo modo:
 	addq.b	#1,BARRA7	; WAIT 7 cambiato
 	....
 
-Otterrete l'effetto "CALA IL SIPARIO", infatti la discesa parte in questo modo
-dalla meta' dellla barra, e, siccome l'ultimo colore vale fino a che non
-viene cambiato, in questo caso l'ultimo colore prima del wait della parte
-inferiore della barra che va in fondo e' ROSSO, dunque sembra che la barra si
-allunghi fino in fondo allo schermo. Togliete i ; e passiamo alla modifica 2.
+You will get the effect "CLOSE THE CURTAIN", in fact the descent starts in this way
+from the middle of the bar, and, since the last color is valid until not
+it is changed, in this case the last color before the wait of the part
+bottom of the bar that goes to the bottom is RED, so it seems that the bar does
+stretch all the way to the bottom of the screen. Remove the; and let's move on to modification 2.
 
-MODIFICA2: Per ottenere un effetto "ZOOM" modificate cosi':(usate Amiga+b+c+i)
+EDIT2: To obtain a "ZOOM" effect, modify as follows: (use Amiga + b + c + i)
 
 	addq.b	#1,BARRA
 	addq.b	#2,BARRA2
@@ -176,13 +177,13 @@ MODIFICA2: Per ottenere un effetto "ZOOM" modificate cosi':(usate Amiga+b+c+i)
 	addq.b	#8,BARRA9
 	addq.b	#8,BARRA10
 
-Avete capito come mai si espande la barra? Perche' anziche' andare in basso
-insieme i wait hanno diverse "velocita'", per cui le piu' basse si distanziano
-da quelle piu' alte.
+Did you understand why the bar expands? Because instead of going low
+together the waits have different "speeds", so the lower ones are separated
+from the higher ones.
 
 
-MODIFICA3: Questa volta "espanderemo" la barra non verso il basso, come nel
-	   caso precedente, ma centralmente:
+EDIT3: This time we will "expand" the bar not down, as in
+previous case, but centrally:
 
 	subq.b	#5,BARRA
 	subq.b	#4,BARRA2
@@ -195,9 +196,9 @@ MODIFICA3: Questa volta "espanderemo" la barra non verso il basso, come nel
 	addq.b	#4,BARRA9
 	addq.b	#5,BARRA10
 
-Infatti abbiamo cambiato i primi 5 addq in subq, dunque la parte superiore
-della barra in questo caso sale invece di scendere, e sale in maniera simile
-a quella dello "zoom" precedente, infatti le "velocita'" sono 5,4,3,2,1,
-mentre i 5 addq fanno lo stesso per la parte inferiore.
+In fact we have changed the first 5 addq to subq, therefore the upper part
+of the bar in this case goes up instead of going down, and goes up in a similar way
+to that of the previous "zoom", in fact the "speeds" are 5,4,3,2,1,
+while the 5 addqs do the same for the lower part.
 
 
