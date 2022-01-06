@@ -53,7 +53,7 @@ You can use ```h.w Init``` to show the contents of memory from the address of th
 
 ![h.w BAR output ](https://github.com/matthewdeaves/ramjamexamples/blob/main/myimages/q1a3.png)
 
-```dc.x``` writes directly to the memory sequentially. This is why the above examples are the same. To prove it start with the code:
+```dc``` writes directly to the memory sequentially. This is why the above examples are the same. To prove it start with the code:
 
 ```
 BAR:
