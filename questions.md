@@ -33,6 +33,43 @@ The notes mention the equivalence [here](https://github.com/matthewdeaves/ramjam
 
 *Answer*
 
-It just.... is.
+An assembled program is loaded into memory staring from one starting address. It's useful to use the h (hex dump) command to study this. The whole program is represented by each memory location laid out one after the other with its execution starting at the base address. If you start your program with a label such as
+
+```
+Init:
+	move.l	4.w,a6		; Execbase in a6
+	jsr	-$78(a6)		; Disable multitasking
+	lea	GfxName(PC),a1	; Address of the name of the lib to open in a1
+	jsr	-$198(a6)	; OpenLibrary, EXEC routine that opens
+```
+
+You can use ```h.w Init``` to show the contents of memory from the address of the ```Init``` label:
+
+![h.w BAR output ](https://github.com/matthewdeaves/ramjamexamples/blob/main/SORGENTI/myimages/q1a3.png)
+
+```dc.x``` writes directly to the memory sequentially. This is why the above examples are the same. To prove it start with the code:
+
+```
+BAR:
+	dc.w	$180,$600
+```
+
+Then use ```h.w BAR``` to show
+
+![h.w BAR output ](https://github.com/matthewdeaves/ramjamexamples/blob/main/SORGENTI/myimages/q1a1.png)
+
+
+Then change the code to
+
+```
+BAR:
+	dc.w	$180
+	dw.w	600
+```
+
+Then use ```h.w BAR``` to show
+
+
+Notice it is the same data in the memory location of BAR whichever method we choose.
 
 ---

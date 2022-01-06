@@ -137,7 +137,8 @@ COPPERLIST:
 BAR:
 	dc.w	$7907,$FFFE	; WAIT - wait for line $79
 
-	dc.w	$180,$600	; COLOR0 - I start the red zone: red at 6
+	dc.w	$180
+	dc.w	$600	; COLOR0 - I start the red zone: red at 6
 
 	dc.w	$FFFF,$FFFE	; END OF COPPERLIST
 
