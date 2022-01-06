@@ -37,7 +37,7 @@ The notes mention the equivalence [here](https://github.com/matthewdeaves/ramjam
 
 First, [watch this video](https://www.youtube.com/watch?v=ZPJW3wIfL4I)
 
-An assembled program is loaded into memory staring from one starting address. Each memory address can contain up to one LONG WORD. See this example using ```h.w```
+An assembled program is loaded into memory staring from one starting address. Each memory address can can be thought of as a box that can hold 32 bits. See this example using ```h.w``` (hex dump of memory by size ```WORD```)
 
 ![h.w BAR output ](https://github.com/matthewdeaves/ramjamexamples/blob/main/myimages/q1a4.png)
 
