@@ -59,7 +59,8 @@ You can use ```h.w Init``` to show the contents of memory from the address of th
 
 ```
 BAR:
-	dc.w	$180,$600
+	dc.w	$7907,$FFFE	; WAIT - wait for line $79
+	dc.w	$180,$600	; COLOR0 - I start the red zone: red at 6
 ```
 
 Then use ```h.w BAR``` to show
@@ -71,8 +72,9 @@ Then change the code to
 
 ```
 BAR:
-	dc.w	$180
-	dw.w	600
+	dc.w	$7907,$FFFE	; WAIT - wait for line $79
+	dc.w	$180 		; COLOUR0
+	dw.w	600  		; red at 6 to start
 ```
 
 Then use ```h.w BAR``` to show
