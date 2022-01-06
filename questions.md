@@ -33,7 +33,13 @@ The notes mention the equivalence [here](https://github.com/matthewdeaves/ramjam
 
 *Answer*
 
-An assembled program is loaded into memory staring from one starting address. It's useful to use the h (hex dump) command to study this. The whole program is represented by each memory location laid out one after the other with its execution starting at the base address. If you start your program with a label such as
+First, [watch this video](https://www.youtube.com/watch?v=ZPJW3wIfL4I)
+
+An assembled program is loaded into memory staring from one starting address. Each memory address can contain up to one LONG WORD. See this example using ```h.w```
+
+![h.w BAR output ](https://github.com/matthewdeaves/ramjamexamples/blob/main/SORGENTI/myimages/q1a4.png)
+
+It's useful to use the h (hex dump) command to study this. The whole program is represented by each memory location laid out one after the other with its execution starting at the base address. If you start your program with a label such as
 
 ```
 Init:
