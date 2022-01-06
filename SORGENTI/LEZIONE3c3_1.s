@@ -52,8 +52,8 @@ Wait:
 ;	This routine moves down a bar consisting of 10 waits
 
 MuoviCopper:
-	cmpi.b	#$fa,BARRA10	; are we at the bottom of the screen?
-	beq.s	Finito		; if yes, we are at the bottom and we do not continue
+	cmpi.b	#$fa,BARRA10	; is the last line of the bar at the bottom of the screen?
+	beq.s	Finish		; if yes, we are at the bottom and we do not continue
 	;addq.b	#1,BARRA	; WAIT 1 changed
 	;addq.b	#1,BARRA2	; WAIT 2 changed
 	;addq.b	#1,BARRA3	; WAIT 3 changed
@@ -64,7 +64,7 @@ MuoviCopper:
 	addq.b	#1,BARRA8	; WAIT 8 changed
 	addq.b	#1,BARRA9	; WAIT 9 changed
 	addq.b	#1,BARRA10	; WAIT 10 changed
-Finito:
+Finish:
 	rts
 
 	; From here we put the data ...
