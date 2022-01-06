@@ -77,6 +77,21 @@ Then use ```h.w BAR``` to show
 
 ![h.w BAR output ](https://github.com/matthewdeaves/ramjamexamples/blob/main/myimages/q1a2.png)
 
-Notice it is the same data in the memory location of BAR whichever method we choose.
+Notice it is the same data in the memory location of BAR whichever method we choose. There is still some magic to me in that the instruction at memory location ```$00000970```  being run by the copper results in register $dff180 taking the value of $0600 (red).
+
+You can see ```FFFF FFFE``` in the pictures, which we know when run in the copper means the end of the copper list. This is because my code for these exmaples is
+
+```
+
+BAR:
+	dc.w	$7907,$FFFE	; WAIT - wait for line $79
+
+	dc.w	$180
+	dc.w	$600	; COLOR0 - I start the red zone: red at 6
+
+	dc.w	$FFFF,$FFFE	; END OF COPPERLIST
+
+	end
+```
 
 ---
