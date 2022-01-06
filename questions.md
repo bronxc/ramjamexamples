@@ -37,7 +37,7 @@ First, [watch this video](https://www.youtube.com/watch?v=ZPJW3wIfL4I)
 
 An assembled program is loaded into memory staring from one starting address. Each memory address can contain up to one LONG WORD. See this example using ```h.w```
 
-![h.w BAR output ](https://github.com/matthewdeaves/ramjamexamples/blob/main/SORGENTI/myimages/q1a4.png)
+![h.w BAR output ](https://github.com/matthewdeaves/ramjamexamples/blob/main/myimages/q1a4.png)
 
 It's useful to use the h (hex dump) command to study this. The whole program is represented by each memory location laid out one after the other with its execution starting at the base address. If you start your program with a label such as
 
@@ -51,7 +51,7 @@ Init:
 
 You can use ```h.w Init``` to show the contents of memory from the address of the ```Init``` label:
 
-![h.w BAR output ](https://github.com/matthewdeaves/ramjamexamples/blob/main/SORGENTI/myimages/q1a3.png)
+![h.w BAR output ](https://github.com/matthewdeaves/ramjamexamples/blob/main/myimages/q1a3.png)
 
 ```dc.x``` writes directly to the memory sequentially. This is why the above examples are the same. To prove it start with the code:
 
@@ -62,7 +62,7 @@ BAR:
 
 Then use ```h.w BAR``` to show
 
-![h.w BAR output ](https://github.com/matthewdeaves/ramjamexamples/blob/main/SORGENTI/myimages/q1a1.png)
+![h.w BAR output ](https://github.com/matthewdeaves/ramjamexamples/blob/main/myimages/q1a1.png)
 
 
 Then change the code to
@@ -75,6 +75,7 @@ BAR:
 
 Then use ```h.w BAR``` to show
 
+![h.w BAR output ](https://github.com/matthewdeaves/ramjamexamples/blob/main/myimages/q1a2.png)
 
 Notice it is the same data in the memory location of BAR whichever method we choose.
 
