@@ -101,6 +101,7 @@ BAR:
 	dc.w	$180
 	dc.w	$060
 
+	; the next two lines just give me a solid red line for some reason....
 	dc.w	$7935,$FFFE ; WAIT - wait for part way along the green line
 	dc.w	$180,$400		; and set background to red
 
