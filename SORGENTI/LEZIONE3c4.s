@@ -96,7 +96,7 @@ COPPERLIST:
 
 BARRA:
 	dc.w	$7907,$FFFE	; WAIT - aspetto la linea $79
-	dc.w	$180,$300	; COLOR0 - inizio la barra rossa: rosso a 3
+	dc.w	$0180,$0300	; COLOR0 - inizio la barra rossa: rosso a 3
 	dc.w	$7a07,$FFFE	; WAIT - linea seguente
 	dc.w	$180,$600	; COLOR0 -rosso a 6
 	dc.w	$7b07,$FFFE
