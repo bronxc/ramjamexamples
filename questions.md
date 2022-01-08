@@ -37,7 +37,7 @@ The notes mention the equivalence [here](https://github.com/matthewdeaves/ramjam
 
 First, [watch this video](https://www.youtube.com/watch?v=ZPJW3wIfL4I)
 
-An assembled program is loaded into memory staring from one starting address. Each memory address can can be thought of as a box that can hold 32 bits. See this example using ```h.w``` (hex dump of memory by size ```WORD```)
+An assembled program is loaded into memory staring from one starting address. Each memory address can can be thought of as a box that can hold 1 byte. See this example using ```h.w``` (hex dump of memory by size ```WORD```)
 
 ![h.w BAR output ](https://github.com/matthewdeaves/ramjamexamples/blob/main/myimages/q1a4.png)
 
@@ -99,3 +99,27 @@ BAR:
 ```
 
 ---
+
+
+#### Question 2
+
+*Q* What exactly is stored at each memory location? How is it organised?
+
+
+
+#### *Answer*
+
+Each memory location can store 1 byte. The below picture show using the memory command to inspect the memory contents for the label BARRA ```m BARRA```
+
+![h.w BAR output ](https://github.com/matthewdeaves/ramjamexamples/blob/main/myimages/q1a5.png)
+
+You can see BARRA starts are memory location ```$00016EC8``` and it contains a byte with value of ```79```. Each subsequent byte shown on the same line is the value stored at the next memory location. So ```$00016EC9``` contains 1 byte with value ```07``` and so on.
+
+The debugger is showing us the memory contents 16 bytes per line which is why the second line of the output is labelled on the left with address ```$00016ED8```. I label each memory location on the first line to illustrate this.
+
+If we look at the code where BARRA is defined, you can see the meory output matches what we would expect
+
+![h.w BAR output ](https://github.com/matthewdeaves/ramjamexamples/blob/main/myimages/q1a6.png)
+
+
+
