@@ -45,25 +45,25 @@ Aspetta:
 	rts
 
 
-; Questa routine anziche' agire sul primo byte a sinistra del wait, ossia
-; quello che determina la posizione Y, facendo abbassare o alzare i wait con
-; i colori seguenti, agisce sul secondo byte, quello delle X, generando uno
-; spostamento a destra e a sinistra, regolato da 2 flags simili al SuGiu che
-; abbiamo gia' visto, in questo caso si chiamano DestraFlag e SinistraFlag,
-; dove sta il numero di volte che la routine VAIDESTRA o VAISINISTRA sono state
-; eseguite, per limitare lo spostamento (ossia per decidere quanto andare 
-; avanti prima di ritornare indietro): infatti ogni volta che la routine
-; VAIDESTRA viene eseguita, la "barra grigia" avanza a destra, dunque dobbiamo
-; farla fermare quando raggiunge il bordo opposto dello schermo, in questo caso
-; quando e' stata eseguita 85 volte, dopodiche' la facciamo tornare indietro
-; eseguendo altre 85 volte la routine VAISINISTRA, che la riporta alla
-; posizione iniziale, e il ciclo riparte per continuare fino a che non premiamo
-; il tasto del mouse.
-; DA NOTARE CHE QUESTA ROUTINE O VA A VAIDESTRA O A VAISINISTRA, NON VENGONO
-; ESEGUITE TUTTE E DUE: SE VIENE ESEGUITA VAIDESTRA POI SI TORNA DA QUELLA
-; ROUTINE AL LOOP MOUSE:, LO STESSO PER VAISINISTRA. SE IL CICLO VAIDESTRA E
-; VAISINISTRA E' FINITO (DOPO 2*85 FRAMES) SI TORNA AL CICLO "MOUSE" DALL'RTS
-; DELLA ROUTINE CopperDESTSIN direttamente, dopo aver azzerato i 2 flag.
+; This routine instead of acting on the first byte to the left of the wait, that is
+; the one that determines the Y position, making the waits lower or higher with
+; the following colors, acts on the second byte, that of the Xs, generating one
+; shift to the right and to the left, regulated by 2 flags similar to the SuGiu che
+; we have already seen, in this case they are called DestraFlag and SinistraFlag,
+; where is the number of times the VAIDESTRA or VAIS LEFT routine has been
+; performed, to limit the movement (i.e. to decide how far to go
+; forward before going back): in fact every time the routine
+; VAIDESTRA is executed, the "gray bar" advances to the right, so we have to
+; make it stop when it reaches the opposite edge of the screen, in this case
+; when it's been done 85 times, then we make it go back
+; running the VAIS LEFT routine 85 more times, which returns it to the
+; initial position, and the cycle restarts to continue until we press
+; the mouse button.
+; NOTE THAT THIS ROUTINE OR GOES TO VAIDESTRA OR VAIS LEFT, DOES NOT COME
+; PERFORM BOTH: IF IT IS PERFORMED GO TO THE RIGHT THEN YOU COME BACK TO THAT
+; LOOP MOUSE ROUTINE: THE SAME FOR GO TO LEFT. IF THE CYCLE GOES RIGHT AND
+; VAISINISTRA IS FINISHED (AFTER 2 * 85 FRAMES) BACK TO THE "MOUSE" CYCLE FROM THE RTS
+; of the Copper DESTSIN routine directly, after having cleared the 2 flags.
 
 
 CopperDestSin:
@@ -122,19 +122,19 @@ OldCop:			; Qua ci va l'indirizzo della vecchia COP di sistema
 
 COPPERLIST:
 	dc.w	$100,$200	; BPLCON0
-	dc.w	$180,$000	; COLOR0 - Inizio la cop col colore NERO
+	dc.w	$180,$000	; COLOR0 - I start with the BLACK color
 
 
-	dc.w	$9007,$fffe	; aspettiamo l'inizio della linea $90
-	dc.w	$180,$AAA	; COLORE grigio
+	dc.w	$9007,$fffe	; wait for the $90 
+	dc.w	$180,$AAA	; gray COLOR line
 
-; Qua abbiamo "SPEZZATO" la prima WORD del WAIT $9031 in 2 bytes per poter
-; mettere una label (CopBar) ad indicare il secondo byte, ossia $31 (LA XX)
+; Here we have "BREAKED" the first WORD of the WAIT $9031 in 2 bytes to be able to
+; put a label (CopBar) to indicate the second byte, that is $31 (LA XX)
 
-	dc.b	$90		; POSIZIONE YY del WAIT (primo byte del WAIT)
+	dc.b	$90		; YY POSITION of WAIT (first byte of WAIT)
 CopBar:
-	dc.b	$31		; POSIZIONE XX del WAIT (Che cambiamo!!!)
-	dc.w	$fffe		; wait - (sara' $9033,$FFFE - $9035,$FFFE....)
+	dc.b	$31		; POSITION XX of the WAIT (Let us change !!!)
+	dc.w	$fffe		; wait - (will be $9033, $FFFE - $9035, $FFFE ....)
 
 	dc.w	$180,$700	; colore ROSSO, che partira' da posizioni
 				; sempre piu' verso destra, preceduto dal

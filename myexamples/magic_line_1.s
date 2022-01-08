@@ -1,5 +1,4 @@
-; My Program to draw a single green line on the screen that moves up and down
-; use magic_line_1.s to modify this to also change colour on the x axis like a progress bar of green/red
+; My Program to draw a single line on the screen that moves up and down as well as change colour on the x axis
 
 ; Let's put everything in chip ram
 	SECTION MyCode,CODE_C
@@ -49,7 +48,7 @@ MoveCopper:
 	LEA	BAR,a0 	;Load address of BAR label then work with offsets
 
 	; Should we be adding or subtracting?
-	TST.B 	DirectionFlag
+	TST.B 	VertDirectionFlag
 	beq.w	GoDown
 
 	jmp	GoUp
@@ -71,15 +70,18 @@ GoUp
 	rts
 
 SetFlagUp
-	move.b	#$ff,DirectionFlag
+	move.b	#$ff,VertDirectionFlag
 	rts
 
 SetFlagDown
-	clr.b	DirectionFlag
+	clr.b	VertDirectionFlag
 	rts
 
-DirectionFlag:
+VertDirectionFlag:
 	dc.b	0,0
+
+HorizDirectionFlag:
+	dc.b 	0,0
 
 GfxName:
 	dc.b	"graphics.library",0,0	;Name of library to load
@@ -96,12 +98,14 @@ MyCopperList:
 
 BAR:
 	dc.w	$7907,$FFFE	; WAIT - wait for line $79 then draw green line
-
 	dc.w	$180
 	dc.w	$060
 
-	dc.w	$7A07,$FFFE ; Wait for line $7A
-	dc.w	$180,$000	; go back to black
+	dc.w	$7935,$FFFE ; WAIT - wait for part way along the green line
+	dc.w	$180,$400		; and set background to red
+
+	dc.w	$7A07,$FFFE ; Wait for line after the green line, $7A
+	dc.w	$180,$000	; and go back to black background
 
 	dc.w	$FFFF,$FFFE	; END OF COPPERLIST
 
