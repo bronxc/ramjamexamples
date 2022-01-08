@@ -1,3 +1,4 @@
+;APS00000000000000000000000000000000000000000000000000000000000000000000000000000000
 
 ; Lezione3h.s	SCORRIMENTO A DESTRA E SINISTRA TRAMITE IL WAIT del COPPER
 
@@ -37,22 +38,22 @@ Aspetta:
 
 	move.l	4.w,a6
 	jsr	-$7e(a6)	; Enable - riabilita il Multitasking
-	move.l	gfxbase(PC),a1	; Base della libreria da chiudere
+	move.l	GfxBase(PC),a1	; Base della libreria da chiudere
 				; (vanno aperte e chiuse le librerie!!!)
 	jsr	-$19e(a6)	; Closelibrary - chiudo la graphics lib
 	rts
 
-; La routine e' come in LEZIONE3g.s, l'unica differenza e' che si agisce su
-; 29 wait anziche' 1 tramite un loop DBRA che cambia un wait, salta al wait
-; successivo, cambia il wait, salta al wait successivo, eccetera.
+; The routine is like in LESSON3g.s, the only difference is that you act on
+; 29 wait instead of 1 through a DBRA loop that changes a wait, jumps to the wait
+; next, change the wait, jump to the next wait, etc.
 
-CopperDESTSIN:
-	CMPI.W	#85,DestraFlag		; VAIDESTRA eseguita 85 volte?
-	BNE.S	VAIDESTRA		; se non ancora, rieseguila
-					; se e' stata eseguita gia' 85
-					; volte invece continua di seguito
+CopperDestSin:
+	CMPI.W	#30,DestraFlag		; VAIDESTRA performed 85 times?
+	BNE.S	VAIDESTRA		; if not yet, run it again
+						; if it has already been performed 85
+						; sometimes it continues on
 
-	CMPI.W	#85,SinistraFlag	; VAISINISTRA eseguita 85 volte?
+	CMPI.W	#30,SinistraFlag	; VAISINISTRA eseguita 85 volte?
 	BNE.S	VAISINISTRA		; se non ancora, rieseguila
 
 	CLR.W	DestraFlag	; la routine VAISINISTRA e' stata eseguita
@@ -65,12 +66,11 @@ CopperDESTSIN:
 	RTS			; TORNIAMO AL LOOP mouse
 
 
-VAIDESTRA:			; questa routine sposta la barra verso DESTRA
-	lea	CopBar+1,A0	; Mettiamo in A0 l'indirizzo del primo valore
-				; XX del primo wait, che si trova appunto
-				; 1 byte dopo CopBar
+VAIDESTRA:			; this routine moves the bar to the RIGHT 
+	lea	CopBar+1,A0	; We put in A0 the address of the first XX value 
+				; of the first wait, which is precisely 1 byte after CopBar
 
-	move.w	#29-1,D2	; dobbiamo cambiare 29 wait (usiamo un DBRA)
+	move.w	#29-1,D2	; we have to change 29 wait (we use a DBRA)
 DestraLoop:
 	addq.b	#2,(a0)		; aggiungiamo 2 alla coordinata X del wait
 	ADD.W	#16,a0		; andiamo al prossimo wait da cambiare
@@ -92,24 +92,24 @@ SinistraLoop:
 				; stata eseguita VAISINISTRA.
 	RTS			; TORNIAMO AL LOOP mouse
 
-; Fate attenzione ad una cosa: cambiamo 1 wait ogni 2 soltanto, non tutti
-; i wait. Ne cambiamo solo la meta' perche', a differenza di quando facciamo
-; scorrere una barra in alto e basso, in cui basta 1 wait per linea
+; Pay attention to one thing: we change 1 wait every 2 only, not all
+; i wait. We only change half of it because, unlike when we do
+; scroll a bar up and down, where 1 wait per line is enough
 ;
-;	dc.w	$YY07,$FFFE	; wait linea YY, inizio linea (07)
-;	dc.w	$180,$0RGB	; colore
-;	dc.w	$YY07,$FFFE	; wait linea YY, inizio linea (07)
-;	...
+; dc.w $YY07, $FFFE; wait line YY, start of line (07)
+; dc.w $180, $0RGB; color
+; dc.w $YY07, $FFFE; wait line YY, start of line (07)
+; ...
 ;
-; In questo caso dobbiamo mettere 2 wait per ogni linea, ossia uno all'inizio
-; della linea e un'altro che scorra a destra e sinistra su quella linea:
+; In this case we have to put 2 waits for each line, ie one at the beginning
+; of the line and another that slides left and right on that line:
 ;
-;	dc.w	$YY07,$FFFE	; wait linea YY, inizio linea (07)
-;	dc.w	$180,$0RGB	; colore GRIGIO
-;	dc.w	$YYXX,$FFFE	; wait linea YY, alla posizione orizzontale
-;				; che decidiamo noi, facendo avanzare il
-;				; GRIGIO sul ROSSO.
-;	dc.w	$180,$0RGB	; ROSSO
+; dc.w $YY07, $FFFE; wait line YY, start of line (07)
+; dc.w $180, $0RGB; Color: Grey
+; dc.w $YYXX, $FFFE; wait line YY, to the horizontal position
+; ; that we decide, by advancing the
+; ; GRAY on RED.
+; dc.w $180, $0RGB; RED
 ;
 
 
@@ -137,7 +137,7 @@ COPPERLIST:
 	dc.w	$100,$200	; BPLCON0
 	dc.w	$180,$000	; COLOR0 - Inizio la cop col colore NERO
 
-	dc.w	$2c07,$FFFE	; WAIT - una piccola barretta fissa verde
+	dc.w	$2c07,$FFFE	; WAIT - a small fixed green bar
 	dc.w	$180,$010	; COLOR0
 	dc.w	$2d07,$FFFE	; WAIT
 	dc.w	$180,$020	; COLOR0
@@ -155,10 +155,10 @@ COPPERLIST:
 	dc.w	$180,$000
 
 
-	dc.w	$9007,$fffe	; aspettiamo l'inizio della linea
-	dc.w	$180,$000	; grigio al minimo, ossia NERO!!!
+	dc.w	$9007,$fffe	; we wait for the beginning of the gray line 
+	dc.w	$180,$000	; to the minimum, that is BLACK !!!
 CopBar:
-	dc.w	$9031,$fffe	; wait che cambiamo ($9033,$9035,$9037...)
+	dc.w	$9031,$fffe	; wait we change ($9033, $9035, $9037 ...)
 	dc.w	$180,$100	; colore rosso, che partira' da posizioni
 				; sempre piu' verso destra, preceduto dal
 				; grigio che avanzera' di conseguenza.
@@ -167,26 +167,26 @@ CopBar:
 	dc.w	$9131,$fffe	; a questo WAIT, che noi cambiaremo...
 	dc.w	$180,$200	; dopo il quale comincia il ROSSO
 
-;	continuiamo risparmiando spazio, osservate lo schema:
+; let's continue saving space, look at the diagram:
 
-; nota: con un "dc.w $1234" mettiamo in memoria 1 word, con "dc.w $1234,$1234"
-; mettiamo in memoria 2 word consecutive, ossia la longword "dc.l $12341234"
-; che avremmo potuto mettere in memoria con un "dc.b $12,$34,$12,$34", dunque
-; possiamo mettere in memoria anche 8 o piu' words con una sola linea dc.w!
-; per esempio la linea 3 si potrebbe riscrivere con il dc.l in questo modo:
-;	dc.l	$9207fffe,$1800222,$9231fffe,$1800300	ossia:
-;	dc.l	$9207fffe,$01800222,$9231fffe,$01800300	con gli zeri *INIZIALI*
-; fate attenzione agli zeri iniziali! un dc.w $0180 lo scrivo con dc.w $180
-; semplicemente per comodita', ma lo zero esiste, va tenuto presente!
-; Per chiarire, la linea 3 completa di zeri iniziali sarebbe:
-;	dc.w	$9207,$fffe,$0180,$0222,$9231,$fffe,$0180,$0300 (1 word =$xxxx)
-; In definitiva gli zeri iniziali "inutili" del .b, .w, .l sono FACOLTATIVI.
+; note: with a "dc.w $1234" we store 1 word, with "dc.w $1234, $1234"
+; we store 2 consecutive words in memory, that is the longword "dc.l $12341234"
+; that we could have stored with a "dc.b $12, $34, $12, $34", so
+; we can also store 8 or more words in memory with a single dc.w line!
+; for example line 3 could be rewritten with dc.l in this way:
+; dc.l $9207fffe, $1800222, $9231fffe, $1800300 i.e .:
+; dc.l $9207fffe, $01800222, $9231fffe, $01800300 with zeros * INITIALS *
+; pay attention to the leading zeros! a dc.w $0180 I write it with dc.w $180
+; simply for convenience, but zero exists, it must be borne in mind!
+; To clarify, line 3 complete with leading zeros would be:
+; dc.w $9207, $fffe, $0180, $0222, $9231, $fffe, $0180, $0300 (1 word = $xxxx)
+; Ultimately the "useless" leading zeros of .b, .w, .l are OPTIONAL.
 
-;	    WAIT FISSI (poi grigio) - WAIT DA CAMBIARE (seguiti dal rosso)
+; WAIT FISSI (then gray) - WAIT TO CHANGE (followed by red)
 
-	dc.w	$9207,$fffe,$180,$222,$9231,$fffe,$180,$300 ; linea 3
-	dc.w	$9307,$fffe,$180,$333,$9331,$fffe,$180,$400 ; linea 4
-	dc.w	$9407,$fffe,$180,$444,$9431,$fffe,$180,$500 ; linea 5
+	dc.w	$9207,$fffe,$180,$222,$9231,$fffe,$180,$300 ; line 3
+	dc.w	$9307,$fffe,$180,$333,$9331,$fffe,$180,$400 ; line 4
+	dc.w	$9407,$fffe,$180,$444,$9431,$fffe,$180,$500 ; line 5
 	dc.w	$9507,$fffe,$180,$555,$9531,$fffe,$180,$600 ; ....
 	dc.w	$9607,$fffe,$180,$666,$9631,$fffe,$180,$700
 	dc.w	$9707,$fffe,$180,$777,$9731,$fffe,$180,$800
@@ -214,13 +214,13 @@ CopBar:
 	dc.w	$ad07,$fffe,$180,$111,$ad31,$fffe,$180,$000
 	dc.w	$ae07,$fffe,$180,$000
 
-;	    WAIT FISSI (poi grigio) - WAIT DA CAMBIARE (seguiti dal rosso)
+; WAIT FISSI (then gray) - WAIT TO CHANGE (followed by red)
 ;
-;	Come notate per ogni linea servono 2 wait, uno per aspettare l'inizio
-;	della linea e uno, quello che modifichiamo, per definire in che
-;	punto della linea cambiare colore, ossia passare dal grigio che e'
-;	presente dalla posizione 07, al rosso che parte dopo la posizione
-;	assunta dal wait che cambiamo.
+; As you can see, for each line it takes 2 waits, one to wait for the start
+; of the line and one, the one we modify, to define in which
+; point of the line change color, i.e. go from gray which is
+; present from position 07, to red starting after position
+; assumed by the wait that we change.
 ;
 	dc.w	$fd07,$FFFE	; aspetto la linea $FD
 	dc.w	$180,$00a	; blu intensita' 10

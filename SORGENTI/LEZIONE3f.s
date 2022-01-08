@@ -58,7 +58,7 @@ MoveCopper:
 				; (if this TST is not verified)
 				; we keep going up (doing subqs)
 	beq.w	VAIGIU
-	cmpi.b	#$0a,(a0)	; did we get to the $ 0a + $ ff line? (265)
+	cmpi.b	#$0a,(a0)	; did we get to the $0a + $ff line? (265)
 	beq.s	MoveDown	; if yes, we are at the top and we have to go down
 	subq.b	#1,(a0)
 	subq.b	#1,8(a0)	; now let's change the other wait: the distance
@@ -103,7 +103,7 @@ MoveUp:
 ; go down and when it is raised ($FF) we have to go up. It comes in fact
 ; a comparison of the reached line was carried out to verify if
 ; we got to the top or bottom, and if we got there we change
-; the DirectionFlag (with clr.b DirectionFlag or move.b # $ ff, DirectionFlag)
+; the DirectionFlag (with clr.b DirectionFlag or move.b # $ff, DirectionFlag)
 
 DirectionFlag:
 	dc.b	0,0
@@ -206,6 +206,6 @@ cases programmers make NTSC versions of the game exclusively for
 distribution in the USA.
 
 NOTE: For now we could wait with the $DFF006 only one line included
-from $01 to $ FF; I will explain later how to wait with $ dffxxx one
+from $01 to $FF; I will explain later how to wait with $dffxxx one
 line after the $FF correctly.
 
