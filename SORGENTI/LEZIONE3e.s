@@ -1,3 +1,4 @@
+;APS00000000000000000000000000000000000000000000000000000000000000000000000000000000
 
 ; Lezione3e.s	Effetto di scorrimento di uno sfondo sfumato
 
@@ -41,7 +42,7 @@ frame2:
 
 	move.l	4.w,a6
 	jsr	-$7e(a6)	; Enable - riabilita il Multitasking
-	move.l	gfxbase(PC),a1	; Base della libreria da chiudere
+	move.l	GfxBase(PC),a1	; Base della libreria da chiudere
 				; (vanno aperte e chiuse le librerie!!!)
 	jsr	-$19e(a6)	; Closelibrary - chiudo la graphics lib
 	rts
@@ -85,7 +86,7 @@ frame2:
 ;	CATENA", che non fornisce piu' il colore precedente.
 
 
-Scrollcolors:	
+ScrollColors:	
 	move.w	col2,col1	; col2 copiato in col1
 	move.w	col3,col2	; col3 copiato in col2
 	move.w	col4,col3	; col4 copiato in col3

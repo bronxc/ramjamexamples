@@ -1,3 +1,4 @@
+;APS00000000000000000000000000000000000000000000000000000000000000000000000000000000
 
 ; Lezione3d.s	BARRETTA CHE SALE E SCENDE FATTA COL MOVE&WAIT DEL COPPER
 
@@ -44,7 +45,7 @@ Aspetta:
 
 	move.l	4.w,a6
 	jsr	-$7e(a6)	; Enable - riabilita il Multitasking
-	move.l	gfxbase(PC),a1	; Base della libreria da chiudere
+	move.l	GfxBase(PC),a1	; Base della libreria da chiudere
 				; (vanno aperte e chiuse le librerie!!!)
 	jsr	-$19e(a6)	; Closelibrary - chiudo la graphics lib
 	rts
