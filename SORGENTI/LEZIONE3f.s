@@ -78,7 +78,7 @@ MoveDown:
 				; the bar will drop
 
 VAIGIU:
-	cmpi.b	#$2c,8*9(a0)	; Did we get to the $ 2c line?
+	cmpi.b	#$2c,8*9(a0)	; Did we get to the $2c line?
 	beq.s	MoveUp		; if yes, we are at the bottom and we have to go back up
 	addq.b	#1,(a0)
 	addq.b	#1,8(a0)	; now let's change the other wait: the distance
@@ -162,7 +162,7 @@ COPPERLIST:
 	dc.w	$180,$000
 
 BAR:
-	dc.w	$0907,$FFFE	; I wait for the $ 79 line
+	dc.w	$0907,$FFFE	; I wait for the $79 line
 	dc.w	$180,$300	; start the red bar: red at 3
 	dc.w	$0a07,$FFFE	; next line
 	dc.w	$180,$600	; red at 6
@@ -188,14 +188,14 @@ BAR:
 
 	end
 
-MIRACLE! We've put colored bars under the flamenco $ FF line!
+MIRACLE! We've put colored bars under the 255 $FF line!
 And just put the command:
 
 	dc.w	$ffdf,$fffe
 
 And start at $0107, $fffe to wait at the bottom of the screen.
 This is because as you know a byte contains only 255 values, that is up
-to $ FF, so to wait for a line higher than $ ff just get there
+to $FF, so to wait for a line higher than $ff just get there
 with $FFdf, $FFFE, then the numbering restarts from 0, up to where it arrives
 visible screen, around $30. note that the American television standard
 NTSC goes up to the $FF line only, or a little more in overscan, then
@@ -207,5 +207,5 @@ distribution in the USA.
 
 NOTE: For now we could wait with the $DFF006 only one line included
 from $01 to $ FF; I will explain later how to wait with $ dffxxx one
-line after the $ FF correctly.
+line after the $FF correctly.
 
