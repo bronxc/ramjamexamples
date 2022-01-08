@@ -8,7 +8,7 @@
 
 	SECTION	CiriCop,CODE
 
-Inizio:
+Init:
 	move.l	4.w,a6		; Execbase in a6
 	jsr	-$78(a6)	; Disable - stop multitasking
 	lea	GfxName(PC),a1	; Address of the name of the lib to open in a1
@@ -22,20 +22,20 @@ Inizio:
 				; di sistema
 	move.l	#COPPERLIST,$dff080	; We point to our COP
 	move.w	d0,$dff088		; Let's start the COP
-mouse:
+WaitForFrame:
 	cmpi.b	#$ff,$dff006	; Are we on line 255?
-	bne.s	mouse		; If not yet, don't move on
+	bne.s	WaitForFrame		; If not yet, don't move on
 
-	bsr.s	MuoviCopper	; Routine that takes advantage of the WAIT masking
+	bsr.s	MoveCopper	; Routine that takes advantage of the WAIT masking
 
-Aspetta:
+Wait:
 	cmpi.b	#$ff,$dff006	; Are we on line 255?
-	beq.s	Aspetta		; If yes, don't go ahead, wait for the line
-					; following, otherwise MoveCopper comes
-					; rerun
+	beq.s	Wait		; If yes, don't go ahead, wait for the line
+					; following, otherwise MoveCopper runs more than 
+					; once per frame
 
 	btst	#6,$bfe001	; left mouse button pressed?
-	bne.s	mouse		; if not, back to mouse:
+	bne.s	WaitForFrame		; if not, back to WaitForFrame:
 
 	move.l	OldCop(PC),$dff080	; We target the system cop
 	move.w	d0,$dff088		; let's start the cop
@@ -50,16 +50,16 @@ Aspetta:
 ; The MoveCopper routine is the same, only the values of the
 ; maximum reachable height, ie $0a and of the bottom of the screen, $2c.
 
-MuoviCopper:
-	LEA	BARRA,a0
-	TST.B	SuGiu		; Should we go up or down? if SuGiu is
+MoveCopper:
+	LEA	BAR,a0 		;a0 holds memory address of BAR and we use offsets
+	TST.B	DirectionFlag		; Should we go up or down? if DirectionFlag is
 				; cleared, (i.e. the TST checks the BEQ)
-				; then let's jump to VAIGIU, if it's $ FF instead
+				; then let's jump to VAIGIU, if it's $FF instead
 				; (if this TST is not verified)
 				; we keep going up (doing subqs)
 	beq.w	VAIGIU
 	cmpi.b	#$0a,(a0)	; did we get to the $ 0a + $ ff line? (265)
-	beq.s	MettiGiu	; if yes, we are at the top and we have to go down
+	beq.s	MoveDown	; if yes, we are at the top and we have to go down
 	subq.b	#1,(a0)
 	subq.b	#1,8(a0)	; now let's change the other wait: the distance
 	subq.b	#1,8*2(a0)	; between one wait and another it is 8 bytes
@@ -72,14 +72,14 @@ MuoviCopper:
 	subq.b	#1,8*9(a0)
 	rts
 
-MettiGiu:
-	clr.b	SuGiu		; By resetting SuGiu, the BEQ
+MoveDown:
+	clr.b	DirectionFlag		; By resetting DirectionFlag, the BEQ
 	rts			; will jump to the VAIGIU routine, and
 				; the bar will drop
 
 VAIGIU:
 	cmpi.b	#$2c,8*9(a0)	; Did we get to the $ 2c line?
-	beq.s	MettiSu		; if yes, we are at the bottom and we have to go back up
+	beq.s	MoveUp		; if yes, we are at the bottom and we have to go back up
 	addq.b	#1,(a0)
 	addq.b	#1,8(a0)	; now let's change the other wait: the distance
 	addq.b	#1,8*2(a0)	;between one wait and another it is 8 bytes
@@ -92,20 +92,20 @@ VAIGIU:
 	addq.b	#1,8*9(a0)
 	rts
 
-MettiSu:
-	move.b	#$ff,SuGiu	; When the SuGiu label is not zero,
+MoveUp:
+	move.b	#$ff,DirectionFlag	; When the DirectionFlag label is not zero,
 	rts			; it means we have to go back up.
 
-; This byte, indicated by the SuGiu label, is a FLAG, that is a
-; flag (in jargon), in fact once it is a $ ff and another time it is a
-; $ 00, depending on the direction to follow (up or down!). It is indeed
-; like a flag, which when lowered ($ 00) indicates that we must
-; go down and when it is raised ($ FF) we have to go up. It comes in fact
+; This byte, indicated by the DirectionFlag label, is a FLAG, that is a
+; flag (in jargon), in fact once it is a $ff and another time it is a
+; $00, depending on the DirectionFlag to follow (up or down!). It is indeed
+; like a flag, which when lowered ($00) indicates that we must
+; go down and when it is raised ($FF) we have to go up. It comes in fact
 ; a comparison of the reached line was carried out to verify if
 ; we got to the top or bottom, and if we got there we change
-; the direction (with clr.b SuGiu or move.b # $ ff, Sugiu)
+; the DirectionFlag (with clr.b DirectionFlag or move.b # $ ff, DirectionFlag)
 
-SuGiu:
+DirectionFlag:
 	dc.b	0,0
 
 GfxName:
@@ -142,7 +142,7 @@ COPPERLIST:
 
 	dc.w	$ffdf,$fffe	; ATTENTION! WAIT AT THE END OF THE $FF LINE!
 					; the waits after this are below the line
-					; $ FF and start at $ 00 !!
+					; $FF and start at $00 !!
 
 	dc.w	$0107,$FFFE	; a green fixed bar UNDER the $FF line!
 	dc.w	$180,$010
@@ -161,7 +161,7 @@ COPPERLIST:
 	dc.w	$0807,$FFFE
 	dc.w	$180,$000
 
-BARRA:
+BAR:
 	dc.w	$0907,$FFFE	; I wait for the $ 79 line
 	dc.w	$180,$300	; start the red bar: red at 3
 	dc.w	$0a07,$FFFE	; next line
@@ -181,7 +181,7 @@ BARRA:
 	dc.w	$1107,$FFFE
 	dc.w	$180,$300	; red at 3
 	dc.w	$1207,$FFFE
-	dc.w	$180,$000	; colore BLACK
+	dc.w	$180,$000	; color BLACK
 
 	dc.w	$FFFF,$FFFE	; end of copperlist
 
