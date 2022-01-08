@@ -1,108 +1,109 @@
+;APS00000000000000000000000000000000000000000000000000000000000000000000000000000000
 
-; Lezione3f.s	          BARRETTA SOTTO LA LINEA $FF
+; Lesson3f.s BAR UNDER THE $FF LINE
 
-;	Questo listato e' identico al Lezione3d.s, fatta eccezione per
-;	il fatto che la barretta si trova sotto la linea $FF che non
-;	abbiamo mai oltrepassato.
+; This listing is identical to Lesson3d.s, except for
+; the fact that the finger is below the $FF line which is not
+; we never overstepped.
 
 	SECTION	CiriCop,CODE
 
 Inizio:
 	move.l	4.w,a6		; Execbase in a6
-	jsr	-$78(a6)	; Disable - ferma il multitasking
-	lea	GfxName(PC),a1	; Indirizzo del nome della lib da aprire in a1
-	jsr	-$198(a6)	; OpenLibrary, routine della EXEC che apre
-				; le librerie, e da in uscita l'indirizzo
-				; di base di quella libreria da cui fare le
-				; distanze di indirizzamento (Offset)
-	move.l	d0,GfxBase	; salvo l'indirizzo base GFX in GfxBase
+	jsr	-$78(a6)	; Disable - stop multitasking
+	lea	GfxName(PC),a1	; Address of the name of the lib to open in a1
+	jsr	-$198(a6)	; OpenLibrary, EXEC routine that opens
+				; the libraries, and outputs the address
+				; of that library to make the
+				; addressing distances (Offset)
+	move.l	d0,GfxBase	; save the GFX base address in GfxBase
 	move.l	d0,a6
-	move.l	$26(a6),OldCop	; salviamo l'indirizzo della copperlist
+	move.l	$26(a6),OldCop	; we save the address of the copperlist
 				; di sistema
-	move.l	#COPPERLIST,$dff080	; Puntiamo la nostra COP
-	move.w	d0,$dff088		; Facciamo partire la COP
+	move.l	#COPPERLIST,$dff080	; We point to our COP
+	move.w	d0,$dff088		; Let's start the COP
 mouse:
-	cmpi.b	#$ff,$dff006	; Siamo alla linea 255?
-	bne.s	mouse		; Se non ancora, non andare avanti
+	cmpi.b	#$ff,$dff006	; Are we on line 255?
+	bne.s	mouse		; If not yet, don't move on
 
-	bsr.s	MuoviCopper	; Routine che sfrutta il mascheramento del WAIT
+	bsr.s	MuoviCopper	; Routine that takes advantage of the WAIT masking
 
 Aspetta:
-	cmpi.b	#$ff,$dff006	; Siamo alla linea 255?
-	beq.s	Aspetta		; Se si, non andare avanti, aspetta la linea
-				; seguente, altrimenti MuoviCopper viene
-				; rieseguito
+	cmpi.b	#$ff,$dff006	; Are we on line 255?
+	beq.s	Aspetta		; If yes, don't go ahead, wait for the line
+					; following, otherwise MoveCopper comes
+					; rerun
 
-	btst	#6,$bfe001	; tasto sinistro del mouse premuto?
-	bne.s	mouse		; se no, torna a mouse:
+	btst	#6,$bfe001	; left mouse button pressed?
+	bne.s	mouse		; if not, back to mouse:
 
-	move.l	OldCop(PC),$dff080	; Puntiamo la cop di sistema
-	move.w	d0,$dff088		; facciamo partire la cop
+	move.l	OldCop(PC),$dff080	; We target the system cop
+	move.w	d0,$dff088		; let's start the cop
 
 	move.l	4.w,a6
-	jsr	-$7e(a6)	; Enable - riabilita il Multitasking
-	move.l	gfxbase(PC),a1	; Base della libreria da chiudere
-				; (vanno aperte e chiuse le librerie!!!)
-	jsr	-$19e(a6)	; Closelibrary - chiudo la graphics lib
+	jsr	-$7e(a6)	; Enable - re-enable Multitasking
+	move.l	GfxBase(PC),a1	; Base of the library to close
+				; (libraries must be opened and closed !!!)
+	jsr	-$19e(a6)	; Closelibrary - close the graphics lib
 	rts
 
-; La routine MuoviCopper e' la stessa, sono cambiati solo i valori della
-; massima altezza raggiungibile, ossia $0a e del fondo dello schermo, $2c.
+; The MoveCopper routine is the same, only the values of the
+; maximum reachable height, ie $0a and of the bottom of the screen, $2c.
 
 MuoviCopper:
 	LEA	BARRA,a0
-	TST.B	SuGiu		; Dobbiamo salire o scendere? se SuGiu e'
-				; azzerata, (cioe' il TST verifica il BEQ)
-				; allora saltiamo a VAIGIU, se invece e' a $FF
-				; (se cioe' questo TST non e' verificato)
-				; continuiamo salendo (facendo dei subq)
+	TST.B	SuGiu		; Should we go up or down? if SuGiu is
+				; cleared, (i.e. the TST checks the BEQ)
+				; then let's jump to VAIGIU, if it's $ FF instead
+				; (if this TST is not verified)
+				; we keep going up (doing subqs)
 	beq.w	VAIGIU
-	cmpi.b	#$0a,(a0)	; siamo arrivati alla linea $0a+$ff? (265)
-	beq.s	MettiGiu	; se si, siamo in cima e dobbiamo scendere
+	cmpi.b	#$0a,(a0)	; did we get to the $ 0a + $ ff line? (265)
+	beq.s	MettiGiu	; if yes, we are at the top and we have to go down
 	subq.b	#1,(a0)
-	subq.b	#1,8(a0)	; ora cambiamo gli altri wait: la distanza
-	subq.b	#1,8*2(a0)	; tra un wait e l'altro e' di 8 bytes
+	subq.b	#1,8(a0)	; now let's change the other wait: the distance
+	subq.b	#1,8*2(a0)	; between one wait and another it is 8 bytes
 	subq.b	#1,8*3(a0)
 	subq.b	#1,8*4(a0)
 	subq.b	#1,8*5(a0)
 	subq.b	#1,8*6(a0)
-	subq.b	#1,8*7(a0)	; qua dobbiamo modificare tutti i 9 wait della
-	subq.b	#1,8*8(a0)	; barra rossa ogni volta per farla salire!
+	subq.b	#1,8*7(a0)	; here we have to modify all 9 waits of the
+	subq.b	#1,8*8(a0)	; red bar every time to make it go up!
 	subq.b	#1,8*9(a0)
 	rts
 
 MettiGiu:
-	clr.b	SuGiu		; Azzerando SuGiu, al TST.B SuGiu il BEQ
-	rts			; fara' saltare alla routine VAIGIU, e
-				; la barra scedera'
+	clr.b	SuGiu		; By resetting SuGiu, the BEQ
+	rts			; will jump to the VAIGIU routine, and
+				; the bar will drop
 
 VAIGIU:
-	cmpi.b	#$2c,8*9(a0)	; siamo arrivati alla linea $2c?
-	beq.s	MettiSu		; se si, siamo in fondo e dobbiamo risalire
+	cmpi.b	#$2c,8*9(a0)	; Did we get to the $ 2c line?
+	beq.s	MettiSu		; if yes, we are at the bottom and we have to go back up
 	addq.b	#1,(a0)
-	addq.b	#1,8(a0)	; ora cambiamo gli altri wait: la distanza
-	addq.b	#1,8*2(a0)	; tra un wait e l'altro e' di 8 bytes
+	addq.b	#1,8(a0)	; now let's change the other wait: the distance
+	addq.b	#1,8*2(a0)	;between one wait and another it is 8 bytes
 	addq.b	#1,8*3(a0)
 	addq.b	#1,8*4(a0)
 	addq.b	#1,8*5(a0)
 	addq.b	#1,8*6(a0)
-	addq.b	#1,8*7(a0)	; qua dobbiamo modificare tutti i 9 wait della
-	addq.b	#1,8*8(a0)	; barra rossa ogni volta per farla scendere!
+	addq.b	#1,8*7(a0)	; here we have to modify all 9 waits of the
+	addq.b	#1,8*8(a0)	; red bar every time to make it go down!
 	addq.b	#1,8*9(a0)
 	rts
 
 MettiSu:
-	move.b	#$ff,SuGiu	; Quando la label SuGiu non e' a zero,
-	rts			; significa che dobbiamo risalire.
+	move.b	#$ff,SuGiu	; When the SuGiu label is not zero,
+	rts			; it means we have to go back up.
 
-;	Questo byte, indicato dalla label SuGiu, e' un FLAG, ossia una
-;	bandierina (in gergo), infatti una volta e'a  $ff e un'altra e' a
-;	$00, a seconda della direzione da seguire (su o giu'!). E' appunto
-;	come una bandierina, che quando e' abbassata ($00) indica che dobbiamo
-;	scendere e quando e' alzata ($FF) dobbiamo salire. Viene infatti
-;	eseguita una comparazione della linea raggiunta per verificare se
-;	siamo arrivati in cima o in fondo, e se ci siamo arrivati cambiamo
-;	la direzione (con clr.b SuGiu o move.b #$ff,Sugiu)
+; This byte, indicated by the SuGiu label, is a FLAG, that is a
+; flag (in jargon), in fact once it is a $ ff and another time it is a
+; $ 00, depending on the direction to follow (up or down!). It is indeed
+; like a flag, which when lowered ($ 00) indicates that we must
+; go down and when it is raised ($ FF) we have to go up. It comes in fact
+; a comparison of the reached line was carried out to verify if
+; we got to the top or bottom, and if we got there we change
+; the direction (with clr.b SuGiu or move.b # $ ff, Sugiu)
 
 SuGiu:
 	dc.b	0,0
@@ -110,19 +111,19 @@ SuGiu:
 GfxName:
 	dc.b	"graphics.library",0,0	
 
-GfxBase:		; Qua ci va l'indirizzo di base per gli Offset
-	dc.l	0	; della graphics.library
+GfxBase:		; Here goes the base address for 
+	dc.l	0	; the graphics.library Offset
 
-OldCop:			; Qua ci va l'indirizzo della vecchia COP di sistema
+OldCop:			; Here goes the address of the old system COP
 	dc.l	0
 
 	SECTION	GRAPHIC,DATA_C
 
 COPPERLIST:
 	dc.w	$100,$200	; BPLCON0
-	dc.w	$180,$000	; COLOR0 - Inizio la cop col colore NERO
+	dc.w	$180,$000	; COLOR0 - I start the copy with the color BLACK
 
-	dc.w	$2c07,$FFFE	; WAIT - una piccola barretta fissa verde
+	dc.w	$2c07,$FFFE	; WAIT - a small green fixed finger
 	dc.w	$180,$010	; COLOR0
 	dc.w	$2d07,$FFFE	; WAIT
 	dc.w	$180,$020	; COLOR0
@@ -139,11 +140,11 @@ COPPERLIST:
 	dc.w	$3307,$FFFE
 	dc.w	$180,$000
 
-	dc.w	$ffdf,$fffe	; ATTENZIONE! WAIT ALLA FINE LINEA $FF!
-				; i wait dopo questo sono sotto la linea
-				; $FF e ripartono da $00!!
+	dc.w	$ffdf,$fffe	; ATTENTION! WAIT AT THE END OF THE $FF LINE!
+					; the waits after this are below the line
+					; $ FF and start at $ 00 !!
 
-	dc.w	$0107,$FFFE	; una barretta fissa verde SOTTO la linea $FF!
+	dc.w	$0107,$FFFE	; a green fixed bar UNDER the $FF line!
 	dc.w	$180,$010
 	dc.w	$0207,$FFFE
 	dc.w	$180,$020
@@ -161,50 +162,50 @@ COPPERLIST:
 	dc.w	$180,$000
 
 BARRA:
-	dc.w	$0907,$FFFE	; aspetto la linea $79
-	dc.w	$180,$300	; inizio la barra rossa: rosso a 3
-	dc.w	$0a07,$FFFE	; linea seguente
-	dc.w	$180,$600	; rosso a 6
+	dc.w	$0907,$FFFE	; I wait for the $ 79 line
+	dc.w	$180,$300	; start the red bar: red at 3
+	dc.w	$0a07,$FFFE	; next line
+	dc.w	$180,$600	; red at 6
 	dc.w	$0b07,$FFFE
-	dc.w	$180,$900	; rosso a 9
+	dc.w	$180,$900	; red at 9
 	dc.w	$0c07,$FFFE
-	dc.w	$180,$c00	; rosso a 12
+	dc.w	$180,$c00	; red at 12
 	dc.w	$0d07,$FFFE
-	dc.w	$180,$f00	; rosso a 15 (al massimo)
+	dc.w	$180,$f00	; red at (al massimo)
 	dc.w	$0e07,$FFFE
-	dc.w	$180,$c00	; rosso a 12
+	dc.w	$180,$c00	; red at 12
 	dc.w	$0f07,$FFFE
-	dc.w	$180,$900	; rosso a 9
+	dc.w	$180,$900	; red at9
 	dc.w	$1007,$FFFE
-	dc.w	$180,$600	; rosso a 6
+	dc.w	$180,$600	; red at 6
 	dc.w	$1107,$FFFE
-	dc.w	$180,$300	; rosso a 3
+	dc.w	$180,$300	; red at 3
 	dc.w	$1207,$FFFE
-	dc.w	$180,$000	; colore NERO
+	dc.w	$180,$000	; colore BLACK
 
-	dc.w	$FFFF,$FFFE	; FINE DELLA COPPERLIST
+	dc.w	$FFFF,$FFFE	; end of copperlist
 
 
 	end
 
-MIRACOLO! Abbiamo messo delle barre colorate sotto la flamigerata linea $FF!
-E basta solo mettere il comando:
+MIRACLE! We've put colored bars under the flamenco $ FF line!
+And just put the command:
 
 	dc.w	$ffdf,$fffe
 
-E ripartire da $0107,$fffe per waitare nella parte bassa dello screen.
-Questo perche' come sapete un byte contiene solo 255 valori, ossia fino
-a $FF, dunque per aspettare una linea superiore a $ff basta arrivarci
-con $FFdf,$FFFE, poi la numerazione riparte da 0, fino a dove arriva lo
-schermo visibile, verso il $30. da notare che lo standard televisivo americano
-NTSC arriva fino alla linea $FF solamente, o poco piu' in overscan, quindi
-gli americani non vedono la parte bassa dello schermo sul televisore, ma a
-noi non importa, perche' l'Amiga e' diffuso soprattutto in Europa dove c'e'
-lo standard PAL, infatti le demo e i giochi sono quasi sempre in PAL. In certi
-casi i programmatori fanno delle versioni NTSC del gioco esclusivamente per
-la distribuzione in USA.
+And start at $0107, $fffe to wait at the bottom of the screen.
+This is because as you know a byte contains only 255 values, that is up
+to $ FF, so to wait for a line higher than $ ff just get there
+with $FFdf, $FFFE, then the numbering restarts from 0, up to where it arrives
+visible screen, around $30. note that the American television standard
+NTSC goes up to the $FF line only, or a little more in overscan, then
+Americans don't see the bottom of the screen on the TV, but
+it doesn't matter to us, because the Amiga is widespread especially in Europe where there is
+the PAL standard, in fact the demos and games are almost always in PAL. In certain
+cases programmers make NTSC versions of the game exclusively for
+distribution in the USA.
 
-NOTA: Per ora abbiamo potuto aspettare con il $DFF006 solo una linea compresa
-da $01 a $FF; spieghero' in seguito come si fa ad aspettare col $dffxxx una
-linea dopo il $FF correttamente.
+NOTE: For now we could wait with the $DFF006 only one line included
+from $01 to $ FF; I will explain later how to wait with $ dffxxx one
+line after the $ FF correctly.
 
