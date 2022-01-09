@@ -25,7 +25,7 @@ Loop1:
 	btst	#2,$dff016	; only move the bar when right mouse is clicked
 	bne.s	Loop2
 
-	bsr.s	MoveCopper
+	bsr.s	MoveBar
 
 Loop2:
 	cmpi.b	#$ff,$dff006	; frame sync again
@@ -45,16 +45,16 @@ Loop2:
 	jsr	-$19e(a6)	; Closelibrary - close the graphics lib
 	rts
 
-MoveCopper:
+MoveBar:
 	LEA	BAR,a0 	;Load address of BAR label then work with offsets
 
 	; Should we be adding or subtracting?
 	TST.B 	DirectionFlag
-	beq.w	GoDown
+	beq.w	BarGoDown
 
-	jmp	GoUp
+	jmp	BarGoUp
 
-GoDown:
+BarGoDown:
 	addq.b	#1,(a0)	; Add 1 to the Y for the green line
 	addq.b	#1,8(a0)	; Add 1 to the Y for setting to black
 
@@ -62,7 +62,7 @@ GoDown:
 	beq.s	SetFlagUp
 	rts
 
-GoUp
+BarGoUp
 	subq.b	#1,(a0)	; Add 1 to the Y for the green line
 	subq.b	#1,8(a0)	; Add 1 to the Y for setting to black
 

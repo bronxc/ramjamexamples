@@ -24,7 +24,7 @@ Loop1:
 	btst	#2,$dff016	; only move the bar when right mouse is clicked
 	bne.s	Loop2
 
-	bsr.s	MoveCopper
+	bsr.s	MoveBar
 
 Loop2:
 	cmpi.b	#$ff,$dff006	; frame sync again
@@ -44,31 +44,65 @@ Loop2:
 	jsr	-$19e(a6)	; Closelibrary - close the graphics lib
 	rts
 
-MoveCopper:
+MoveBar:
 	LEA	BAR,a0 	;Load address of BAR label then work with offsets
 
 	; Should we be adding or subtracting?
 	TST.B 	VertDirectionFlag
-	beq.w	GoDown
+	beq.w	BarGoDown
 
-	jmp	GoUp
+	jmp	BarGoUp
 
-GoDown:
+BarGoDown:
 	addq.b	#1,(a0)	; Add 1 to the Y for the green line
 	addq.b	#1,8(a0)	; Add 1 to the Y for setting to black
 	addq.b	#1,16(a0)
 
 	cmpi.b	#$ff,8(a0)	; If we reached bottom, need to go up
 	beq.s	SetVertFlagUp
+
+	jmp	MoveColour
+
 	rts
 
-GoUp
+BarGoUp
 	subq.b	#1,(a0)	; Add 1 to the Y for the green line
 	subq.b	#1,8(a0)	; Add 1 to the Y for setting to black
 	subq.b	#1,16(a0)
 
 	cmpi.b	#$2c,8(a0) ; if we are at the top, go down
 	beq.s 	SetVertFlagDown
+
+	jmp	MoveColour
+
+	rts
+
+MoveColour:
+
+	;LEA	BAR,a0 	;Already loaded into a0
+
+	; Should we be adding or subtracting?
+	TST.B 	HorizDirectionFlag
+	beq.w	ColourGoRight
+
+	jmp	ColourGoLeft
+	rts
+
+ColourGoRight:
+
+	addq.b	#2,9(a0)	; Add 1 to the X for the green line
+
+	cmpi.b	#$e1,9(a0)	;if we reached the end of the line, go left
+	beq.s 	SetHorizFlagLeft
+
+	rts
+
+ColourGoLeft:
+	subq.b	#2,9(a0)	; Subtract 1 to the X for the green line
+
+	cmpi.b	#$07,9(a0)
+	beq.s 	SetHorizFlagRight
+	
 	rts
 
 SetVertFlagUp
@@ -80,11 +114,11 @@ SetVertFlagDown
 	rts
 
 SetHorizFlagLeft
-	move.b	#$ff,VertDirectionFlag
+	move.b	#$ff,HorizDirectionFlag
 	rts
 
 SetHorizFlagRight
-	clr.b	VertDirectionFlag
+	clr.b	HorizDirectionFlag
 	rts
 
 VertDirectionFlag:
