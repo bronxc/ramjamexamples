@@ -14,3 +14,7 @@ Documenting questions as I go [here](https://github.com/matthewdeaves/ramjamexam
 
 ## AsmPro Cheat Sheet
 * [Link](https://github.com/matthewdeaves/ramjamexamples/blob/main/command%20cheat%20sheet.md)
+
+## My Own Examples
+* [Draw a green line that moves up and down vertically](https://github.com/matthewdeaves/ramjamexamples/blob/main/myexamples/magic_line.s)
+* WIP [Draw a green line that moves up and down vertically and swipes greent to red in colour](https://github.com/matthewdeaves/ramjamexamples/blob/main/myexamples/magic_line_1.s)
