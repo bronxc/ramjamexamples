@@ -1,7 +1,7 @@
 ; My Program to draw a single line on the screen that moves up and down as well as change colour on the x axis
 
-; Let's put everything in chip ram
-	SECTION MyCode,CODE_C
+; Let Amiga decide where to put our code
+	SECTION MyCode,CODE
 
 Start:
 	move.l	4.w,a6		; Store Execbase in a6
@@ -92,6 +92,9 @@ GfxBase:		; Base address for the graphics.library
 OldCop:			; Address of the old system COP
 	dc.l	0
 
+	;Copperlist must be in chipmem
+	SECTION MyCopper,CODE_C
+
 MyCopperList:
 	dc.w	$100,$200	; BPLCON0 - no bitplanes, only background.
 	dc.w	$180,$000	; COLOR0 - start with black
@@ -99,11 +102,11 @@ MyCopperList:
 BAR:
 	dc.w	$7907,$FFFE	; WAIT - wait for line $79 then draw green line
 	dc.w	$180
-	dc.w	$060
+	dc.w	$0F0
 
 	; the next two lines just give me a solid red line for some reason....
-	dc.w	$7935,$FFFE ; WAIT - wait for part way along the green line
-	dc.w	$180,$400		; and set background to red
+	dc.w	$7981,$FFFE ; WAIT - wait for part way along the green line
+	dc.w	$180,$F00		; and set background to red
 
 	dc.w	$7A07,$FFFE ; Wait for line after the green line, $7A
 	dc.w	$180,$000	; and go back to black background

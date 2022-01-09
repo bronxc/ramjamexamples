@@ -1,8 +1,8 @@
 ; My Program to draw a single green line on the screen that moves up and down
 ; use magic_line_1.s to modify this to also change colour on the x axis like a progress bar of green/red
 
-; Let's put everything in chip ram
-	SECTION MyCode,CODE_C
+; Let Amiga decide where to put our code
+	SECTION MyCode,CODE
 
 Start:
 	move.l	4.w,a6		; Store Execbase in a6
@@ -89,6 +89,9 @@ GfxBase:		; Base address for the graphics.library
 
 OldCop:			; Address of the old system COP
 	dc.l	0
+
+	;Copperlist must be in chipmem
+	SECTION MyCopper,CODE_C
 
 MyCopperList:
 	dc.w	$100,$200	; BPLCON0 - no bitplanes, only background.
