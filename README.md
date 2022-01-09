@@ -17,4 +17,4 @@ Documenting questions as I go [here](https://github.com/matthewdeaves/ramjamexam
 
 ## My Own Examples
 * [Draw a green line that moves up and down vertically](https://github.com/matthewdeaves/ramjamexamples/blob/main/myexamples/magic_line.s)
-* WIP [Draw a green line that moves up and down vertically and swipes greent to red in colour](https://github.com/matthewdeaves/ramjamexamples/blob/main/myexamples/magic_line_1.s)
+* WIP [Draw a green line that moves up and down vertically and swipes green to red in colour](https://github.com/matthewdeaves/ramjamexamples/blob/main/myexamples/magic_line_1.s)
