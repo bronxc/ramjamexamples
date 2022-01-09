@@ -56,24 +56,34 @@ MoveCopper:
 GoDown:
 	addq.b	#1,(a0)	; Add 1 to the Y for the green line
 	addq.b	#1,8(a0)	; Add 1 to the Y for setting to black
+	addq.b	#1,16(a0)
 
 	cmpi.b	#$ff,8(a0)	; If we reached bottom, need to go up
-	beq.s	SetFlagUp
+	beq.s	SetVertFlagUp
 	rts
 
 GoUp
 	subq.b	#1,(a0)	; Add 1 to the Y for the green line
 	subq.b	#1,8(a0)	; Add 1 to the Y for setting to black
+	subq.b	#1,16(a0)
 
 	cmpi.b	#$2c,8(a0) ; if we are at the top, go down
-	beq.s 	SetFlagDown
+	beq.s 	SetVertFlagDown
 	rts
 
-SetFlagUp
+SetVertFlagUp
 	move.b	#$ff,VertDirectionFlag
 	rts
 
-SetFlagDown
+SetVertFlagDown
+	clr.b	VertDirectionFlag
+	rts
+
+SetHorizFlagLeft
+	move.b	#$ff,VertDirectionFlag
+	rts
+
+SetHorizFlagRight
 	clr.b	VertDirectionFlag
 	rts
 
@@ -104,11 +114,10 @@ BAR:
 	dc.w	$180
 	dc.w	$0F0
 
-	; the next two lines just give me a solid red line for some reason....
 	dc.w	$7981,$FFFE ; WAIT - wait for part way along the green line
 	dc.w	$180,$F00		; and set background to red
 
-	dc.w	$7A07,$FFFE ; Wait for line after the green line, $7A
+	dc.w	$7A07,$FFFE ; Wait for line after the green/red line, ($7A on very fist run, then code increments)
 	dc.w	$180,$000	; and go back to black background
 
 	dc.w	$FFFF,$FFFE	; END OF COPPERLIST
