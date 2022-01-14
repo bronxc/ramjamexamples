@@ -1,3 +1,4 @@
+;APS00000000000000000000000000000000000000000000000000000000000000000000000000000000
 
 ; Lezione4b.s	VISUALIZZAZIONE DI UNA FIGURA IN 320*256 a 3 plane (8 colori)
 
@@ -34,7 +35,7 @@ POINTBP:
 				; nella word giusta nella copperlist
 	swap	d0		; scambia le 2 word di d0 (es: 3412 > 1234)
 				; rimettendo a posto l'indirizzo.
-	ADD.L	#40*256,d0	; Aggiungiamo 10240 ad D0, facendolo puntare
+	ADD.L	#40*255,d0	; Aggiungiamo 10240 ad D0, facendolo puntare
 				; al secondo bitplane (si trova dopo il primo)
 				; (cioe' aggiungiamo la lunghezza di un plane)
 				; Nei cicli seguenti al primo faremo puntare
@@ -61,7 +62,7 @@ mouse:
 
 	move.l	4.w,a6
 	jsr	-$7e(a6)	; Enable - riabilita il Multitasking
-	move.l	gfxbase(PC),a1	; Base della libreria da chiudere
+	move.l	GfxBase(PC),a1	; Base della libreria da chiudere
 	jsr	-$19e(a6)	; Closelibrary - chiudo la graphics lib
 	rts			; USCITA DAL PROGRAMMA
 
@@ -132,7 +133,8 @@ BPLPOINTERS:
 
 
 PIC:
-	incbin	"amiga.320*256*3"	; qua carichiamo la figura in RAW,
+	incbin	"hd1:develop/projects/dischi/myimages/earth_320x255x3.raw"	; qua carichiamo la figura in RAW,
+	; qua carichiamo la figura in RAW,
 					; convertita col KEFCON, fatta di
 					; 3 bitplanes consecutivi
 

@@ -1,3 +1,4 @@
+;APS00000000000000000000000000000000000000000000000000000000000000000000000000000000
 
 ; Lezione4a.s	ROUTINE UNIVERSALE DI PUNTAMENTO BITPLANES
 
@@ -9,7 +10,7 @@ Inizio:
 
 	LEA	BPLPOINTERS,A1	; in a1 mettiamo l'indirizzo dei
 				; puntatori ai planes della COPPERLIST
-	MOVEQ	#2,D1		; numero di bitplanes -1 (qua sono 3)
+	MOVEQ	#4,D1		; numero di bitplanes -1 (qua sono 3)
 				; per eseguire il ciclo col DBRA
 POINTBP:
 	move.w	d0,6(a1)	; copia la word BASSA dell'indirizzo del plane
@@ -53,7 +54,7 @@ BPLPOINTERS:
 ;	in questo caso basta scrivere: "V df0:SORGENTI2"
 
 PIC:
-	incbin	"amiga.320*256*3"	; qua carichiamo la figura in RAW,
+	incbin	"hd1:develop/projects/dischi/myimages/earth_320x255x5.raw"	; qua carichiamo la figura in RAW,
 					; convertita col KEFCON, fatta di
 					; 3 bitplanes consecutivi
 
