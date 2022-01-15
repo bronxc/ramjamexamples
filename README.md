@@ -1,4 +1,5 @@
 # ramjamexamples
+
 Google translated source files for the book, lightly tweaked as I make sense of them myself.
 
 ## Completed (roughly) English Translations
@@ -9,12 +10,19 @@ Google translated source files for the book, lightly tweaked as I make sense of 
 * [LEZIONE3c3.s](https://github.com/matthewdeaves/ramjamexamples/blob/main/SORGENTI/LEZIONE3c3.s)
 * [LEZIONE3c3_1.s](https://github.com/matthewdeaves/ramjamexamples/blob/main/SORGENTI/LEZIONE3c3_1.s)
 
+Using images
+
+* [LEZIONE4b.s](https://github.com/matthewdeaves/ramjamexamples/blob/main/SORGENTI2/LEZIONE4b.s)
+
 ## Questions 
+
 Documenting questions as I go [here](https://github.com/matthewdeaves/ramjamexamples/blob/main/questions.md)
 
 ## AsmPro Cheat Sheet
+
 * [Link](https://github.com/matthewdeaves/ramjamexamples/blob/main/command%20cheat%20sheet.md)
 
 ## My Own Examples
+
 * [Draw a green line that moves up and down vertically](https://github.com/matthewdeaves/ramjamexamples/blob/main/myexamples/magic_line.s)
-* WIP [Draw a green line that moves up and down vertically and swipes green to red in colour](https://github.com/matthewdeaves/ramjamexamples/blob/main/myexamples/magic_line_1.s)
+* [Draw a green line that moves up and down vertically and swipes green to red in colour](https://github.com/matthewdeaves/ramjamexamples/blob/main/myexamples/magic_line_1.s)

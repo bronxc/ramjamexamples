@@ -119,3 +119,22 @@ The debugger is showing us the memory contents 16 bytes per line which is why th
 If we look at the code where BARRA is defined, you can see the memory output matches what we would expect
 
 ![h.w BAR output ](https://github.com/matthewdeaves/ramjamexamples/blob/main/myimages/q1a6.png)
+
+---
+
+#### Question 3
+
+*Q* Dispaying an image correctly - were am I going wrong with my example?
+
+For example 4 code [here](https://github.com/matthewdeaves/ramjamexamples/blob/main/SORGENTI2/LEZIONE4b.s)
+
+![h.w BAR output ](https://github.com/matthewdeaves/ramjamexamples/blob/main/myimages/q3.png)
+
+Images used listed below:
+
+[Original 3 bit plan .iff](https://github.com/matthewdeaves/ramjamexamples/blob/main/myimages/earth.iff)
+
+[AGAiff exported no colour raw](https://github.com/matthewdeaves/ramjamexamples/blob/main/myimages/earth_320x256x0.raw)
+
+[AGAiff exported 3 bit plane raw](https://github.com/matthewdeaves/ramjamexamples/blob/main/myimages/earth_320x256x3.raw)
+
