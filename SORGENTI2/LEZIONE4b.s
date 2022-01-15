@@ -110,7 +110,7 @@ BPLPOINTERS:
 	dc.w $e4,$0000,$e6,$0000	;second bitplane - BPL1PT
 	dc.w $e8,$0000,$ea,$0000	;third	 bitplane - BPL2PT
 
-;	Gli 8 colori della figura sono definiti qui:
+;	The 8 colors of the image are defined here:
 
 	dc.w	$0180,$000	; color0
 	dc.w	$0182,$475	; color1
