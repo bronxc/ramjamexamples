@@ -10,7 +10,7 @@ Inizio:
 
 	LEA	BPLPOINTERS,A1	; in a1 mettiamo l'indirizzo dei
 				; puntatori ai planes della COPPERLIST
-	MOVEQ	#4,D1		; numero di bitplanes -1 (qua sono 3)
+	MOVEQ	#2,D1		; numero di bitplanes -1 (qua sono 3)
 				; per eseguire il ciclo col DBRA
 POINTBP:
 	move.w	d0,6(a1)	; copia la word BASSA dell'indirizzo del plane

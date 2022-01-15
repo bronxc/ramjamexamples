@@ -123,6 +123,15 @@ BPLPOINTERS:
 
 ; Enter any WAIT effects here
 
+	BAR:
+	dc.w	$7907,$FFFE	; WAIT - wait for line $79 then draw green line
+
+	dc.w	$180
+	dc.w	$060
+
+	dc.w	$7A07,$FFFE ; Wait for line $7A
+	dc.w	$180,$000	; go back to black
+
 	dc.w	$FFFF,$FFFE	; Finish copperlist
 
 

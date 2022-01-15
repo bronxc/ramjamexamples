@@ -138,3 +138,7 @@ Images used listed below (sizes seem messed up):
 
 [AGAiff exported 3 bit plane raw](https://github.com/matthewdeaves/ramjamexamples/blob/main/myimages/earth_320x256x3.raw)
 
+#### *Answer*
+
+The colours used to render the image are hard coded in the copper list in the code. See [this line onwards](https://github.com/matthewdeaves/ramjamexamples/blob/7ee1c1bd3649ed7f2bdd7d15db76672783dc2dae/SORGENTI2/LEZIONE4b.s#L115)
+
