@@ -1,6 +1,6 @@
 ;APS00000000000000000000000000000000000000000000000000000000000000000000000000000000
 
-; Lezione4b.s	VISUALIZZAZIONE DI UNA FIGURA IN 320*256 a 3 plane (8 colori)
+; Lesson4b.s DISPLAY OF A FIGURE IN 320 * 256 a 3 plane (8 colors)
 
 	SECTION	CiriCop,CODE
 
@@ -14,57 +14,55 @@ Inizio:
 	move.l	$26(a6),OldCop	; salviamo l'indirizzo della copperlist vecchia
 
 ;*****************************************************************************
-;	FACCIAMO PUNTARE I BPLPOINTERS NELLA COPPELIST AI NOSTRI BITPLANES
+;	LET THE BPLPOINTERS POINT IN THE COPPERLIST AT OUR BITPLANES
 ;*****************************************************************************
 
 
-	MOVE.L	#PIC,d0		; in d0 mettiamo l'indirizzo della PIC,
-				; ossia dove inizia il primo bitplane
+	MOVE.L	#PIC,d0		; in d0 we put the address of the PIC,
+					; that is, where the first bitplane begins
 
-	LEA	BPLPOINTERS,A1	; in a1 mettiamo l'indirizzo dei
-				; puntatori ai planes della COPPERLIST
-	MOVEQ	#2,D1		; numero di bitplanes -1 (qua sono 3)
-				; per eseguire il ciclo col DBRA
+	LEA	BPLPOINTERS,A1	; in a1 we put the address of
+					; pointers to the COPPERLIST planes
+	MOVEQ	#2,D1		; number of bitplanes -1 (there are 3)
+					; to run the cycle with the DBRA
 POINTBP:
-	move.w	d0,6(a1)	; copia la word BASSA dell'indirizzo del plane
-				; nella word giusta nella copperlist
-	swap	d0		; scambia le 2 word di d0 (es: 1234 > 3412)
-				; mettendo la word ALTA al posto di quella
-				; BASSA, permettendone la copia col move.w!!
-	move.w	d0,2(a1)	; copia la word ALTA dell'indirizzo del plane
-				; nella word giusta nella copperlist
+	move.w	d0,6(a1)	; copies the LOW word of the plane address
+					; in the right word in the copperlist
+	swap	d0		; swap the 2 words of d0 (ex: 1234> 3412)
+				; putting the word HIGH in place of that
+				; LOW, allowing copying with move.w !!
+	move.w	d0,2(a1)	; copies the word HIGH of the address of the plane
+				; in the right word in the copperlist
 	swap	d0		; scambia le 2 word di d0 (es: 3412 > 1234)
 				; rimettendo a posto l'indirizzo.
-	ADD.L	#40*255,d0	; Aggiungiamo 10240 ad D0, facendolo puntare
-				; al secondo bitplane (si trova dopo il primo)
-				; (cioe' aggiungiamo la lunghezza di un plane)
-				; Nei cicli seguenti al primo faremo puntare
-				; al terzo, al quarto bitplane eccetera.
+	ADD.L	#40*256,d0	; We add 10240 to D0, making it point
+			; to the second bitplane (after the first)
+			; (i.e. we add the length of a plane)
+			; In the cycles following the first we will make a bet
+			; to the third, to the fourth bitplane and so on.
 
-	addq.w	#8,a1		; a1 ora contiene l'indirizzo dei prossimi
-				; bplpointers nella copperlist da scrivere.
-	dbra	d1,POINTBP	; Rifai D1 volte POINTBP (D1=num of bitplanes)
+	addq.w	#8,a1		; a1 now contains the address of the next ones
+				; bplpointers in the copperlist to be written.
+	dbra	d1,POINTBP	; Redo D1 times POINTBP (D1 = num of bitplanes)
 
-;
+	move.l	#COPPERLIST,$dff080	; Point to our COP
+	move.w	d0,$dff088		; Let's start the COP
 
-	move.l	#COPPERLIST,$dff080	; Puntiamo la nostra COP
-	move.w	d0,$dff088		; Facciamo partire la COP
-
-	move.w	#0,$dff1fc		; FMODE - Disattiva l'AGA
-	move.w	#$c00,$dff106		; BPLCON3 - Disattiva l'AGA
+	move.w	#0,$dff1fc		; FMODE - Disable AGA
+	move.w	#$c00,$dff106		; BPLCON3 - Disable AGA
 
 mouse:
-	btst	#6,$bfe001	; tasto sinistro del mouse premuto?
-	bne.s	mouse		; se no, torna a mouse:
+	btst	#6,$bfe001	; left mouse button pressed?
+	bne.s	mouse		; if not, back to mouse:
 
-	move.l	OldCop(PC),$dff080	; Puntiamo la cop di sistema
-	move.w	d0,$dff088		; facciamo partire la vecchia cop
+	move.l	OldCop(PC),$dff080	; We target the system cop
+	move.w	d0,$dff088		; let's start the old cop
 
 	move.l	4.w,a6
-	jsr	-$7e(a6)	; Enable - riabilita il Multitasking
-	move.l	GfxBase(PC),a1	; Base della libreria da chiudere
-	jsr	-$19e(a6)	; Closelibrary - chiudo la graphics lib
-	rts			; USCITA DAL PROGRAMMA
+	jsr	-$7e(a6)	; Enable - re-enable Multitasking
+	move.l	GfxBase(PC),a1	; Base of the library to close
+	jsr	-$19e(a6)	; Closelibrary - close the graphics lib
+	rts			; EXIT FROM THE PROGRAM
 
 ;	Dati
 
@@ -81,15 +79,15 @@ OldCop:			; Qua ci va l'indirizzo della vecchia COP di sistema
 
 COPPERLIST:
 
-	; Facciamo puntare gli sprite a ZERO, per eliminarli, o ce li troviamo
-	; in giro impazziti a disturbare!!!
+	; We point the sprites to ZERO, to eliminate them, or we find them
+	; around crazy to disturb !!!
 
 	dc.w	$120,$0000,$122,$0000,$124,$0000,$126,$0000,$128,$0000
 	dc.w	$12a,$0000,$12c,$0000,$12e,$0000,$130,$0000,$132,$0000
 	dc.w	$134,$0000,$136,$0000,$138,$0000,$13a,$0000,$13c,$0000
 	dc.w	$13e,$0000
 
-	dc.w	$8e,$2c81	; DiwStrt	(registri con valori normali)
+	dc.w	$8e,$2c81	; DiwStrt	(registers with normal values)
 	dc.w	$90,$2cc1	; DiwStop
 	dc.w	$92,$0038	; DdfStart
 	dc.w	$94,$00d0	; DdfStop
@@ -98,19 +96,19 @@ COPPERLIST:
 	dc.w	$108,0		; Bpl1Mod
 	dc.w	$10a,0		; Bpl2Mod
 
-; il BPLCON0 ($dff100) Per uno schermo a 3 bitplanes: (8 colori)
+; the BPLCON0 ($ dff100) For a 3 bitplanes screen: (8 colors)
 
 		    ; 5432109876543210
-	dc.w	$100,%0011001000000000	; bits 13 e 12 accesi!! (3 = %011)
+	dc.w	$100,%0011001000000000	; bits 13 and 12 on !! (3 =% 011)
 
-;	Facciamo puntare i bitplanes direttamente mettendo nella copperlist
-;	i registri $dff0e0 e seguenti qua di seguito con gli indirizzi
-;	dei bitplanes che saranno messi dalla routine POINTBP
+; We point the bitplanes directly by placing them in the copperlist
+; the $dff0e0 and following registers below with the addresses
+; of the bitplanes that will be placed by the POINTBP routine
 
 BPLPOINTERS:
-	dc.w $e0,$0000,$e2,$0000	;primo	 bitplane - BPL0PT
-	dc.w $e4,$0000,$e6,$0000	;secondo bitplane - BPL1PT
-	dc.w $e8,$0000,$ea,$0000	;terzo	 bitplane - BPL2PT
+	dc.w $e0,$0000,$e2,$0000	;first	 bitplane - BPL0PT
+	dc.w $e4,$0000,$e6,$0000	;second bitplane - BPL1PT
+	dc.w $e8,$0000,$ea,$0000	;third	 bitplane - BPL2PT
 
 ;	Gli 8 colori della figura sono definiti qui:
 
@@ -123,46 +121,46 @@ BPLPOINTERS:
 	dc.w	$018c,$777	; color6
 	dc.w	$018e,$444	; color7
 
-;	Inserite qua eventuali effetti coi WAIT
+; Enter any WAIT effects here
 
-	dc.w	$FFFF,$FFFE	; Fine della copperlist
+	dc.w	$FFFF,$FFFE	; Finish copperlist
 
 
-;	Ricordatevi di selezionare la directory dove si trova la figura
-;	in questo caso basta scrivere: "V df0:SORGENTI2"
+; Remember to select the directory where the figure is located
+; in this case just write: "V df0: SOURCES2"
 
 
 PIC:
-	incbin	"hd1:develop/projects/dischi/myimages/earth_320x256x3.raw"	; qua carichiamo la figura in RAW,
-	; qua carichiamo la figura in RAW,
-					; convertita col KEFCON, fatta di
-					; 3 bitplanes consecutivi
+	incbin	"hd1:develop/projects/dischi/myimages/earth_320x256x3.raw"	
+	; here we load the figure in RAW,
+	; converted with KEFCON, made of
+	; 3 consecutive bitplanes
 
 	end
 
-Come avrete visto non ci sono routine sincronizzate in questo esempio, ma
-solo le routine che puntano i bitplane e la copperlist.
-Innanzitutto provate a eliminare con dei ; i puntatori degli sprite:
+As you may have seen, there are no synchronized routines in this example, but
+only the routines that target the bitplanes and the copperlist.
+First try to eliminate with gods; sprite pointers:
 
 ;	dc.w	$120,$0000,$122,$0000,$124,$0000,$126,$0000,$128,$0000
 ;	dc.w	$12a,$0000,$12c,$0000,$12e,$0000,$130,$0000,$132,$0000
 ;	dc.w	$134,$0000,$136,$0000,$138,$0000,$13a,$0000,$13c,$0000
 ;	dc.w	$13e,$0000
 
-Noterete che ogni tanto passano come delle STRISCIATE, quelli sono sprite
-senza controllo all'impazzata. Impareremo a domarli piu' avanti.
+You will notice that every now and then they pass like STRIPES, those are sprites
+without control madly. We will learn to tame them later.
 
-Provate ora ad aggiungere prima della fine della copperlist qualche WAIT,
-e noterete come siano utili i WAIT+COLOR per AGGIUNGERE SFUMATURE ORIZZONTALI
-o CAMBIARE COLORI totalmente GRATIS, ossia, con una figura a 8 colori come
-questa possiamo lavorare con MOVE+WAIT facendogli uno sfondo con un centinaio
-di colori sfumandoli, oppure cambiando anche i colori "in sovraimpressione",
-ossia il $182, $184, $186, $188, $18a, $18c, $18e.
+Now try to add some WAIT before the end of the copperlist,
+and you will notice how useful WAIT + COLOR are to ADD HORIZONTAL SHADES
+o CHANGE COLORS totally FREE, that is, with an 8-color figure like
+this we can work with MOVE + WAIT making it a background with a hundred
+of colors by blending them, or by changing the "superimposed" colors,
+i.e. the $182, $184, $186, $188, $18a, $18c, $18e.
 
-Come primo 'abbellimento' copiate e inserite questo pezzo prefabbricato di
-sfumatura tra i colori e la fine della copperlist: (dc.w $FFFF,$FFFE)
-RICORDO CHE BISOGNA SELEZIONARE IL BLOCCO CON Amiga+b, Amiga+c, poi
-posizionare il cursore dove si vuole copiare il testo, e inserirlo con Amiga+i.
+As a first 'embellishment' copy and insert this pre-made piece of
+nuance between the colors and the end of the copperlist: (dc.w $FFFF, $FFFE)
+I REMEMBER THAT YOU MUST SELECT THE BLOCK WITH Amiga + b, Amiga + c, then
+place the cursor where you want to copy the text, and insert it with Amiga + i.
 
 
 	dc.w	$a907,$FFFE	; Aspetto la linea $a9
@@ -204,11 +202,11 @@ posizionare il cursore dove si vuole copiare il testo, e inserirlo con Amiga+i.
 	dc.w	$2007,$FFFE	; linea $20+$FF = linea $1ff (287)
 	dc.w	$180,$44F	; schiarisco...
 
-Abbiamo creato dal nulla, senza effetti controproducenti, una sfumatura
-portando i colori effettivi sullo schermo da 8 a 27!!!!
-Aggiungiamo altri 7 colori, questa volta cambiando non il colore di sfondo,
-il $dff180, ma gli altri 7 colori: inserite questo pezzo di copperlist tra
-i puntatori dei bitplane e i colori: (lasciate pure l'altra modifica)
+We have created from scratch, without counterproductive effects, a nuance
+bringing the actual colors on the screen from 8 to 27 !!!!
+Let's add another 7 colors, this time changing not the background color,
+the $dff180, but the other 7 colors: insert this piece of copperlist between
+bitplane pointers and colors: (leave the other change as well)
 
 	dc.w	$0180,$000	; color0
 	dc.w	$0182,$550	; color1	; ridefiniamo il colore della
@@ -221,21 +219,21 @@ i puntatori dei bitplane e i colori: (lasciate pure l'altra modifica)
 
 	dc.w	$7007,$fffe	; Aspettiamo la fine della scritta COMMODORE
 
-Con 45 "dc.w" aggiunti alla copperlist abbiamo trasformato un'innoqua PIC di
-soli 8 colori in una PIC a 34 colori, superando anche il limite dei 32 colori
-delle pic a 5 bitplanes!!!
+With 45 "dc.w" added to the copperlist we have transformed a harmless PIC of
+only 8 colors in a 34-color PIC, even exceeding the limit of 32 colors
+some pic to 5 bitplanes !!!
 
-Solo programmando le copperlist in assembler si puo' sfruttare al massimo
-la grafica di Amiga: ora potreste anche fare delle figure a 320 colori
-puliti puliti semplicemente cambiando l'intera palette di una figura a 32
-colori 10 volte, mettendo un wait+palette ogni 25 linee...
-Ora forse vi spiegherete come mai certi giochi hanno 64, 128 o piu' colori
-sullo schermo!!! Hanno delle copperlist lunghissime dove cambiano colore
-a diverse altezze del video!
+Only by programming copperlists in assembler you can make the most of it
+Amiga graphics: now you could also make 320-color figures
+clean clean simply by changing the entire palette of a figure at 32
+colors 10 times, putting a wait + palette every 25 lines ...
+Now maybe you will explain why certain games have 64, 128 or more colors
+on the screen!!! They have very long copperlists where they change color
+at different heights of the video!
 
-Fatevi un po' di modifiche, che fanno sempre bene, e se vi va provate a
-mettere in "sottofondo" gli esempi con le barrette della Lezione3, basta
-caricarseli in altri buffer e inserire i pezzi di routine e di copperlist
-giusti, e' un buon allenamento. Provate a far camminare la barretta "sotto"
-il disegno, se ci riuscite siete tosti.
+Make some changes, which are always good, and if you like, try to
+putting the examples in the "background" with the bars of Lesson 3, that's enough
+load them into other buffers and insert the pieces of routines and copperlists
+right, it's a good workout. Try to make the finger walk "under"
+the drawing, if you can, you are tough.
 
