@@ -130,9 +130,9 @@ For example 4 code [here](https://github.com/matthewdeaves/ramjamexamples/blob/m
 
 ![h.w BAR output ](https://github.com/matthewdeaves/ramjamexamples/blob/main/myimages/q3.png)
 
-Images used listed below:
+Images used listed below (sizes seem messed up):
 
-[Original 3 bit plan .iff](https://github.com/matthewdeaves/ramjamexamples/blob/main/myimages/earth.iff)
+[Original 3 bit plane .iff](https://github.com/matthewdeaves/ramjamexamples/blob/main/myimages/earth.iff)
 
 [AGAiff exported no colour raw](https://github.com/matthewdeaves/ramjamexamples/blob/main/myimages/earth_320x256x0.raw)
 
