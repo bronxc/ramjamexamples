@@ -133,7 +133,7 @@ BPLPOINTERS:
 
 
 PIC:
-	incbin	"hd1:develop/projects/dischi/myimages/earth_320x255x3.raw"	; qua carichiamo la figura in RAW,
+	incbin	"hd1:develop/projects/dischi/myimages/earth_320x256x3.raw"	; qua carichiamo la figura in RAW,
 	; qua carichiamo la figura in RAW,
 					; convertita col KEFCON, fatta di
 					; 3 bitplanes consecutivi
