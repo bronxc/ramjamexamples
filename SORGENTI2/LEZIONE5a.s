@@ -71,15 +71,15 @@ GfxBase:		; Qua ci va l'indirizzo di base per gli Offset
 OldCop:			; Qua ci va l'indirizzo della vecchia COP di sistema
 	dc.l	0
 
-;	Questa routine e' simile a quella di Lezione3d.s, in questo caso
-;	modifichiamo il valore del registro di scroll BPLCON1 $dff102 per
-;	scorrere in avanti ed indietro la figura.
-;	Essendo possibile agire separatamente sui bitplanes pari e su quelli
-;	dispari, per spostare tutti i bitplanes dobbiamo spostarli
-;	contemporaneamente: $0011,$0022,$0033 anziche' $0001,$0002,$0003 che
-;	sposterebbe solo i bitplanes dispari (1,3,5), o $0010,$0020,$0030 che
-;	sposterebbe solo i bitplanes pari (2,4,6).
-;	Provate con un "=c 102" per vedere i bit del $dff102
+; This routine is similar to that of Lesson3d.s, in this case
+; we modify the value of the scroll register BPLCON1 $dff102 for
+; scroll the figure back and forth.
+; Being possible to act separately on the even bitplanes and on those
+; odd, to move all the bitplanes we have to move them
+; simultaneously: $0011, $0022, $0033 instead of $0001, $0002, $0003 which
+; would only move the odd bitplanes (1,3,5), or $0010, $0020, $0030 which
+; would only move the even bitplanes (2,4,6).
+; Try a "= c 102" to see the bits of the $dff102
 
 MuoviCopper:
 	TST.B	FLAG		; Dobbiamo avanzare o indietreggiare? se
@@ -113,8 +113,8 @@ MettiIndietro:
 	rts			; significa che dobbiamo indietreggiare
 				; verso sinistra
 
-;	Questo byte e' un FLAG, ossia serve per indicare se andare avanti o
-;	indietro.
+; This byte is a FLAG, that is, it is used to 
+; indicate whether to go ahead or backards.
 
 FLAG:
 	dc.b	0,0
@@ -166,24 +166,24 @@ BPLPOINTERS:
 ;	figura
 
 PIC:
-	incbin	"amiga.320*256*3"	; qua carichiamo la figura in RAW,
-					; convertita col KEFCON, fatta di
-					; 3 bitplanes consecutivi
+	incbin	"hd1:develop/projects/dischi/myimages/earth_320x256x3.raw"	
+			; here we load the figure in RAW, made of
+			; 3 consecutive bitplanes
 
 	end
 
-Spostare lo schermo in avanti di 16 pixel sull'Amiga e' uno scherzo! basta
-modificare un byte, quello del $dff102, e il gioco e' fatto. Su altri sistemi
-grafici di computer come il PC MSDOS invece bisogna proprio modificare tutta
-la figura e "spostarla", con moltissime istruzioni che rallentano tutto.
-Inoltre si possono spostare separatamente i planes pari e quelli dispari, in
-modo da creare facilmente effetti di parallasse, basta far scorrere piu'
-lentamente lo sfondo, fatto dai bitplanes dispari, e piu' velocemente il
-primo piano, fatto ad esempio dai bitplanes pari. Non per niente per fare una
-parallasse sul PC occorre fare routines complicatissime e lente.
-Verifichiamo che e' possibile scorrere i bitplanes pari e dispari separatamente
-con queste due modifiche; per scorrere SOLO i bitplanes PARI (qua c'e' il 2
-solamente) cambiate queste istruzioni
+Moving the screen forward 16 pixels on the Amiga is a joke! enough
+modify one byte, that of $dff102, and that's it. On other systems
+computer graphics such as the MSDOS PC instead you have to change everything
+the figure and "move it", with a lot of instructions that slow everything down.
+In addition, even and odd planes can be moved separately
+so you can easily create parallax effects, just slide more
+slowly the background, made by the odd bitplanes, and faster the
+close-up, made for example by the even bitplanes. Not for nothing to make one
+parallax on the PC it is necessary to do very complicated and slow routines.
+We verify that it is possible to scroll the odd and even bitplanes separately
+with these two changes; to scroll ONLY the EVEN bitplanes (here is the 2
+only) change these instructions
 
 
 	sub.b	#$11,MIOCON1	; sottraiamo 1 allo scroll dei bitplanes
@@ -202,35 +202,35 @@ in questo modo:
 
 	add.b	#$10,MIOCON1
 
-Noterete che si muove un solo bitplane, il 2, mentre il primo ed il terzo
-rimangono al loro posto. Nello spostarsi il bitplane 2 rimane "allo scoperto",
-ossia perde la sovrapposizione con gli altri 2 mostrando la sua "VERA FACCIA",
-e assumendo il COLOR2, che e' a $FFF nella copperlist come potete vedere,
-infatti e' bianco. Assume il color2 perche' spostandosi il bitplane 2 si
-trova "solo" con lo sfondo, ossia: %010, con i bitplane 1 e 3 azzerati.
-Il numero binario %010 equivale a 2, dunque il suo colore sara' deciso dal
-registro colore 2, il $dff184. cambiate nella copperlist il suo valore e
-verificherete che il bitplane 2 "da solo" e' controllato proprio da quel
-registro:
+You will notice that only one bitplane moves, the 2, while the first and the third
+they remain in place. In moving, bitplane 2 remains "in the open",
+ie it loses the overlap with the other 2 showing its "TRUE FACE",
+and assuming COLOR2, which is at $FFF in the copperlist as you can see,
+in fact it is white. It assumes color2 because moving bitplane 2 does
+finds "only" with the background, ie:% 010, with bitplanes 1 and 3 cleared.
+The binary number% 010 equals 2, so its color will be decided by the
+color register 2, the $dff184. change its value in the copperlist 
+you will verify that bitplane 2 "alone" is controlled by that
+register:
 
 	dc.w	$0184,$fff	; color2
 
-Infatti mettendo, ad esempio, un $ff0, diventera' giallo. D'altronde la figura
-rimane "BUCATA" nei punti dove il bitplane2 "SE NE VA", potete vederlo meglio
-premendo il tasto destro che blocca lo scorrimento: in particolare i buchi
-si notano dove compare il BIANCO, ossia dove c'era solo il bitplane2 senza
-sovrapposizioni. In altri casi anziche' formarsi un BUCO cambia il colore.
+In fact, putting, for example, a $ff0, it will become yellow. On the other hand the figure
+it remains "HOLE" in the points where the bitplane2 "IF IT GOES", you can see it better
+pressing the right button that blocks the scrolling: in particular the holes
+you can see where the WHITE appears, that is where there was only the bitplane2 without
+overlaps. In other cases, instead of forming a HOLE, the color changes.
 
-Per far scorrere solo i bitplanes DISPARI (1 e 3 nella nostra figura), invece,
-modificate la routine cosi':
+To slide only the ODD bitplanes (1 and 3 in our figure), instead,
+modify the routine like this:
 
-	subq.b	#$01,MIOCON1	; solo i planes DISPARI!
+	subq.b	#$01,MIOCON1	; only the ODD planes!
 
 	cmpi.b	#$0f,MIOCON1
 
 	addq.b	#$01,MIOCON1
 
-In questo caso rimane fermo il bitplane2, l'unico pari, e si muovono i plane
-1 e 3, i dispari.
-Con questo esempi avete potuto verificare anche il metodo della sovrapposizione
-dei bitplane per visualizzare i vari colori.
+In this case the bitplane2, the only even one, remains stationary and the planes move
+1 and 3, the odd ones.
+With this example you have also been able to verify the overlapping method
+bitplanes to display the various colors.
