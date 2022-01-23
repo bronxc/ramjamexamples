@@ -28,8 +28,8 @@ POINTBP:
 				; Nei cicli seguenti al primo faremo puntare
 				; al terzo, al quarto bitplane eccetera.
 
-	addq.w	#8,a1		; a1 ora contiene l'indirizzo dei prossimi
-				; bplpointers nella copperlist da scrivere.
+	addq.w	#8,a1	; a1 now contains the address of the next
+				; bplpointer in the copperlist to be written (value for $e4)
 	dbra	d1,POINTBP	; Rifai D1 volte POINTBP (D1=num of bitplanes)
 
 	rts	; USCITA!!
@@ -54,7 +54,7 @@ BPLPOINTERS:
 ;	in questo caso basta scrivere: "V df0:SORGENTI2"
 
 PIC:
-	incbin	"hd1:develop/projects/dischi/myimages/earth_320x255x5.raw"	; qua carichiamo la figura in RAW,
+	incbin	"hd1:develop/projects/dischi/myimages/earth_320x256x3.raw"	; qua carichiamo la figura in RAW,
 					; convertita col KEFCON, fatta di
 					; 3 bitplanes consecutivi
 

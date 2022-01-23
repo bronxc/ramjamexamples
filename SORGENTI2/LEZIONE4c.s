@@ -1,3 +1,4 @@
+;APS00000000000000000000000000000000000000000000000000000000000000000000000000000000
 
 ; Lezione4c.s	FUSIONE DI 3 EFFETTI COPPER + FIGURA AD 8 COLORI
 
@@ -56,9 +57,9 @@ mouse:
 	cmpi.b	#$ff,$dff006	; Siamo alla linea 255?
 	bne.s	mouse		; Se non ancora, non andare avanti
 
-	bsr.w	muovicopper	; barra rossa sotto linea $ff
+	bsr.w	MuoviCopper	; barra rossa sotto linea $ff
 	bsr.w	CopperDestSin	; Routine di scorrimento destra/sinistra
-	BSR.w	scrollcolors	; scorrimento ciclico dei colori
+	BSR.w	ScrollColors	; scorrimento ciclico dei colori
 
 Aspetta:
 	cmpi.b	#$ff,$dff006	; Siamo alla linea 255?
@@ -75,7 +76,7 @@ Aspetta:
 
 	move.l	4.w,a6
 	jsr	-$7e(a6)	; Enable - riabilita il Multitasking
-	move.l	gfxbase(PC),a1	; Base della libreria da chiudere
+	move.l	GfxBase(PC),a1	; Base della libreria da chiudere
 	jsr	-$19e(a6)	; Closelibrary - chiudo la graphics lib
 	rts			; USCITA DAL PROGRAMMA
 
@@ -95,7 +96,7 @@ OldCop:			; Qua ci va l'indirizzo della vecchia COP di sistema
 ; *		BARRA A SCORRIMENTO ORIZZONTALE (Lezione3h.s)		   *
 ; **************************************************************************
 
-CopperDESTSIN:
+CopperDestSin:
 	CMPI.W	#85,DestraFlag		; VAIDESTRA eseguita 85 volte?
 	BNE.S	VAIDESTRA		; se non ancora, rieseguila
 	CMPI.W	#85,SinistraFlag	; VAISINISTRA eseguita 85 volte?
@@ -187,7 +188,7 @@ SuGiu:
 ; *		SCORRIMENTO CICLICO DEI COLORI (Lezione3E.s)		   *
 ; **************************************************************************
 
-Scrollcolors:	
+ScrollColors:	
 	move.w	col2,col1	; col2 copiato in col1
 	move.w	col3,col2	; col3 copiato in col2
 	move.w	col4,col3	; col4 copiato in col3
@@ -454,9 +455,10 @@ BARRA:
 
 
 PIC:
-	incbin	"amiga.320*256*3"	; qua carichiamo la figura in RAW,
-					; convertita col KEFCON, fatta di
-					; 3 bitplanes consecutivi
+	incbin	"hd1:develop/projects/dischi/myimages/earth_320x256x3.raw"
+				; qua carichiamo la figura in RAW,
+				; convertita col KEFCON, fatta di
+				; 3 bitplanes consecutivi
 
 	end
 
