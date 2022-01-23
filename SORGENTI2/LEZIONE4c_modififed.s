@@ -249,31 +249,31 @@ BPLPOINTERS:
 	dc.w	$3a07,$fffe	; aspettiamo la linea 154 ($9a in esadecimale)
 	dc.w	$180		; regster COLOR0
 col1:
-	dc.w	$0f0		; VALUE OF COLOR 0 (which will be modified)
+	dc.w	$f00		; VALUE OF COLOR 0 (which will be modified)
 	dc.w	$3b07,$fffe ; we wait for line 155 (it will not be changed)
 	dc.w	$180		; COLOR0 REGISTER (will not be modified)
 col2:
-	dc.w	$0d0		; VALUE OF COLOR 0 (will be modified)
+	dc.w	$d00		; VALUE OF COLOR 0 (will be modified)
 	dc.w	$3c07,$fffe	; wait for line 156 (unmodified, etc.)
 	dc.w	$180		; regster COLOR0
 col3:
-	dc.w	$0b0		; VALORE DEL COLOR 0
+	dc.w	$b00		; VALORE DEL COLOR 0
 	dc.w 	$3d07,$fffe	; aspettiamo la linea 157
 	dc.w	$180		; regster COLOR0
 col4:
-	dc.w	$090		; VALORE DEL COLOR 0
+	dc.w	$900		; VALORE DEL COLOR 0
 	dc.w	$3e07,$fffe	; aspettiamo la linea 158
 	dc.w	$180		; regster COLOR0
 col5:
-	dc.w	$070		; VALORE DEL COLOR 0
+	dc.w	$700		; VALORE DEL COLOR 0
 	dc.w	$3f07,$fffe	; aspettiamo la linea 159
 	dc.w	$180		; regster COLOR0
 col6:
-	dc.w	$050		; VALORE DEL COLOR 0
+	dc.w	$500		; VALORE DEL COLOR 0
 	dc.w	$4007,$fffe	; aspettiamo la linea 160
 	dc.w	$180		; regster COLOR0
 col7:
-	dc.w	$030		; VALORE DEL COLOR 0
+	dc.w	$300		; VALORE DEL COLOR 0
 	dc.w	$4107,$fffe	; aspettiamo la linea 161
 	dc.w	$180		; color0 ... (now you understand the comments, 
 col8:				; I can also stop putting them from here!)
@@ -307,19 +307,20 @@ col14:
 	dc.w 	$180,$0000	; BLACK color for the part
 				; of screen under the effect
 
-
+	; these define the colours used for the image of earth
+	; to be shades of yellow
 	dc.w	$0180,$000	; color0
-	dc.w	$0182,$550	; color1	; ridefiniamo il colore della
-	dc.w	$0184,$ff0	; color2	; scritta COMMODORE! GIALLA!
+	dc.w	$0182,$550	; color1
+	dc.w	$0184,$ff0	; color2
 	dc.w	$0186,$cc0	; color3
 	dc.w	$0188,$990	; color4
 	dc.w	$018a,$220	; color5
 	dc.w	$018c,$770	; color6
 	dc.w	$018e,$440	; color7
 
-	dc.w	$7007,$fffe	; Aspettiamo la fine della scritta COMMODORE
+	dc.w	$7007,$fffe	; We await the end of the yellow section
 
-;	Gli 8 colori della figura sono definiti qui:
+;	Reset the 8 colours used for the image
 
 	dc.w	$0180,$000	; color0
 	dc.w	$0182,$475	; color1
@@ -330,7 +331,7 @@ col14:
 	dc.w	$018c,$777	; color6
 	dc.w	$018e,$444	; color7
 
-;	EFFETTO DELLA LEZIONE3h.s
+;	EFFECT OF THE LESSON 3h.s
 
 	dc.w	$9007,$fffe	; aspettiamo l'inizio della linea
 	dc.w	$180,$000	; grigio al minimo, ossia NERO!!!
