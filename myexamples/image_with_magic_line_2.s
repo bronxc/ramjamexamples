@@ -41,7 +41,7 @@ SETUPBP:
        move.l d0,a0
 
        lea    GameScreenColours,a1
-       moveq #7,d1                       ;loop counter, 16 colours
+       moveq #7,d1                       ;loop counter, 8 colours
        .NextColour:
               move.w (a0)+,(a1)
               addq.l #4,a1
