@@ -103,7 +103,7 @@ MuoviCopper:
 	cmpi.b	#$00,MIOCON1	; siamo arrivati alla posizione normale, ossia
 				; tutto indietro?
 	beq.s	MettiAvanti	; se si, dobbiamo avanzare!
-	sub.b	#$01,MIOCON1	; sottraiamo 1 allo scroll dei bitplanes
+	sub.b	#$10,MIOCON1	; sottraiamo 1 allo scroll dei bitplanes
 	rts			; dispari ($ff,$ee,$dd,$cc,$bb,$aa,$99....)
 				; andando a SINISTRA
 MettiAvanti:
@@ -112,15 +112,15 @@ MettiAvanti:
 				; la figura avanzera' (verso destra)
 
 AVANTI:
-	cmpi.b	#$0f,MIOCON1	; siamo arrivati allo scroll massimo in
+	cmpi.b	#$f0,MIOCON1	; siamo arrivati allo scroll massimo in
 				; avanti, ossia $FF? ($f pari e $f dispari)
 	beq.s	MettiIndietro	; se si, siamo dobbiamo tornare indietro
-	add.b	#$01,MIOCON1	; aggiungiamo 1 allo scroll dei bitplanes
+	add.b	#$10,MIOCON1	; aggiungiamo 1 allo scroll dei bitplanes
 				; pari e dispari ($11,$22,$33,$44 etc..)
 	rts			; ANDANDO A DESTRA
 
 MettiIndietro:
-	move.b	#$0f,FLAG	; Quando la label FLAG non e' a zero,
+	move.b	#$ff,FLAG	; Quando la label FLAG non e' a zero,
 	rts			; significa che dobbiamo indietreggiare
 				; verso sinistra
 
