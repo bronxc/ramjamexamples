@@ -100,16 +100,16 @@ MuoviCopper:
 				; punta i bitplanes! Qua invece di mettere
 				; l'indirizzo lo prendiamo!!!
 
-	TST.B	SuGiu		; Dobbiamo salire o scendere? se SuGiu e'
-				; azzerata, (cioe' il TST verifica il BEQ)
-				; allora saltiamo a VAIGIU, se invece e' a $FF
-				; (se cioe' questo TST non e' verificato)
-				; continuiamo salendo (facendo dei sub)
+	TST.B	SuGiu		; Should we go up or down? if SuGiu is
+		; cleared, (i.e. the TST checks the BEQ)
+		; then let's jump to VAIGIU, if it's $ FF instead
+		; (if this TST is not verified)
+		; we keep going up (diving)
 	beq.w	VAIGIU
-	cmp.l	#PIC-(40*30),d0	; siamo arrivati abbastanza in ALTO?
-	beq.s	MettiGiu	; se si, siamo in cima e dobbiamo scendere
-	sub.l	#40,d0		; sottraiamo 40, ossia 1 linea, facendo
-				; scorrere in BASSO la figura
+	cmp.l	#PIC-(40*60),d0	; Did we get high enough?
+	beq.s	MettiGiu	; if yes, we are at the top and we have to go down
+	sub.l	#40,d0		; we subtract 40, or 1 line, by doing
+				; scroll the picture DOWN
 	bra.s	Finito
 
 MettiGiu:
@@ -117,7 +117,7 @@ MettiGiu:
 	bra.s	Finito		; fara' saltare alla routine VAIGIU
 
 VAIGIU:
-	cmpi.l	#PIC+(40*30),d0	; siamo arrivati abbastanza in BASSO?
+	cmpi.l	#PIC+(40*60),d0	; siamo arrivati abbastanza in BASSO?
 	beq.s	MettiSu		; se si, siamo in fondo e dobbiamo risalire
 	add.l	#40,d0		; Aggiungiamo 40, ossia 1 linea, facendo
 				; scorrere in ALTO la figura
@@ -190,7 +190,7 @@ IMAGECOLOURS:
 
 ;	figura
 
-	dcb.b	40*30,0	; questo spazio azzerato serve perche' spostandoci
+	dcb.b	40*70,0	; questo spazio azzerato serve perche' spostandoci
 			; a visualizzare piu' in basso e piu' in alto usciamo
 			; dalla zona della PIC e visualizziamo quello che sta
 			; prima e dopo la pic stessa, il che' causerebbe
@@ -203,7 +203,7 @@ PIC:
 					; convertita col KEFCON, fatta di
 					; 3 bitplanes consecutivi
 
-	dcb.b	40*30,0	; vedi sopra
+	dcb.b	40*70,0	; vedi sopra
 
 ; NOTA: Il dcb.b serve a mettere molti bytes uguali tra loro in memoria,
 ; scrivere dcb.b 10,0 e' come scrivere 10 volte dc.b 0.
@@ -211,20 +211,20 @@ PIC:
 
 	end
 
-Questa routine in pratica aggiunge o sottrae 40 all'indirizzo a cui puntano i
-BPLPOINTERS in copperlist, leggendo per prima cosa l'indirizzo "attuale" con
-la routine opposta a quella che punta i bitplanes.
-Con questo metodo si possono visualizzare anche immagini piu' grandi dello
-schermo, visualizzandone una parte per volta con la possibilita' di scorrerle
-in alto o in basso. Ad esempio nei giochi di FLIPPER, come PINBALL DREAMS, lo
-schermo di gioco e' piu' lungo di quello visibile, e scorre in alto o in basso,
-per visualizzare la parte dove rimbalza la pallina, cambiando i puntatori dei
+This routine basically adds or subtracts 40 to the address that i point to
+BPLPOINTERS in copperlist, first reading the "current" address with
+the opposite routine to the one that points the bitplanes.
+With this method, even larger images than
+screen, displaying one part at a time with the possibility of scrolling through them
+up or down. For example in FLIPPER games, such as PINBALL DREAMS, it is
+game screen is longer than the visible one, and scrolls up or down,
+to view the part where the ball bounces by changing the pointers
 bitplanes.
-In questo esempio spostandoci visualiziamo anche delle linee fuori dalla
-nostra figura, in quanto e' lunga 256 linee solamente e noi scorriamo di
-30 linee sopra e 30 sotto, ossia 316 linne in totale. E' per questo che sono
-presenti dei dcb.b prima e dopo la figura, per "pulire" la zona che appare
-scorrendo fuori dai bitplanes RAW. Provate a cambiarli in questo modo:
+In this example moving we also visualize some lines outside the
+our figure, as it is only 256 lines long and we scroll by
+30 lines above and 30 below, or 316 lines in total. That's what I am for
+present some dcb.b before and after the figure, to "clean" the area that appears
+scrolling out of the RAW bitplanes. Try changing them like this:
 
 	dcb.b	40*30,%11001100
 
