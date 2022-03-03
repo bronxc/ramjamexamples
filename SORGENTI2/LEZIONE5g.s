@@ -27,7 +27,18 @@ POINTBP:
 	ADD.L	#40*256,d0	; + lunghezza bitplane -> prossimo bitplane
 	addq.w	#8,a1		; andiamo ai prossimi bplpointers nella COP
 	dbra	d1,POINTBP	; Rifai D1 volte POINTBP (D1=num of bitplanes)
-;
+
+	;load the colours from the image
+	move.l #PIC,d0
+	add.l  #40*256*3,d0 ;skip past 3 BP to colour info
+	move.l d0,a0 ;going to use address location of PIC
+	lea IMAGECOLOURS,a1
+	moveq	#7,d1
+	.NextColour:
+		move.w (a0)+,(a1)
+	    addq.l #4,a1
+	    dbra   d1,.NextColour
+
 	move.l	#COPPERLIST,$dff080	; Puntiamo la nostra COP
 	move.w	d0,$dff088		; Facciamo partire la COP
 	move.w	#0,$dff1fc		; Disattiva l'AGA
@@ -57,7 +68,7 @@ Aspetta:
 
 	move.l	4.w,a6
 	jsr	-$7e(a6)	; Enable - riabilita il Multitasking
-	move.l	gfxbase(PC),a1	; Base della libreria da chiudere
+	move.l	GfxBase(PC),a1	; Base della libreria da chiudere
 	jsr	-$19e(a6)	; Closelibrary - chiudo la graphics lib
 	rts			; USCITA DAL PROGRAMMA
 
@@ -106,7 +117,7 @@ VAIGIU:
 	beq.s	MettiSu		; se si, siamo in fondo e dobbiamo risalire
 	add.l	#40,d0		; Aggiungiamo 40, ossia 1 linea, facendo
 				; scorrere in ALTO la figura
-	bra.s	finito
+	bra.s	Finito
 
 MettiSu:
 	move.b	#$ff,SuGiu	; Quando la label SuGiu non e' a zero,
@@ -157,14 +168,17 @@ BPLPOINTERS:
 	dc.w $e4,$0000,$e6,$0000	;secondo bitplane
 	dc.w $e8,$0000,$ea,$0000	;terzo	 bitplane
 
-	dc.w	$0180,$000	; color0
-	dc.w	$0182,$475	; color1
-	dc.w	$0184,$fff	; color2
-	dc.w	$0186,$ccc	; color3
-	dc.w	$0188,$999	; color4
-	dc.w	$018a,$232	; color5
-	dc.w	$018c,$777	; color6
-	dc.w	$018e,$444	; color7
+	dc.w	$0180
+IMAGECOLOURS:
+	dc.w    $0000						; color00 - plane 1
+	dc.w	$0182,$0ff0					; color01 - plane 1 
+	dc.w	$0184,$000f					; color02 - plane 2
+	dc.w	$0186,$0008					; color03 - plane 2
+	dc.w	$0188,$0004					; color04 - plane 3
+	dc.w	$018A,$0004					; color05 - plane 3
+	dc.w	$018C,$0008					; color06 - plane 3
+	dc.w	$018E,$0800					; color07 - plane 3
+	dc.w	$0190,$0080					; color08 - plane 4
 
 ;	EFFETTO SPECCHIO (che si potrebbe vendere per effetto "texturemap")
 
@@ -232,7 +246,7 @@ BPLPOINTERS:
 	dcb.b	40*98,0		; spazio azzerato
 
 PIC:
-	incbin	"amiga.320*256*3"	; qua carichiamo la figura in RAW,
+	incbin	"hd1:develop/projects/dischi/myimages/earth_320x256x3.raw"	; qua carichiamo la figura in RAW,
 					; convertita col KEFCON, fatta di
 					; 3 bitplanes consecutivi
 
