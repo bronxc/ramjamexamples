@@ -25,7 +25,7 @@ Inizio:
 	move.w	#0,$dff1fc		; Disattiva l'AGA
 	move.w	#$c00,$dff106		; Disattiva l'AGA
 
-	bsr.w	print		; Stampa una riga di testo sullo schermo
+	bsr.w	PRINT		; Stampa una riga di testo sullo schermo
 
 mouse:
 	btst	#6,$bfe001	; tasto sinistro del mouse premuto?
@@ -36,7 +36,7 @@ mouse:
 
 	move.l	4.w,a6
 	jsr	-$7e(a6)	; Enable - riabilita il Multitasking
-	move.l	gfxbase(PC),a1	; Base della libreria da chiudere
+	move.l	GfxBase(PC),a1	; Base della libreria da chiudere
 	jsr	-$19e(a6)	; Closelibrary - chiudo la graphics lib
 	rts			; USCITA DAL PROGRAMMA
 
@@ -61,10 +61,10 @@ PRINT:
 PRINTCHAR2:
 	MOVEQ	#0,D2		; Pulisci d2
 	MOVE.B	(A0)+,D2	; Prossimo carattere in d2
-	SUB.B	#$20,D2		; TOGLI 32 AL VALORE ASCII DEL CARATTERE, IN
-				; MODO DA TRASFORMARE, AD ESEMPIO, QUELLO
-				; DELLO SPAZIO (che e' $20), in $00, quello
-				; DELL'ASTERISCO ($21), in $01...
+	SUB.B	#$20,D2		; REMOVE 32 FROM THE ASCII VALUE OF THE CHARACTER,
+		; TO TRANSFORM, FOR EXAMPLE,
+		; SPACE (which is $20), to $00, that
+		; ASTERISK ($21), in $01 ...
 	MULU.W	#8,D2		; MOLTIPLICA PER 8 IL NUMERO PRECEDENTE,
 				; essendo i caratteri alti 8 pixel
 	MOVE.L	D2,A2
@@ -81,7 +81,7 @@ PRINTCHAR2:
 	MOVE.B	(A2)+,40*6(A3)	; stampa LA LINEA 7  " "
 	MOVE.B	(A2)+,40*7(A3)	; stampa LA LINEA 8  " "
 
-	ADDQ.w	#1,A3		; A3+1, avanziamo di 8 bit (PROSSIMO CARATTERE)
+	ADDQ.w	#1,A3		; A3 + 1, we advance 8 bits (NEXT CHARACTER)
 
 	DBRA	D0,PRINTCHAR2	; STAMPIAMO D0 (40) CARATTERI PER RIGA
 
@@ -91,7 +91,7 @@ PRINTCHAR2:
 		; numero caratteri per linea: 40
 TESTO:	     ;		  1111111111222222222233333333334
 	     ;	 1234567890123456789012345678901234567890
-	dc.b	' PRIMA RIGA  Sullo Schermo! 123 prova   '
+	dc.b	'This is some test text to display! 12345'
 
 	EVEN
 
@@ -129,7 +129,7 @@ BPLPOINTERS:
 FONT:
 ;	incbin	"metal.fnt"	; Carattere largo
 ;	incbin	"normal.fnt"	; Simile ai caratteri kickstart 1.3
-	incbin	"nice.fnt"	; Carattere stretto
+	incbin	"hd1:develop/projects/dischi/SORGENTI2/nice.fnt"	; Carattere stretto
 
 	SECTION	MIOPLANE,BSS_C	; Le SECTION BSS devono essere fatte di
 				; soli ZERI!!! si usa il DS.b per definire
