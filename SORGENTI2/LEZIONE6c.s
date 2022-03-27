@@ -57,7 +57,7 @@ OldCop:			; Qua ci va l'indirizzo della vecchia COP di sistema
 PRINT:
 	LEA	TESTO(PC),A0	; Indirizzo del testo da stampare in a0
 	LEA	BITPLANE,A3	; Indirizzo del bitplane destinazione in a3
-	MOVEQ	#23-1,D3	; NUMERO RIGHE DA STAMPARE: 23
+	MOVEQ	#24-1,D3	; NUMERO RIGHE DA STAMPARE: 23
 PRINTRIGA:
 	MOVEQ	#40-1,D0	; NUMERO COLONNE PER RIGA: 40
 PRINTCHAR2:
