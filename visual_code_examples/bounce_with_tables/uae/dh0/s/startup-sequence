@@ -1,0 +1,3 @@
+sys:bounce_with_tables
+; Quits the emulator at the end of the program
+UAEquit

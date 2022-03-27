@@ -1,3 +1,16 @@
+;------------------------------
+; Example inspired by Photon's Tutorial:
+;  https://www.youtube.com/user/ScoopexUs
+;
+;---------- Includes ----------
+              INCDIR      "include"
+              INCLUDE     "hw.i"
+              INCLUDE     "funcdef.i"
+              INCLUDE     "exec/exec_lib.i"
+              INCLUDE     "graphics/graphics_lib.i"
+              INCLUDE     "hardware/cia.i"
+;---------- Const ----------
+
 ;APS00000000000000000000000000000000000000000000000000000000000000000000000000000000
 
 ; Lezione6m.s	EFFETTO "RIMBALZO" TRAMITE L'USO DI UNA TABELLA
@@ -67,52 +80,53 @@ GfxBase:
 OldCop:
 	dc.l	0
 
-; This time we use a table that contains the values to subtract from
-; pointers of the bitplanes to simulate a "bounce" of the figure, instead of a
-; obvious UP-DOWN movement with add.l #40 and sub.l #40. To do this it was enough
-; make a table, in fact, with the values to be subtracted from the pointer, that
-; clearly they are multiples of 40, where 2 * 40 indicates that 2 lines are skipped,
-; while 3 * 40 that jump 3 at a time:
+; Questa volta usiamo una tabella che contiene i valori da sottrarre ai
+; puntatori dei bitplanes per simulare un "rimbalzo" della figura, anziche' un
+; ovvio movimento SU-GIU con add.l #40 e sub.l #40. Per fare cio' e' bastato
+; fare una tabella, appunto, con i valori da sottrarre al puntatore, che
+; chiaramente sono multipli del 40, dove 2*40 indica che si saltano 2 linee,
+; mentre 3*40 che se ne saltano 3 alla volta:
 ;
-; dc.l 40,40,2 * 40,2 * 40; example...
+;	dc.l	40,40,2*40,2*40	; esempio...
 ;
-; To return to the starting position once you have reached the bottom of the screen
-; it is necessary to add what has been removed from the bitplanes pointers, therefore,
-; being present in the routine a subtraction:
+; Per tornare alla posizione iniziale una volta arrivati in fondo allo schermo
+; occorre aggiungere quanto e' stato tolto ai puntatori bitplanes, dunque,
+; essendo presente nella routine una sottrazione:
 ;
-; sub.l d1, d0; subtract the value of the table (d1) from the address
-; ; which is pointing the bplpointer
+;	sub.l	d1,d0	; sottrai il valore della tabella (d1) all'indirizzo
+;			; che sta puntando il bplpointer
 ;
-; how do we ADD with a SUB ?? Simple! Just SUBTRACT negative numbers
-; How much is 10 - (- 1)? It is 11 ! Therefore in the table they are present
-; negative numbers after hitting "bottom":
+; come facciamo ad AGGIUNGERE con un SUB?? Semplice! Basta SOTTRARRE numeri
+; negativi!!! Quanto fa 10-(-1)? Fa 11!!! Dunque nella tabella sono presenti
+; i numeri negativi dopo aver toccato "il fondo":
 ;
-; dc.l -8 * 40, -6 * 40, -5 * 40; we go up
+;	dc.l	-8*40,-6*40,-5*40		; risaliamo
 ;
-; a sub.l # -8 * 40 is like an add.l # 8 * 40.
-; But remember that negative numbers keep the "sign" on the highest bit?
-; so a -40 is $ FFFFFFd8, which is why the table values ​​are
-; in LONGWORD and not in WORD, to contain negative numbers.
-; In fact a:
+; un sub.l #-8*40 e' come un add.l #8*40.
+; Ricordate pero' che i numeri negativi tengono "il segno" sul bit piu' alto?
+; per cui un -40 e' $FFFFFFd8, e' per questo che i valori della tabella sono
+; in LONGWORD e non in WORD, per contenere numeri negativi.
+; Infatti un:
 ;
 ; dc.w -40
 ;
-; It is not assembled, by mistake, you have to use .l for negative numbers.
+; Non viene assemblato, da errore, dovete usare .l per i numeri negativi.
 ;
-; Having used the .L values, you have to remember this in the routine:
+; Avendo usato i valori .L, bisogna ricordarselo nella routine:
 ;
-; ADDQ.L # 4, RIMTABPOINT
+; ADDQ.L #4,RIMTABPOINT
 ; FINERIMBALZTAB-4
-; dc.l BOUNCEB-4
+; dc.l RIMBALZTAB-4
 ;
-; and not
+; e non
 ;
-; ADDQ.L # 2, RIMTABPOINT
-; FINER BOUNCEB-2
-; dc.l BOUNCEB-2
+; ADDQ.L #2,RIMTABPOINT
+; FINERIMBALZTAB-2
+; dc.l RIMBALZTAB-2
 ;
-; Regarding the actual displacement there are no news:
-; we take the address from BPLPOINTERS, we make the SUB with the value read in the table and we repeat the new address.
+; Per quanto riguarda lo spostamento vero e proprio non ci sono novita':
+; preleviamo l'indirizzo da BPLPOINTERS, facciamo il SUB con il valore letto
+; in tabella e ripuntiamo il nuovo indirizzo.
 
 Rimbalzo:
 	LEA	BPLPOINTERS,A1	; Con queste 4 istruzioni preleviamo dalla
@@ -185,7 +199,7 @@ COPPERLIST:
 	dc.w	$108,0		; Bpl1Mod
 	dc.w	$10a,0		; Bpl2Mod
 
-		    ; 5432109876543210
+                     ; 5432109876543210
 	dc.w	$100,%0011001000000000	; bits 13 e 12 accesi!! (3 = %011)
 
 BPLPOINTERS:
@@ -208,7 +222,7 @@ BPLPOINTERS:
 	dcb.b	80*40,0	; spazio azzerato per lo scroll del bitplane
 
 PIC:
-	incbin	"hd1:develop/projects/dischi/myimages/earth_320x256x3.raw"	; qua carichiamo la figura in RAW,
+	incbin	"images/earth_320x256x3.raw"	; qua carichiamo la figura in RAW,
 
 	end
 
