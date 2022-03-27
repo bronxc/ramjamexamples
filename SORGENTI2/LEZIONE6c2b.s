@@ -106,7 +106,7 @@ PRINTCHAR2:
 
 		; numero caratteri per linea: 40
 TESTO:							 ;40 caratteri
-	dc.b	"                                        " ; 1
+	dc.b	"    this is a test                      " ; 1
 	dc.b	"                                        " ; 2
 	dc.b	"                                        " ; 3
 	dc.b	"                                        " ; 4
