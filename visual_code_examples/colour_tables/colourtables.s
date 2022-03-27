@@ -1,8 +1,15 @@
-;APS00000000000000000000000000000000000000000000000000000000000000000000000000000000
-
-; Lesson6l.s FLASHING COLOR THROUGH THE USE OF A TABLE 
-; with routine that once the table is finished rereads it backwards
-
+;------------------------------
+; Example inspired by Photon's Tutorial:
+;  https://www.youtube.com/user/ScoopexUs
+;
+;---------- Includes ----------
+              INCDIR      "include"
+              INCLUDE     "hw.i"
+              INCLUDE     "funcdef.i"
+              INCLUDE     "exec/exec_lib.i"
+              INCLUDE     "graphics/graphics_lib.i"
+              INCLUDE     "hardware/cia.i"
+;---------- Const ----------
 
 	SECTION	CiriCop,CODE
 
@@ -94,7 +101,7 @@ Flashing:
 GODOWN:
 	SUBQ.L	#2,COLTABPOINTER	; Point to the previous word
 	MOVE.L	COLTABPOINTER(PC),A0 ; address contained in long COLTABPOINTER
-				   ; copied to a0
+                                   ; copied to a0
 	CMP.L	#COLORTAB,A0	; Have we arrived at the first value of the TABLE?
 	BNE.S	NOBSTART2
 	BCHG.B	#1,DIRECTIONFLAG	; change direction, go forward!
@@ -158,7 +165,7 @@ COPPERLIST:
 	dc.w	$104,0		; BplCon2
 	dc.w	$108,0		; Bpl1Mod
 	dc.w	$10a,0		; Bpl2Mod
-		    ; 5432109876543210
+              ; 5432109876543210
 	dc.w	$100,%0000001000000000	; 0 bitplane LOWRES
 
 	dc.w	$180,$000	; color0
@@ -174,52 +181,3 @@ COLORE0:
 	dc.w	$FFFF,$FFFE	; Fine della copperlist
 
 	end
-
-This is one of the many variations of the routine that reads values from one
-table. This routine can only be used in cases of "mirror" tables
-that is, with increasing values equal to those decreasing with the "maximum"
-reached right in the middle.
-In fact, the effect is more symmetrical than the one in Lesson6i.s
-
-Try to change TABLE and everything will change: (Amiga + b + c + i)
-
-COLORTAB:
-	dc.w $000,$100,$200,$300,$400,$500,$600,$700
-	dc.w $800,$900,$a00,$b00,$c00,$d00,$e00
-	dc.w $f00,$f10,$f20,$f30,$f40,$f50,$f60,$f70
-	dc.w $f80,$f90,$fa0,$fb0,$fc0,$fd0,$fe0
-	dc.w $ff0,$ef0,$df0,$cf0,$bf0,$af0,$9f0,$8f0
-	dc.w $7f0,$6f0,$5f0,$4f0,$3f0,$2f0,$1f0
-	dc.w $0f0,$0f1,$0f2,$0f3,$0f4,$0f5,$0f6,$0f7
-	dc.w $0f8,$0f9,$0fa,$0fb,$0fc,$0fd,$0fe
-	dc.w $0ff,$0ef,$0df,$0cf,$0bf,$0af,$09f,$08f
-	dc.w $07f,$06f,$05f,$04f,$03f,$02f,$01f
-	dc.w $00f,$10f,$20f,$30f,$40f,$50f,$60f,$70f
-	dc.w $80f,$90f,$a0f,$b0f,$c0f,$d0f,$e0f
-	dc.w $f0f,$e0e,$d0d,$c0c,$b0b,$a0a,$909,$808
-	dc.w $707,$606,$505,$404,$303,$202,$101,$000
-ENDCOLORTAB:
-
-Also try this TABLE:
-
-COLORTAB:
-	dc.w 0,0,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
-	dc.w $10f,$20f,$30f,$40f,$50f,$60f,$70f,$80f
-	dc.w $90f,$a0f,$b0f,$c0f,$d0f,$e0f,$f0f
-	dc.w $f1e,$f2d,$f3c,$f4b,$f5a,$f69,$f78,$f87
-	dc.w $f96,$fa5,$fb4,$fc3,$fd2,$fe1,$ff0
-	dc.w $ff0,$ff0,$fe0,$fd0,$fc0,$fb0,$fa0,$f90
-	dc.w $f80,$f70,$f60,$f50,$f40,$f30,$f20,$f10
-	dc.w $f00,$f00,$e01,$d02,$c03,$b04,$a05,$906
-	dc.w $807,$708,$609,$50a,$40b,$30c,$20d,$10e,15
-	dc.w $0f,$1f,$2f,$3f,$4f,$5f,$6f,$7f,$8f,$9f,$af
-	dc.w $bf,$cf,$df,$ef,$ff,$ff,$fe,$fd,$fc,$fb,$fa
-	dc.w $f9,$f8,$f7,$f6,$f5,$f4,$f3,$f2,$f1,$f0
-	dc.w $1f1,$2f2,$3f3,$4f4,$5f5,$6f6,$7f7,$8f8,$9f9
-	dc.w $afa,$bfb,$cfc,$dfd,$efe,$fff,$ffe,$ffd,$ffc,$ffb
-	dc.w $ffa,$ff9,$ff8,$ff7,$ff6,$ff5,$ff4,$ff3,$ff2,$ff1,$ff0
-	dc.w $fe0,$fd0,$fc0,$fb0,$fa0,$f90,$f80,$f70,$f60,$f50,$f40
-	dc.w $f30,$f20,$f10,$f00,$f00,$e00,$d00,$c00,$b00,$a00,$900
-	dc.w $800,$700,$600,$500,$400,$300,$200,$100,$0,0
-ENDCOLORTAB:
-
