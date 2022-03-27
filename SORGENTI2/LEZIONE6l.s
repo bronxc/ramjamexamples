@@ -1,11 +1,12 @@
+;APS00000000000000000000000000000000000000000000000000000000000000000000000000000000
 
-; Lezione6l.s	COLORE LAMPEGGIANTE TRAMITE L'USO DI UNA TABELLA con routine
-;		che una volta finita la tabella la rilegge all'indietro
+; Lesson6l.s FLASHING COLOR THROUGH THE USE OF A TABLE 
+; with routine that once the table is finished rereads it backwards
 
 
 	SECTION	CiriCop,CODE
 
-Inizio:
+Init:
 	move.l	4.w,a6		; Execbase
 	jsr	-$78(a6)	; Disable
 	lea	GfxName(PC),a1	; Nome lib
@@ -24,13 +25,13 @@ mouse:
 	bne.s	mouse
 
 	btst	#2,$dff016	; tasto destro?
-	beq.s	aspetta
+	beq.s	Wait
 
-	bsr.w	Lampeggio	; Fa lampeggiare il Color0 in copperlist
+	bsr.w	Flashing	; Flashes Color0 in copperlist
 
-Aspetta:
+Wait:
 	cmpi.b	#$ff,$dff006	; linea 255?
-	beq.s	Aspetta
+	beq.s	Wait
 
 	btst	#6,$bfe001	; mouse premuto?
 	bne.s	mouse
@@ -40,7 +41,7 @@ Aspetta:
 
 	move.l	4.w,a6
 	jsr	-$7e(a6)	; Enable
-	move.l	gfxbase(PC),a1
+	move.l	GfxBase(PC),a1
 	jsr	-$19e(a6)	; Closelibrary
 	rts
 
@@ -55,72 +56,71 @@ GfxBase:
 OldCop:
 	dc.l	0
 
-;	Routine di lampeggiamento che sfrutta una TABELLA di sfumature gia'
-;	pronte. La TABELLA non e' altro che una serie di words contenenti
-;	i vari valori RGB che il COLOR1 dovra' assumere nei vari fotogrammi.
-;	Da notare che la tabella viene "letta" in questo modo: si parte col
-;	copiare la prima word, poi ogni volta che viene rieseguita nei
-;	fotogrammi seguenti la routine copia la seconda word, la terza, la
-;	quarta e cosi' via, fino a che non giunge all'ultimo valore della
-;	tabella, alla label FINECOLORTAB, allora inverte la direzione col
-;	BCHG.B	#1,DIREZFLAG, e procede leggendo "all'indietro" ogni volta
-;	fino a che non torna alla prima word, allora cambia ancora DIREZFLAG
-;	e riprende leggendo "in avanti".
-;	NOTA: questa routine e' utile quando i valori in "aumento" della
-;	tabella, una volta raggiunto il "massimo", calano in maniera uguale
-;	a come sono aumentati: in questo caso, avremmo dovuto scrivere
-;	una tabella di questo tipo:
-;
-;	dc.w	0,1,2,3,4,5,6,7,8,9,10 ; progressione fino al massimo
-;	dc.w	10,9,8,7,6,5,4,3,2,1,0 ; calo fono al minimo
-;
-;	Ma con questa routine si puo' scrivere la sola meta' della TABELLA,
-;	ossia fino al 10, sara' la routine a "tornare indietro" una volta
-;	raggiunto il massimo: 9,8,7,6,5,4..., risparmiando spazio nel
-;	listato, e tempo se i valori sono scritti "a mano".
-;	Se la tabella invece non era "speculare", ossia di questo tipo:
-;
-;	dc.b	0,2,3,5,6,7,8,9,10
-;	dc.b	9,8,7,6,4,3,2,1,0
-;
-;	Sarebbe stata usata una routine che legge tutta la tabella, dal primo
-;	valore all'ultimo, ma che anziche' rileggere all'indietro una volta
-;	raggiunto il termine, ricominci da capo.
+;	Flashing routine that uses a TABLE of ready-made shades. The TABLE 
+;	is nothing more than a series of words containing the various RGB 
+;	values that COLOR1 will have to assume in the various frames.
+;	Note that the table is "read" in this way: we start by copying 
+;	the first word, then every time it is re-executed in the following 
+;	frames the routine copies the second word, the third, the 
+;	fourth and so on, until it reachs the last value of the 
+;	table, at the ENDCOLORTAB label, then it reverses the direction with
+;	BCHG.B #1, DIRECTIONFLAG, and proceeds by reading "backwards" each time
+;	until it goes back to the first word, then it changes DIRECTIONFLAG again
+;	and resumes reading "forward".
+;	NOTE: this routine is useful when the "increasing" values of the
+;	table, once the "maximum" is reached, they reverse equally
+;	how they increased: in this case, we should have written
+;	a table like this:;	
 
-Lampeggio:
-	BTST	#1,DIREZFLAG	; dobbiamo leggere in avanti all'indietro le
-	BEQ.S	GIUT2		; word della tabella??
+;	dc.w 0,1,2,3,4,5,6,7,8,9,10; progression up to the maximum
+;	dc.w 10,9,8,7,6,5,4,3,2,1,0; drop to a minimum;	
+
+;	But with this routine you can write only half of the TABLE,
+;	ie until 10, it will be the routine to "go back" once
+;	reached the maximum: 9,8,7,6,5,4 ..., saving space in the
+;	listing, and time if the values are written "by hand".
+;	If the table was not "mirrored", that is, of this type:;	
+
+;	dc.b 0,2,3,5,6,7,8,9,10
+;	dc.b 9,8,7,6,4,3,2,1,0;	
+
+;	A routine would have been used that reads the whole table, from the first
+;	value at the last, but which instead of re-reading backwards once
+;	when the deadline is reached, you start over.
+
+Flashing:
+	BTST	#1,DIRECTIONFLAG	; do we have to read the 
+	BEQ.S	GIUT2		; words of the table forwards backwards ??
 SUT2:
-	SUBQ.L	#2,COLTABPOINT	; Fai puntare alla word precedente
-	MOVE.L	COLTABPOINT(PC),A0 ; indirizzo contenuto in long COLTABPOINT
-				   ; copiato in a0
-	CMP.L	#COLORTAB,A0	; Siamo arrivati al primo valore della TABELLA?
+	SUBQ.L	#2,COLTABPOINTER	; Point to the previous word
+	MOVE.L	COLTABPOINTER(PC),A0 ; address contained in long COLTABPOINTER
+				   ; copied to a0
+	CMP.L	#COLORTAB,A0	; Have we arrived at the first value of the TABLE?
 	BNE.S	NOBSTART2
-	BCHG.B	#1,DIREZFLAG	; cambia direzione, vai in avanti!
+	BCHG.B	#1,DIRECTIONFLAG	; change direction, go forward!
 NOBSTART2:
-	MOVE.W	(A0),COLORE0	; copia la word dalla tabella al colore COP
+	MOVE.W	(A0),COLORE0	; copy the word from the table to the color COP
 	rts
 
 GIUT2:
-	ADDQ.L	#2,COLTABPOINT	   ; Fai puntare alla prossima word
-	MOVE.L	COLTABPOINT(PC),A0 ; Indirizzo in COLTABPOINT copiato in a0
-	CMP.L	#FINECOLORTAB-2,A0 ; Siamo all'ultima word della TAB?
-	BNE.S	NONCAMBDIREZ	   ; Se non ancora, non cambiare nulla
-	BCHG.B	#1,DIREZFLAG	   ; cambia direzione, vai all'indietro!
-NONCAMBDIREZ:
-	MOVE.W	(A0),COLORE0	; coopia la word dalla tabella al colore COP
+	ADDQ.L	#2,COLTABPOINTER	   ; Point to the next word Address in COLTABPOINTER copied to a0
+	MOVE.L	COLTABPOINTER(PC),A0 ; copied to a0. 
+	CMP.L	#ENDCOLORTAB-2,A0 ; Are we at the last word of the TAB?
+	BNE.S	DONOTCHANGEDIRECTION ; If not yet, don't change anything change direction, go backwards
+	BCHG.B	#1,DIRECTIONFLAG	   
+DONOTCHANGEDIRECTION:
+	MOVE.W	(A0),COLORE0	; copy the word from the table to the color COP
 	rts
 
-DIREZFLAG:			; Label FLAG usata per indicare la direzione
-	DC.W	0		; di lettura.
+DIRECTIONFLAG:			; FLAG label used to indicate direction
+	DC.W	0		; of reading
 
 
-COLTABPOINT:			; Questa longword "PUNTA" a COLORTAB, ossia
-	dc.l	COLORTAB-2	; contiene l'indirizzo di COLORTAB. Terra'
-				; l'indirizzo del'ultima word "letta" dentro
-				; la tabella.
+COLTABPOINTER:			; This longword "POINTS" to COLORTAB,  
+	dc.l	COLORTAB-2	; ie it contains the address of COLORTAB.
+				; Keep the address of the last word "read" inside the table.
 
-;	La tabella con i valori "precalcolati" del lampeggiamento di color0
+;The table with the "pre-calculated" values of the flashing of color0
 
 COLORTAB:
 	dc.w	$000,$000,$001,$011,$011,$011,$012,$012	; inizio SCURO
@@ -138,7 +138,7 @@ COLORTAB:
 	dc.w	$4cd,$4cd,$4dd,$4dd,$4dd
 	dc.w	$5de,$5de,$5ee,$5ee,$5ee,$5ee
 	dc.w	$6ef,$6ff,$6ff,$7ff,$7ff,$8ff,$8ff,$9ff	; ,massimo CHIARO
-FINECOLORTAB:
+ENDCOLORTAB:
 
 
 	SECTION	GRAPHIC,DATA_C
@@ -174,13 +174,13 @@ COLORE0:
 
 	end
 
-Questa e' una delle tante varianti della routine che legge i valori da una
-tabella. Questa routine puo' essere usata solo nei casi di tabelle "a specchio"
-ossia con valori crescenti uguali a quelli decrescenti con il "massimo"
-raggiunto proprio nel mezzo.
-L'effetto infatti e' piu' simmetrico di quello in Lezione6i.s
+This is one of the many variations of the routine that reads values from one
+table. This routine can only be used in cases of "mirror" tables
+that is, with increasing values equal to those decreasing with the "maximum"
+reached right in the middle.
+In fact, the effect is more symmetrical than the one in Lesson6i.s
 
-Provate a cambiare TABELLA e cambiera' tutto: (Amiga+b+c+i)
+Try to change TABLE and everything will change: (Amiga + b + c + i)
 
 COLORTAB:
 	dc.w $000,$100,$200,$300,$400,$500,$600,$700
@@ -197,9 +197,9 @@ COLORTAB:
 	dc.w $80f,$90f,$a0f,$b0f,$c0f,$d0f,$e0f
 	dc.w $f0f,$e0e,$d0d,$c0c,$b0b,$a0a,$909,$808
 	dc.w $707,$606,$505,$404,$303,$202,$101,$000
-FINECOLORTAB:
+ENDCOLORTAB:
 
-Provate anche questa TABELLA:
+Also try this TABLE:
 
 COLORTAB:
 	dc.w 0,0,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
@@ -220,5 +220,5 @@ COLORTAB:
 	dc.w $fe0,$fd0,$fc0,$fb0,$fa0,$f90,$f80,$f70,$f60,$f50,$f40
 	dc.w $f30,$f20,$f10,$f00,$f00,$e00,$d00,$c00,$b00,$a00,$900
 	dc.w $800,$700,$600,$500,$400,$300,$200,$100,$0,0
-FINECOLORTAB:
+ENDCOLORTAB:
 
