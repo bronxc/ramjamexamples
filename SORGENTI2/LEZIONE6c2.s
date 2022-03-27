@@ -1,3 +1,4 @@
+;APS00000000000000000000000000000000000000000000000000000000000000000000000000000000
 
 ; Lezione6c2.s	STAMPIAMO VARIE RIGHE DI TESTO SULLO SCHERMO!!!
 ;		- con font in binario MODIFICABILE FACILMENTE!!
@@ -26,7 +27,7 @@ Inizio:
 	move.w	#0,$dff1fc		; Disattiva l'AGA
 	move.w	#$c00,$dff106		; Disattiva l'AGA
 
-	bsr.w	print		; Stampa le linee di testo sullo schermo
+	bsr.w	PRINT		; Stampa le linee di testo sullo schermo
 
 mouse:
 	btst	#6,$bfe001	; tasto sinistro del mouse premuto?
@@ -37,7 +38,7 @@ mouse:
 
 	move.l	4.w,a6
 	jsr	-$7e(a6)	; Enable - riabilita il Multitasking
-	move.l	gfxbase(PC),a1	; Base della libreria da chiudere
+	move.l	GfxBase(PC),a1	; Base della libreria da chiudere
 	jsr	-$19e(a6)	; Closelibrary - chiudo la graphics lib
 	rts			; USCITA DAL PROGRAMMA
 
