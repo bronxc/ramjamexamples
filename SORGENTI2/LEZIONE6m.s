@@ -1,3 +1,4 @@
+;APS00000000000000000000000000000000000000000000000000000000000000000000000000000000
 
 ; Lezione6m.s	EFFETTO "RIMBALZO" TRAMITE L'USO DI UNA TABELLA
 
@@ -51,7 +52,7 @@ Aspetta:
 
 	move.l	4.w,a6
 	jsr	-$7e(a6)	; Enable
-	move.l	gfxbase(PC),a1
+	move.l	GfxBase(PC),a1
 	jsr	-$19e(a6)	; Closelibrary
 	rts
 
@@ -208,7 +209,7 @@ BPLPOINTERS:
 	dcb.b	80*40,0	; spazio azzerato per lo scroll del bitplane
 
 PIC:
-	incbin	"amiga.320*256*3"	; qua carichiamo la figura in RAW,
+	incbin	"hd1:develop/projects/dischi/myimages/earth_320x256x3.raw"	; qua carichiamo la figura in RAW,
 
 	end
 
