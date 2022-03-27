@@ -118,7 +118,7 @@ COPPERLIST:
 	dc.w	$100,%0001001000000000	; 1 bitplane LOWRES 320x256
 
 BPLPOINTERS:
-	dc.w $e0,$0000,$e2,$0000	;primo	 bitplane
+	dc.w $00e0,$0000,$00e2,$0000	;primo	 bitplane
 
 	dc.w	$0180,$000	; color0 - SFONDO
 	dc.w	$0182,$19a	; color1 - SCRITTE
@@ -130,7 +130,7 @@ BPLPOINTERS:
 FONT:
 ;	incbin	"metal.fnt"	; Carattere largo
 ;	incbin	"normal.fnt"	; Simile ai caratteri kickstart 1.3
-	incbin	"hd1:develop/projects/dischi/SORGENTI2/nice.fnt"	; Carattere stretto
+	incbin	"hd1:develop/projects/dischi/SORGENTI2/Metal.fnt"	; Carattere stretto
 
 	SECTION	MIOPLANE,BSS_C	; Le SECTION BSS devono essere fatte di
 				; soli ZERI!!! si usa il DS.b per definire
