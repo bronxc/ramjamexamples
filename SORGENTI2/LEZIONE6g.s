@@ -1,3 +1,4 @@
+;APS00000000000000000000000000000000000000000000000000000000000000000000000000000000
 
 ; Lezione6g.s		SCRITTURA "SOPRA" UNA FIGURA (in trasparenza)
 ;			Tasto sinistro del mouse per avanzare, destro per
@@ -44,7 +45,7 @@ POINTBP:
 	move.w	#0,$dff1fc		; Disattiva l'AGA
 	move.w	#$c00,$dff106		; Disattiva l'AGA
 
-	bsr.w	print		; Stampa le linee di testo sullo schermo
+	bsr.w	PRINT		; Stampa le linee di testo sullo schermo
 				; in HIRES
 
 mouse:
@@ -59,7 +60,7 @@ Aspetta:
 
 	bsr.w	VaiGiu		; tasto destro premuto, scorri giu!
 
-Nongiu:
+NonGiu:
 	btst	#6,$bfe001	; tasto sinistro del mouse premuto?
 	beq.s	Scorrisu	; se si, scorri in su
 	bra.s	mouse		; no? allora ripeti il ciclo il prossimo FRAME
@@ -76,7 +77,7 @@ Scorrisu:
 
 	move.l	4.w,a6
 	jsr	-$7e(a6)	; Enable - riabilita il Multitasking
-	move.l	gfxbase(PC),a1	; Base della libreria da chiudere
+	move.l	GfxBase(PC),a1	; Base della libreria da chiudere
 	jsr	-$19e(a6)	; Closelibrary - chiudo la graphics lib
 	rts			; USCITA DAL PROGRAMMA
 
@@ -168,7 +169,7 @@ TESTO:	     ;		  1111111111222222222233333333334
 ;	puntatori ai bitplanes in copperlist (tramite la label BPLPOINTERS)
 ;	Da Lezione5l.s
 
-VAIGIU:
+VaiGiu:
 	LEA	BPLPOINTERS2,A1	; Con queste 4 istruzioni preleviamo dalla
 	move.w	2(a1),d0	; copperlist l'indirizzo dove sta puntando
 	swap	d0		; attualmente il $dff0e0 e lo poniamo
@@ -178,14 +179,14 @@ VAIGIU:
 	bra.s	Finito
 
 
-VAISU:
+VaiSu:
 	LEA	BPLPOINTERS2,A1	; Con queste 4 istruzioni preleviamo dalla
 	move.w	2(a1),d0	; copperlist l'indirizzo dove sta puntando
 	swap	d0		; attualmente il $dff0e0 e lo poniamo
 	move.w	6(a1),d0	; in d0 - il contrario della routine che
 	add.l	#40,d0		; Aggiungiamo 40, ossia 1 linea, facendo
 				; scorrere in ALTO la figura
-	bra.w	finito
+	bra.w	Finito
 
 
 Finito:				; PUNTIAMO I PUNTATORI BITPLANES
@@ -246,12 +247,12 @@ BPLPOINTERS2:
 ;	Il FONT caratteri 8x8
 
 FONT:
-	incbin	"metal.fnt"	; Carattere largo
+	incbin	"hd1:develop/projects/dischi/SORGENTI2/metal.fnt"	; Carattere largo
 ;	incbin	"normal.fnt"	; Simile ai caratteri kickstart 1.3
 ;	incbin	"nice.fnt"	; Carattere stretto
 
 PIC:
-	incbin	"amiga.320*256*3"	; qua carichiamo la figura in RAW,
+	incbin	"hd1:develop/projects/dischi/myimages/earth_320x256x3.raw"	; qua carichiamo la figura in RAW,
 
 	SECTION	MIOPLANE,BSS_C	; in CHIP
 
