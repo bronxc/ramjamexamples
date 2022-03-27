@@ -1,3 +1,4 @@
+;APS00000000000000000000000000000000000000000000000000000000000000000000000000000000
 
 ; Lezione6i.s	TESTO A 3 COLORI CON UN COLORE LAMPEGGIANTE OTTENUTO USANDO
 ;		UNA TABELLA DI COLORI RGB PREFISSATI.
@@ -34,18 +35,18 @@ Inizio:
 
 	LEA	TESTO(PC),A0	; testo da stampare
 	LEA	BITPLANE,A3	; destinazione
-	bsr.w	print		; Stampa
+	bsr.w	PRINT		; Stampa
 
 	LEA	TESTO2(PC),A0	; testo da stampare
 	LEA	BITPLANE2,A3	; destinazione
-	bsr.w	print		; Stampa
+	bsr.w	PRINT		; Stampa
 
 mouse:
 	cmpi.b	#$ff,$dff006	; Linea 255?
 	bne.s	mouse
 
 	btst	#2,$dff016	; tasto destro?
-	beq.s	aspetta
+	beq.s	Aspetta
 
 	bsr.w	Lampeggio	; Fa lampeggiare il Color2 in copperlist
 
@@ -61,7 +62,7 @@ Aspetta:
 
 	move.l	4.w,a6
 	jsr	-$7e(a6)	; Enable
-	move.l	gfxbase(PC),a1
+	move.l	GfxBase(PC),a1
 	jsr	-$19e(a6)	; Closelibrary
 	rts
 
@@ -94,16 +95,21 @@ OldCop:
 ;	L'indirizzo dell'ultima word letta viene tenuto nella long COLTABPOINT
 
 Lampeggio:
-	ADDQ.L	#2,COLTABPOINT	; Fai puntare alla word successiva
-	MOVE.L	COLTABPOINT(PC),A0 ; indirizzo contenuto in long COLTABPOINT
+	ADDQ.L	#2,COLTABPOINT	; Point to the next word address 
+	MOVE.L	COLTABPOINT(PC),A0 ; contained in long COLTABPOINT
 				   ; copiato in a0
-	CMP.L	#FINECOLORTAB-2,A0 ; Siamo arrivati all'ultima word della TAB?
-	BNE.S	NOBSTART2		; non ancora? allora continua
-	MOVE.L	#COLORTAB-2,COLTABPOINT	; Riparti a puntare dalla prima word
+	CMP.L	#FINECOLORTAB-2,A0 ; Have we reached the last word of the TAB?
+	BNE.S	NOBSTART2		; not yet? then continue
+	MOVE.L	#COLORTAB-2,COLTABPOINT	; You start shifting from the first word
 NOBSTART2:
-	MOVE.W	(A0),COLORE1	; copia la word dalla tabella al colore COP
+	MOVE.W	(A0),COLORE1	; copy the word from the table to the color COP
 	rts
 
+
+	;This longword "POINTS" to COLORTAB, ie it contains the address of 
+	;COLORTAB. Keep the address of the last word "read" inside the table. 
+	;(here it starts from COLORTAB-2 as Flashing starts with an ADDQ.L # 2, C .. 
+	;serves to "balance" the first instruction.
 
 COLTABPOINT:			; Questa longword "PUNTA" a COLORTAB, ossia
 	dc.l	COLORTAB-2	; contiene l'indirizzo di COLORTAB. Terra'
@@ -115,7 +121,7 @@ COLTABPOINT:			; Questa longword "PUNTA" a COLORTAB, ossia
 ;	La tabella con i valori "precalcolati" del lampeggiamento di color0
 
 COLORTAB:
-	dc.w	$000,$000,$001,$011,$011,$011,$012,$012	; inizio SCURO
+	dc.w	$000,$000,$001,$011,$011,$011,$012,$012	; start dark colour
 	dc.w	$022,$022,$022,$023,$023
 	dc.w	$033,$033,$034
 	dc.w	$044,$044
@@ -129,7 +135,7 @@ COLORTAB:
 	dc.w	$4bc,$4cc,$4cc,$4cc
 	dc.w	$4cd,$4cd,$4dd,$4dd,$4dd
 	dc.w	$5de,$5de,$5ee,$5ee,$5ee,$5ee
-	dc.w	$6ef,$6ff,$6ff,$7ff,$7ff,$8ff,$8ff,$9ff	; ,massimo CHIARO
+	dc.w	$6ef,$6ff,$6ff,$7ff,$7ff,$8ff,$8ff,$9ff	; ,maximum CLEAR
 	dc.w	$5ee,$5ee,$5ee,$5de,$5de,$5de
 	dc.w	$4dd,$4dd,$4dd,$4cd,$4cd
 	dc.w	$4cc,$4cc,$4cc,$4bc
@@ -144,7 +150,7 @@ COLORTAB:
 	dc.w	$034
 	dc.w	$022
 	dc.w	$011
-	dc.w	$000			; di nuovo SCURO
+	dc.w	$000			; back to dark colour
 FINECOLORTAB:
 
 ;	Routine che stampa caratteri larghi 8x8 pixel
@@ -159,8 +165,8 @@ PRINTCHAR2:
 	SUB.B	#$20,D2		; TOGLI 32 AL VALORE ASCII DEL CARATTERE
 	MULU.W	#8,D2		; MOLTIPLICA PER 8 IL NUMERO PRECEDENTE
 	MOVE.L	D2,A2
-	ADD.L	#FONT,A2	; TROVA IL CARATTERE DESIDERATO NEL FONT...
-	MOVE.B	(A2)+,(A3)	; stampa LA LINEA 1 del carattere
+	ADD.L	#FONT,A2	; address of font + the offset we want
+	MOVE.B	(A2)+,(A3)	; print line 1 and so on of the character
 	MOVE.B	(A2)+,40(A3)	; stampa LA LINEA 2  " "
 	MOVE.B	(A2)+,40*2(A3)	; stampa LA LINEA 3  " "
 	MOVE.B	(A2)+,40*3(A3)	; stampa LA LINEA 4  " "
@@ -281,7 +287,7 @@ COLORE1:
 ;	Il FONT caratteri 8x8
 
 FONT:
-	incbin	"metal.fnt"
+	incbin	"hd1:develop/projects/dischi/SORGENTI2/metal.fnt"
 ;	incbin	"normal.fnt"
 ;	incbin	"nice.fnt"
 

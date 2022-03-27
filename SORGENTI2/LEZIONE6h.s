@@ -1,3 +1,4 @@
+;APS00000000000000000000000000000000000000000000000000000000000000000000000000000000
 
 ; Lezione6h.s	STAMPIAMO VARIE RIGHE DI TESTO * A 3 COLORI * ATTIVANDO IL
 ;		SECONDO BITPLANE, SU CUI SCRIVIAMO IL TESTO2.
@@ -34,11 +35,11 @@ Inizio:
 
 	LEA	TESTO(PC),A0	; Indirizzo del testo da stampare in a0
 	LEA	BITPLANE,A3	; Indirizzo del bitplane destinazione in a3
-	bsr.w	print		; Stampa le linee di testo sullo schermo
+	bsr.w	PRINT		; Stampa le linee di testo sullo schermo
 
 	LEA	TESTO2(PC),A0	; Indirizzo del testo da stampare in a0
 	LEA	BITPLANE2,A3	; Indirizzo del bitplane destinazione in a3
-	bsr.w	print		; Stampa le linee di testo sullo schermo
+	bsr.w	PRINT		; Stampa le linee di testo sullo schermo
 
 mouse:
 	btst	#6,$bfe001	; tasto sinistro del mouse premuto?
@@ -49,7 +50,7 @@ mouse:
 
 	move.l	4.w,a6
 	jsr	-$7e(a6)	; Enable - riabilita il Multitasking
-	move.l	gfxbase(PC),a1	; Base della libreria da chiudere
+	move.l	GfxBase(PC),a1	; Base della libreria da chiudere
 	jsr	-$19e(a6)	; Closelibrary - chiudo la graphics lib
 	rts			; USCITA DAL PROGRAMMA
 
@@ -205,7 +206,7 @@ BPLPOINTERS2:
 FONT:
 ;	incbin	"metal.fnt"	; Carattere largo
 ;	incbin	"normal.fnt"	; Simile ai caratteri kickstart 1.3
-	incbin	"nice.fnt"	; Carattere stretto
+	incbin	"hd1:develop/projects/dischi/SORGENTI2/nice.fnt"	; Carattere stretto
 
 	SECTION	MIOPLANE,BSS_C	; In CHIP
 
