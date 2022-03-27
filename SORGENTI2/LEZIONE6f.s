@@ -1,3 +1,4 @@
+;APS00000000000000000000000000000000000000000000000000000000000000000000000000000000
 
 ; Lezione6f.s		SCRITTURA "SOPRA" UNA FIGURA
 
@@ -41,7 +42,7 @@ POINTBP:
 	move.w	#0,$dff1fc		; Disattiva l'AGA
 	move.w	#$c00,$dff106		; Disattiva l'AGA
 
-	bsr.w	print		; Stampa le linee di testo sullo schermo
+	bsr.w	PRINT		; Stampa le linee di testo sullo schermo
 				; in HIRES
 mouse:
 	btst	#6,$bfe001	; tasto sinistro del mouse premuto?
@@ -52,7 +53,7 @@ mouse:
 
 	move.l	4.w,a6
 	jsr	-$7e(a6)	; Enable - riabilita il Multitasking
-	move.l	gfxbase(PC),a1	; Base della libreria da chiudere
+	move.l	GfxBase(PC),a1	; Base della libreria da chiudere
 	jsr	-$19e(a6)	; Closelibrary - chiudo la graphics lib
 	rts			; USCITA DAL PROGRAMMA
 
@@ -192,12 +193,12 @@ BPLPOINTERS2:
 ;	Il FONT caratteri 8x8
 
 FONT:
-	incbin	"metal.fnt"	; Carattere largo
+	incbin	"hd1:develop/projects/dischi/SORGENTI2/metal.fnt"	; Carattere largo
 ;	incbin	"normal.fnt"	; Simile ai caratteri kickstart 1.3
 ;	incbin	"nice.fnt"	; Carattere stretto
 
 PIC:
-	incbin	"amiga.320*256*3"	; qua carichiamo la figura in RAW,
+	incbin	"hd1:develop/projects/dischi/myimages/earth_320x256x3.raw"	; qua carichiamo la figura in RAW,
 
 	SECTION	MIOPLANE,BSS_C	; in CHIP
 
