@@ -123,7 +123,7 @@ COLTABPOINTER:			; This longword "POINTS" to COLORTAB,
 ;The table with the "pre-calculated" values of the flashing of color0
 
 COLORTAB:
-	dc.w	$000,$000,$001,$011,$011,$011,$012,$012	; inizio SCURO
+	dc.w	$000,$000,$001,$011,$011,$011,$012,$012	; starting dark
 	dc.w	$022,$022,$022,$023,$023
 	dc.w	$033,$033,$034
 	dc.w	$044,$044
@@ -137,7 +137,8 @@ COLORTAB:
 	dc.w	$4bc,$4cc,$4cc,$4cc
 	dc.w	$4cd,$4cd,$4dd,$4dd,$4dd
 	dc.w	$5de,$5de,$5ee,$5ee,$5ee,$5ee
-	dc.w	$6ef,$6ff,$6ff,$7ff,$7ff,$8ff,$8ff,$9ff	; ,massimo CHIARO
+	dc.w	$6ef,$6ff,$6ff,$7ff,$7ff,$8ff,$8ff,$9ff	
+	dc.w	$aff,$bff,$cff,$dff,$eff,$fff ; maximum is white!
 ENDCOLORTAB:
 
 
