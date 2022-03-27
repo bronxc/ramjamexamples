@@ -175,7 +175,8 @@ COPPERLIST:
 	dc.w	$90,$2cc1	; DiwStop
 	dc.w	$92,$003c	; DdfStart HIRES
 	dc.w	$94,$00d4	; DdfStop HIRES
-	dc.w	$102,0		; BplCon1
+	;SHIFT 1 BITPLANE BY 1PX
+	dc.w	$102,$10		; BplCon1
 	dc.w	$104,0		; BplCon2
 	dc.w	$108,0		; Bpl1Mod
 	dc.w	$10a,0		; Bpl2Mod
