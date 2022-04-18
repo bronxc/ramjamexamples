@@ -100,11 +100,11 @@ BPLPOINTERS:
 
 MYSPRITE:		; lunghezza 13 linee
 VSTART:
-	dc.b $f2	; Vertical sprite start position ($2c to $f2)
+	dc.b $2c+128	; Vertical sprite start position ($2c to $f2)
 HSTART:
-	dc.b $d8	; Horizontal sprite start position ($ 40 to $ d8)
+	dc.b $40+(160/2)	; Horizontal sprite start position ($ 40 to $ d8)
 VSTOP:
-	dc.b $f2+13	; $30+13=$3d	; vertical position of end of sprite
+	dc.b $2c+128+13	; $30+13=$3d	; vertical position of end of sprite
 	dc.b $00
  dc.w	%0000000000000000,%0000110000110000 ; Formato binario per modifiche
  dc.w	%0000000000000000,%0000011001100000
