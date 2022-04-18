@@ -98,11 +98,11 @@ BPLPOINTERS:
 
 ; ************ Ecco lo sprite: OVVIAMENTE deve essere in CHIP RAM! ************
 
-MYSPRITE:		; lunghezza 13 linee
+MYSPRITE:		; sprinte 13 lines tall
 VSTART:
-	dc.b $2c+128	; Vertical sprite start position ($2c to $f2)
+	dc.b $2c+128	; Vertical sprite start position (range $2c to $f2 of visible screen)
 HSTART:
-	dc.b $40+(160/2)	; Horizontal sprite start position ($ 40 to $ d8)
+	dc.b $40+(160/2)	; Horizontal sprite start position ($40 to $d8 of visible screen)
 VSTOP:
 	dc.b $2c+128+13	; $30+13=$3d	; vertical position of end of sprite
 	dc.b $00
@@ -132,8 +132,8 @@ BITPLANE:
 	end
 
 This is the first sprite we check in the course, you can easily
-define your own by changing its 2 floors, which in this listing are
-defined in binary; the color resulting from the various overlaps
+define your own by changing its 2 layers, which in this listing are
+defined in binary. the color resulting from the various overlaps
 binary can be guessed by reading the comment next to the sprite.
 The colors of sprite 0 are defined by the COLOR registers 17,18 and 19:
 
