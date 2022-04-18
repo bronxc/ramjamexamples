@@ -1,3 +1,4 @@
+;APS00000000000000000000000000000000000000000000000000000000000000000000000000000000
 
 ; Lezione6r.s	RIEPILOGO DELLA LEZIONE 6 - VARIE ROUTINES DELLA LEZIONE
 ;		COMBINATE INSIEME + ROUTINE MUSICALE
@@ -32,7 +33,7 @@ Inizio:
 	move.w	#0,$dff1fc		; Disattiva l'AGA
 	move.w	#$c00,$dff106		; Disattiva l'AGA
 
-	bsr.w	griglia3	; Fai la scacchiera su BITPLANEGRIGLIA
+	bsr.w	GRIGLIA3	; Fai la scacchiera su BITPLANEGRIGLIA
 
 	bsr.w	mt_init		; Inizializza routine musicale
 
@@ -40,7 +41,7 @@ mouse:
 	cmpi.b	#$ff,$dff006	; Linea 255?
 	bne.s	mouse
 
-	bsr.s	PrintCarattere	; Stampa un carattere alla volta
+	bsr.s	PRINTcarattere	; Stampa un carattere alla volta
 	bsr.w	MEGAScrolla	; Esegue lo scroll dello schermo largo 640
 				; pixel su uno di 320
 	bsr.w	Rimbalzo	; Fa rimbalzare il bitplane TESTO
@@ -60,7 +61,7 @@ Aspetta:
 
 	move.l	4.w,a6
 	jsr	-$7e(a6)	; Enable
-	move.l	gfxbase(PC),a1
+	move.l	GfxBase(PC),a1
 	jsr	-$19e(a6)	; Closelibrary
 	rts
 
@@ -80,7 +81,7 @@ OldCop:
 ;************************************************************************
 
 PRINTcarattere:
-	MOVE.L	PuntaTESTO(PC),A0 ; Indirizzo del testo da stampare in a0
+	MOVE.L	PuntaTesto(PC),A0 ; Indirizzo del testo da stampare in a0
 	MOVEQ	#0,D2		; Pulisci d2
 	MOVE.B	(A0)+,D2	; Prossimo carattere in d2
 	CMP.B	#$ff,d2		; Segnale di fine testo? ($FF)
@@ -88,7 +89,7 @@ PRINTcarattere:
 	TST.B	d2		; Segnale di fine riga? ($00)
 	bne.s	NonFineRiga	; Se no, non andare a capo
 
-	ADD.L	#80*7,PuntaBITPLANE	; ANDIAMO A CAPO
+	ADD.L	#80*7,PuntaBitplane	; ANDIAMO A CAPO
 	ADDQ.L	#1,PuntaTesto		; primo carattere riga dopo
 					; (saltiamo lo ZERO)
 	move.b	(a0)+,d2		; primo carattere della riga dopo
@@ -104,7 +105,7 @@ NonFineRiga:
 	MOVE.L	D2,A2
 	ADD.L	#FONT,A2	; TROVA IL CARATTERE DESIDERATO NEL FONT...
 
-	MOVE.L	PuntaBITPLANE(PC),A3 ; Indir. del bitplane destinazione in a3
+	MOVE.L	PuntaBitplane(PC),A3 ; Indir. del bitplane destinazione in a3
 
 				; STAMPIAMO IL CARATTERE LINEA PER LINEA
 	MOVE.B	(A2)+,(A3)	; stampa LA LINEA 1 del carattere
@@ -405,7 +406,7 @@ FaiALTRO3:
 	move.l	#%00000000000000001111111111111111,(a0)+
 					; lunghezza quadretto azzerato = 16
 					; quadretto ad 1 = 16 pixel
-	dbra	d1,FaiAltro3		; fai 8 linee .#.#.#.#.#.#.#.#.#.
+	dbra	d1,FaiALTRO3		; fai 8 linee .#.#.#.#.#.#.#.#.#.
 
 	DBRA	d0,FaiCoppia3		 ; fai 8 coppie di quadretti
 					 ; #.#.#.#.#.#.#.#.#.#
@@ -415,7 +416,7 @@ FaiALTRO3:
 ; *		ROUTINE CHE SUONA MUSICHE SOUNDTRACKER/PROTRACKER	   *
 ; **************************************************************************
 
-	include	"music.s"	; routine 100% funzionante su tutti gli Amiga
+	include	"hd1:develop/projects/dischi/SORGENTI2/music.s"	; routine 100% funzionante su tutti gli Amiga
 
 
 	SECTION	GRAPHIC,DATA_C
@@ -457,7 +458,7 @@ BPLPOINTERS2:
 ;	Il FONT caratteri 8x8
 
 FONT:
-	incbin	"metal.fnt"
+	incbin	"hd1:develop/projects/dischi/SORGENTI2/metal.fnt"
 ;	incbin	"normal.fnt"
 ;	incbin	"nice.fnt"
 
@@ -466,7 +467,7 @@ FONT:
 ; **************************************************************************
 
 mt_data:
-	incbin	"mod.purple-shades"
+	incbin	"hd1:develop/projects/dischi/SORGENTI2/mod.purple-shades"
 
 
 	SECTION	MIOPLANE,BSS_C

@@ -974,7 +974,7 @@ mt_NoteDelay:
 	MOVEQ	#0,D0
 	MOVE.B	n_cmdlo(A6),D0
 	AND.B	#$0F,D0
-	CMP.B	mt_Counter(PC),D0
+	CMP.B	mt_counter(PC),D0
 	BNE.w	mt_Return2
 	MOVE.W	(A6),D0
 	BEQ.w	mt_Return2
