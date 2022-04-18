@@ -1,3 +1,4 @@
+;APS00000000000000000000000000000000000000000000000000000000000000000000000000000000
 
 ; Lezione7c.s	UNO SPRITE MOSSO ORIZZONTALMENTE USANDO UNA TABELLA DI VALORI
 ;		(ossia di coordinate orizzontali) PRESTABILITI.
@@ -53,7 +54,7 @@ Aspetta:
 
 	move.l	4.w,a6
 	jsr	-$7e(a6)	; Enable
-	move.l	gfxbase(PC),a1
+	move.l	GfxBase(PC),a1
 	jsr	-$19e(a6)	; Closelibrary
 	rts
 
@@ -68,37 +69,38 @@ GfxBase:
 OldCop:
 	dc.l	0
 
-; Questa routine sposta  lo sprite agendo sul suo byte HSTART, ossia
-; il byte della sua posizione X, immettendoci delle coordinate gia' stabilite
-; nella tabella TABX. Agendo solo su HSTART, lo scorrimento e' a scatti di 2
-; pixel ogni volta e non di 1 pixel alla volta, per cui e' leggermente
-; "scattoso" specialmente nei rallentamenti. Renderemo piu' fluido lo scroll
-; orizzontale in seguito, rendendolo fedele al singolo pixel.
+; This routine moves the sprite by acting on its HSTART byte, 
+; that is the byte of its X position, by entering the coordinates 
+; already established in the TABX table. Acting only on HSTART, 
+; the scrolling is in steps of 2 pixels each time and not of 1 
+; pixel at a time, so it is slightly "jerky" especially in 
+; slowdowns. We will make the horizontal scroll more fluid later, 
+; making it faithful to the single pixel.
 
 MuoviSprite:
-	ADDQ.L	#1,TABXPOINT	 ; Fai puntare al byte successivo
-	MOVE.L	TABXPOINT(PC),A0 ; indirizzo contenuto in long TABXPOINT
-				 ; copiato in a0
-	CMP.L	#FINETABX-1,A0  ; Siamo all'ultima longword della TAB?
-	BNE.S	NOBSTART	; non ancora? allora continua
-	MOVE.L	#TABX-1,TABXPOINT ; Riparti a puntare dalla prima long
+	ADDQ.L	#1,TABXPOINT	 ; Point to the next byte 
+	MOVE.L	TABXPOINT(PC),A0 ; address contained in long TABXPOINT copied to a0
+
+	CMP.L	#FINETABX-1,A0  ; Are we at the last longword of the TAB?
+	BNE.S	NOBSTART	; not yet? then continue
+	MOVE.L	#TABX-1,TABXPOINT ; You start from the first long
 NOBSTART:
-	MOVE.b	(A0),HSTART	; copia il byte dalla tabella ad HSTART
+	MOVE.b	(A0),HSTART	; copy the byte from the table to HSTART
 	rts
 
 TABXPOINT:
-	dc.l	TABX-1		; NOTA: i valori della tabella qua sono bytes,
-				; dunque lavoriamo con un ADDQ.L #1,TABXPOINT
-				; e non #2 come per quando sono word o con #4
-				; come quando sono longword.
+	dc.l	TABX-1		; NOTE: the values of the table here 
+	;are bytes, so we work with an ADDQ.L # 1, TABXPOINT 
+	; and not # 2 as when they are word or with # 4 as 
+	;when they are longword.
 
-; Tabella con coordinate X dello sprite precalcolate.
-; Da notare che la posizione X per far entrare lo sprite nella finestra video
-; deve essere compresa tra $40 e $d8, infatti nella tabella ci sono byte non
-; piu' grandi di $d8 e non piu' piccoli di $40.
+; Table with pre-calculated sprite X coordinates.
+; Note that the X position to let the sprite enter the video 
+; window must be between $40 and $d8, in fact in the table 
+; there are bytes not bigger than $d8 and not smaller than $40.
 
 TABX:
-	dc.b	$41,$43,$46,$48,$4A,$4C,$4F,$51,$53,$55,$58,$5A ; 200 valori
+	dc.b	$41,$43,$46,$48,$4A,$4C,$4F,$51,$53,$55,$58,$5A ; 200 values
 	dc.b	$5C,$5E,$61,$63,$65,$67,$69,$6B,$6E,$70,$72,$74
 	dc.b	$76,$78,$7A,$7C,$7E,$80,$82,$84,$86,$88,$8A,$8C
 	dc.b	$8E,$90,$92,$94,$96,$97,$99,$9B,$9D,$9E,$A0,$A2
@@ -181,21 +183,19 @@ VSTOP:
  dc.w	0,0	; 2 word azzerate definiscono la fine dello sprite.
 
 
-	SECTION	PLANEVUOTO,BSS_C	; Il bitplane azzerato che usiamo,
-					; perche' per vedere gli sprite
-					; e' necessario che ci siano bitplanes
-					; abilitati
+	SECTION	PLANEVUOTO,BSS_C	; The reset bitplane we use, because to 
+	;see the sprites it is necessary that there are bitplanes enabled
 BITPLANE:
 	ds.b	40*256		; bitplane azzerato lowres
 
 	end
 
-I movimenti complessi e realistici si fanno con le tabelle!
-Provate a sostituire la tabella corrente con questa, ed invertirete il rimbalzo
-dello sprite. (Amiga+b+c+i per copiare), (amiga+b+x per cancellare un pezzo)
+Complex and realistic movements are done with tables!
+Try replacing the current table with this one, and you will reverse the bounce
+of the sprite. (Amiga + b + c + i to copy), (amiga + b + x to delete a piece)
 
 TABX:
-	dc.b	$CF,$CD,$CA,$C8,$C6,$C4,$C1,$BF,$BD,$BB,$B8,$B6 ; 200 valori
+	dc.b	$CF,$CD,$CA,$C8,$C6,$C4,$C1,$BF,$BD,$BB,$B8,$B6 ; 200 values
 	dc.b	$B4,$B2,$AF,$AD,$AB,$A9,$A7,$A5,$A2,$A0,$9E,$9C
 	dc.b	$9A,$98,$96,$94,$92,$90,$8E,$8C,$8A,$88,$86,$84
 	dc.b	$82,$80,$7E,$7C,$7A,$79,$77,$75,$73,$72,$70,$6E
@@ -215,10 +215,10 @@ TABX:
 FINETABX:
 
 
-Ora sostituitela con questa, che fa oscillare da entrambe le parti lo sprite.
+Now replace it with this one, which makes the sprite wobble both ways.
 
 TABX:
-	dc.b	$91,$93,$96,$98,$9A,$9C,$9F,$A1,$A3,$A5,$A7,$A9 ; 200 valori
+	dc.b	$91,$93,$96,$98,$9A,$9C,$9F,$A1,$A3,$A5,$A7,$A9 ; 200 values
 	dc.b	$AC,$AE,$B0,$B2,$B4,$B6,$B8,$B9,$BB,$BD,$BF,$C0
 	dc.b	$C2,$C4,$C5,$C7,$C8,$CA,$CB,$CC,$CD,$CF,$D0,$D1
 	dc.b	$D2,$D3,$D3,$D4,$D5,$D5,$D6,$D7,$D7,$D7,$D8,$D8
