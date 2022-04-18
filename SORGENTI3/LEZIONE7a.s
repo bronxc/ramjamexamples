@@ -1,3 +1,4 @@
+;APS00000000000000000000000000000000000000000000000000000000000000000000000000000000
 
 ; Lezione7a.s		VISUALIZZAZIONE DI UNO SPRITE
 
@@ -13,7 +14,7 @@ Inizio:
 	move.l	d0,a6
 	move.l	$26(a6),OldCop	; salviamo la vecchia COP
 
-;	Puntiamo la PIC "vuota"
+;	Setup 1 bitplane
 
 	MOVE.L	#BITPLANE,d0	; dove puntare
 	LEA	BPLPOINTERS,A1	; puntatori COP
@@ -21,9 +22,9 @@ Inizio:
 	swap	d0
 	move.w	d0,2(a1)
 
-;	Puntiamo lo sprite
+;	Setup 1 sprite pointer
 
-	MOVE.L	#MIOSPRITE,d0		; indirizzo dello sprite in d0
+	MOVE.L	#MYSPRITE,d0		; indirizzo dello sprite in d0
 	LEA	SpritePointers,a1	; Puntatori in copperlist
 	move.w	d0,6(a1)
 	swap	d0
@@ -43,7 +44,7 @@ mouse:
 
 	move.l	4.w,a6
 	jsr	-$7e(a6)	; Enable
-	move.l	gfxbase(PC),a1
+	move.l	GfxBase(PC),a1
 	jsr	-$19e(a6)	; Closelibrary
 	rts
 
@@ -87,7 +88,7 @@ BPLPOINTERS:
 	dc.w	$182,$123	; color1	; colore 1 del bitplane, che
 						; in questo caso e' vuoto,
 						; per cui non compare.
-
+	; sprite colours					
 	dc.w	$1A2,$F00	; color17, ossia COLOR1 dello sprite0 - ROSSO
 	dc.w	$1A4,$0F0	; color18, ossia COLOR2 dello sprite0 - VERDE
 	dc.w	$1A6,$FF0	; color19, ossia COLOR3 dello sprite0 - GIALLO
@@ -97,13 +98,13 @@ BPLPOINTERS:
 
 ; ************ Ecco lo sprite: OVVIAMENTE deve essere in CHIP RAM! ************
 
-MIOSPRITE:		; lunghezza 13 linee
+MYSPRITE:		; lunghezza 13 linee
 VSTART:
-	dc.b $30	; Posizione verticale di inizio sprite (da $2c a $f2)
+	dc.b $f2	; Vertical sprite start position ($2c to $f2)
 HSTART:
-	dc.b $90	; Posizione orizzontale di inizio sprite (da $40 a $d8)
+	dc.b $d8	; Horizontal sprite start position ($ 40 to $ d8)
 VSTOP:
-	dc.b $3d	; $30+13=$3d	; posizione verticale di fine sprite
+	dc.b $f2+13	; $30+13=$3d	; vertical position of end of sprite
 	dc.b $00
  dc.w	%0000000000000000,%0000110000110000 ; Formato binario per modifiche
  dc.w	%0000000000000000,%0000011001100000
@@ -121,20 +122,20 @@ VSTOP:
  dc.w	0,0	; 2 word azzerate definiscono la fine dello sprite.
 
 
-	SECTION	PLANEVUOTO,BSS_C	; Il bitplane azzerato che usiamo,
-					; perche' per vedere gli sprite
-					; e' necessario che ci siano bitplanes
-					; abilitati
+	SECTION	PLANEVUOTO,BSS_C	; The reset bitplane we use, 
+	; because to see the sprites it is necessary 
+	; that there are bitplanes enabled
+
 BITPLANE:
-	ds.b	40*256		; bitplane azzerato lowres
+	ds.b	40*256		; bitplane reset lowres
 
 	end
 
-Questo e' il primo sprite che controlliamo nel corso, potete facilmente
-definirne uno vostro cambiando i suoi 2 piani , che in questo listato sono
-definiti in binario; il colore risultante dalle varie sovrapposizioni
-binarie puo' essere intuito leggendo il commento a fianco dello sprite.
-I colori dello sprite 0 sono definiti dai registri del COLOR 17,18 e 19:
+This is the first sprite we check in the course, you can easily
+define your own by changing its 2 floors, which in this listing are
+defined in binary; the color resulting from the various overlaps
+binary can be guessed by reading the comment next to the sprite.
+The colors of sprite 0 are defined by the COLOR registers 17,18 and 19:
 
 	dc.w	$1A2,$F00	; color17, ossia COLOR1 dello sprite0 - ROSSO
 	dc.w	$1A4,$0F0	; color18, ossia COLOR2 dello sprite0 - VERDE
@@ -142,59 +143,59 @@ I colori dello sprite 0 sono definiti dai registri del COLOR 17,18 e 19:
 
 Per cambiare la posizione dello sprite, agite sui suoi primi byte:
 
-MIOSPRITE:		; lunghezza 13 linee
+MYSPRITE:		; length 13 lines
 VSTART:
-	dc.b $30	; Posizione verticale di inizio sprite (da $2c a $f2)
+	dc.b $2c	; Vertical sprite start position ($2c to $f2)
 HSTART:
-	dc.b $90	; Posizione orizzontale di inizio sprite (da $40 a $d8)
+	dc.b $90	; Horizontal sprite start position ($40 to $d8)
 VSTOP:
-	dc.b $3d	; $30+13=$3d	; posizione verticale di fine sprite
+	dc.b $3d	; $30+13=$3d	; vertical position of end sprite
 	dc.b $00
 
 Basta ricordarsi queste due cose:
 
-1) L'angolo in alto a sinistra dello schermo non e' la posizione $00,$00
-infatti lo schermo con l'overscan puo' essere piu' largo; nel caso dello
-schermo di larghezza normale la posizione orizzontale iniziale (HSTART) puo'
-andare da $40 a $d8, altrimenti lo sprite viene "tagliato" o va proprio fuori
-dallo schermo visibile. Allo stesso modo la posizione verticale iniziale, ossia
-il VSTART, va selezionato a partire da $2c, cioe' dall'inizio della finestra
-video definita in DIWSTART (che qua e' $2c81). 
-Per posizionare nello schermo 320x256 lo sprite, per esempio alla cordinata
-centrale 160,128 bisogna tener conto che la prima coordinata in alto a sinistra
-e' $40,$2c anziche' 0,0 per cui bisogna sommare $40 alla coordinata X e $2c
-alla coordinata Y.
-Infatti $40+160, $2c+128, corrispondono alla coordinata 160,128 di uno schermo
-320x256 non overscan.
-Non avendo ancora il controllo della posizione orizzontale a livello di 1
-pixel, ma ogni 2 pixel, dobbiamo sommare non 160, ma 160/2 all'inizio per
-individuare il centro dello schermo:
+1) The top left corner of the screen is not the $00, $00 position
+in fact the screen with the overscan can be wider; in the case of
+normal width screen the initial horizontal position (HSTART) can
+go from $40 to $d8, otherwise the sprite gets "cut" or goes right out
+from the visible screen. Similarly the initial vertical position, ie
+the VSTART, must be selected starting from $2c, that is, from the beginning of the window
+video defined in DIWSTART (which here is $2c81).
+To position the sprite on the 320x256 screen, for example at the coordinate
+central 160,128 it is necessary to take into account that the first coordinate in the upper left
+is $40, $2c instead of 0.0 so you have to add $ 40 to the X coordinate and $2c
+to the Y coordinate.
+In fact, $40 + 160, $2c + 128, correspond to the coordinate 160,128 of a screen
+320x256 not overscan.
+Not yet having control of the horizontal position at level 1
+pixels, but every 2 pixels, we need to add up not 160, but 160/2 at the beginning for
+locate the center of the screen:
 
 HSTART:
-	dc.b $40+(160/2)	; posizionato al centro dello schermo
+	dc.b $40+(160/2)	; located in the center of the screen
 
-Cosi' per altre coordinate orizzontali, ad esempio la posizione 50:
+So for other horizontal coordinates, for example position 50:
 
 	dc.b $40+(50/2)
 
-Piu' avanti vedremo come posizionare orizzontalmente 1 pixel alla volta.
+Later we will see how to position horizontally 1 pixel at a time.
 
-2) La posizione orizzontale si puo' variare da sola per spostare a destra e a
-sinistra uno sprite, mentre se si intende spostare lo sprite in alto o in basso
-e' necessario ogni volta agire su due byte, ossia su VSTART e VSTOP, cioe' la
-posizione verticale di inizio e di fine sprite. Infatti, mentre la larghezza di
-uno sprite e' sempre 16, per cui determinata la posizione orizzontale di inizio
-la posizione di fine e' sempre 16 pixel piu' a destra, per quanto riguarda la
-lunghezza in verticale, essendo a piacere, e' necessario definirla comunicando
-la posizione di inizio e di fine ogni volta, per cui se vogliamo spostare lo
-sprite in alto dobbiamo sottrarre 1 sia a VSTART che a VSTOP, se vogliamo
-spostarlo in basso e' necessario invece aggiungere 1 ad entrambi.
-Se per esempio si vuole modificare il VSTART in $55, per determinare VSTOP
-occorrera' sommare la lunghezza dello sprite (questo e' alto 13 linee) a
-VSTART, dunque $55+13=$62.
+2) The horizontal position can be varied by itself to move to the right and a
+left a sprite, while if you intend to move the sprite up or down
+it is necessary every time to act on two bytes, ie on VSTART and VSTOP, ie the
+vertical position of start and end sprite. In fact, while the width of
+a sprite is always 16, so the horizontal starting position is determined
+the end position is always 16 pixels further to the right, as far as the
+vertical length, being at will, it is necessary to define it by communicating
+the start and end position each time, so if we want to move it
+sprite at the top we have to subtract 1 from both VSTART and VSTOP if we want
+move it down instead you need to add 1 to both.
+For example if you want to change the VSTART to $55, to determine VSTOP
+it will be necessary to add the length of the sprite (this is 13 lines high) a
+VSTART, so $55 + 13 = $62.
 
-Spostate lo sprite in varie posizioni dello schermo per verificare se avete
-capito o se avete solo l'illusione di aver capito.
-Non dimenticatevi che HSTART fa spostare di 2 pixel ogni volta e non di 1
-pixel come potrebbe sembrare.
+Move the sprite to various positions on the screen to check if you have
+understood or if you only have the illusion of having understood.
+Don't forget that HSTART moves 2 pixels each time and not 1
+pixels as it might seem.
 
