@@ -1,3 +1,4 @@
+;APS00000000000000000000000000000000000000000000000000000000000000000000000000000000
 
 ; Lezione6q.s	Alcune "scacchiere" screate sullo schermo
 ;		- ALTERNARE TASTO SINISTRO-DESTRO-SINISTRO del mouse per
@@ -37,7 +38,7 @@ mouse:
 
 mouse2:
 	btst	#2,$dff016	; tasto destro?
-	bne.s	Mouse2
+	bne.s	mouse2
 
 	bsr.w	GRIGLIA3
 
@@ -49,7 +50,7 @@ mouse3:
 
 mouse4:
 	btst	#2,$dff016	; tasto destro?
-	bne.s	Mouse4
+	bne.s	mouse4
 
 
 	move.l	OldCop(PC),$dff080	; Puntiamo la cop di sistema
@@ -57,7 +58,7 @@ mouse4:
 
 	move.l	4.w,a6
 	jsr	-$7e(a6)	; Enable
-	move.l	gfxbase(PC),a1
+	move.l	GfxBase(PC),a1
 	jsr	-$19e(a6)	; Closelibrary
 	rts
 
@@ -91,7 +92,7 @@ FaiUNO:
 
 	move.l	#(20*8)-1,d1	; 20 words per riempire 1 linea
 				; 8 linee da riempire
-FaiALTRO:
+FaiAltro:
 	move.w	#%0000000011111111,(a0)+ ; lunghezza quadretto azzerato = 8
 					 ; quadretto ad 1 = 8 pixel
 	dbra	d1,FaiAltro		 ; fai 8 linee .#.#.#.#.#.#.#.#.#.
@@ -117,7 +118,7 @@ FaiUNO2:
 
 	move.l	#(40*4)-1,d1	; 40 bytes per riempire 1 linea
 				; 4 linee da riempire
-FaiALTRO2:
+FaiAltro2:
 	move.b	#%00001111,(a0)+ 	; lunghezza quadretto azzerato=4 pixel
 					; quadretto ad 1 = 4 pixel
 	dbra	d1,FaiAltro2		; fai 8 linee .#.#.#.#.#.#.#.#.#.
@@ -144,7 +145,7 @@ FaiUNO3:
 
 	move.l	#(10*16)-1,d1	; 10 lingwords per riempire 1 linea
 				; 16 linee da riempire
-FaiALTRO3:
+FaiAltro3:
 	move.l	#%00000000000000001111111111111111,(a0)+
 					; lunghezza quadretto azzerato = 16
 					; quadretto ad 1 = 16 pixel
@@ -172,7 +173,7 @@ FaiUNO4:
 
 	move.l	#(10*16)-1,d1	; 10 lingwords per riempire 1 linea
 				; 16 linee da riempire
-FaiALTRO4:
+FaiAltro4:
 	move.l	#%00000000000011111000000000011111,(a0)+
 					; lunghezza quadretto azzerato = 12
 					; quadretto ad 1 = 4 pixel
