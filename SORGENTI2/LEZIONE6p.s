@@ -1,3 +1,4 @@
+;APS00000000000000000000000000000000000000000000000000000000000000000000000000000000
 
 ; Lezione6p.s	STAMPIAMO LO SCHERMO UN CARATTERE OGNI FOTOGRAMMA
 
@@ -29,7 +30,7 @@ mouse:
 	cmpi.b	#$ff,$dff006	; Linea 255?
 	bne.s	mouse
 
-	bsr.s	PrintCarattere	; Stampa un carattere alla volta
+	bsr.s	PRINTcarattere	; Stampa un carattere alla volta
 
 Aspetta:
 	cmpi.b	#$ff,$dff006	; linea 255?
@@ -43,7 +44,7 @@ Aspetta:
 
 	move.l	4.w,a6
 	jsr	-$7e(a6)	; Enable
-	move.l	gfxbase(PC),a1
+	move.l	GfxBase(PC),a1
 	jsr	-$19e(a6)	; Closelibrary
 	rts
 
@@ -98,7 +99,7 @@ OldCop:
 ;	e $80, ossia tra i byte dedicati ai caratteri.
 
 PRINTcarattere:
-	MOVE.L	PuntaTESTO(PC),A0 ; Indirizzo del testo da stampare in a0
+	MOVE.L	PuntaTesto(PC),A0 ; Indirizzo del testo da stampare in a0
 	MOVEQ	#0,D2		; Pulisci d2
 	MOVE.B	(A0)+,D2	; Prossimo carattere in d2
 	CMP.B	#$ff,d2		; Segnale di fine testo? ($FF)
@@ -106,7 +107,7 @@ PRINTcarattere:
 	TST.B	d2		; Segnale di fine riga? ($00)
 	bne.s	NonFineRiga	; Se no, non andare a capo
 
-	ADD.L	#40*7,PuntaBITPLANE	; ANDIAMO A CAPO
+	ADD.L	#40*7,PuntaBitplane	; ANDIAMO A CAPO
 	ADDQ.L	#1,PuntaTesto		; primo carattere riga dopo
 					; (saltiamo lo ZERO)
 	move.b	(a0)+,d2		; primo carattere della riga dopo
@@ -122,7 +123,7 @@ NonFineRiga:
 	MOVE.L	D2,A2
 	ADD.L	#FONT,A2	; TROVA IL CARATTERE DESIDERATO NEL FONT...
 
-	MOVE.L	PuntaBITPLANE(PC),A3 ; Indir. del bitplane destinazione in a3
+	MOVE.L	PuntaBitplane(PC),A3 ; Indir. del bitplane destinazione in a3
 
 				; STAMPIAMO IL CARATTERE LINEA PER LINEA
 	MOVE.B	(A2)+,(A3)	; stampa LA LINEA 1 del carattere
@@ -209,7 +210,7 @@ BPLPOINTERS:
 ;	Il FONT caratteri 8x8
 
 FONT:
-	incbin	"metal.fnt"
+	incbin	"hd1:develop/projects/dischi/SORGENTI2/nice.fnt"
 ;	incbin	"normal.fnt"
 ;	incbin	"nice.fnt"
 

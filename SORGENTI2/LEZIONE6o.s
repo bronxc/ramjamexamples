@@ -1,3 +1,4 @@
+;APS00000000000000000000000000000000000000000000000000000000000000000000000000000000
 
 ; Lezione6o.s		SCORRIMENTO A DESTRA E SINISTRA DI UN PLAYFIELD PIU'
 ;			GRANDE DELLO SCHERMO (qua largo 640 pixel)
@@ -29,7 +30,7 @@ Inizio:
 	swap	d0		; scambia le 2 word di d0 (es: 1234 > 3412)
 	move.w	d0,2(a1)	; copia la word ALTA dell'indirizzo del plane
 
-	bsr.w	print		; Stampa le linee di testo sul playfield
+	bsr.w	PRINT		; Stampa le linee di testo sul playfield
 				; largo 640 pixel (80 byte per linea)
 
 	move.l	#COPPERLIST,$dff080	; nostra COP
@@ -59,7 +60,7 @@ Aspetta:
 
 	move.l	4.w,a6
 	jsr	-$7e(a6)	; Enable
-	move.l	gfxbase(PC),a1
+	move.l	GfxBase(PC),a1
 	jsr	-$19e(a6)	; Closelibrary
 	rts
 
@@ -334,7 +335,7 @@ BPLPOINTERS:
 FONT:
 ;	incbin	"metal.fnt"
 ;	incbin	"normal.fnt"
-	incbin	"nice.fnt"
+	incbin	"hd1:develop/projects/dischi/SORGENTI2/nice.fnt"
 
 
 	SECTION	MIOPLANE,BSS_C
