@@ -1,10 +1,11 @@
+;APS00000000000000000000000000000000000000000000000000000000000000000000000000000000
 
 ; Lezione7b.s	VISUALIZZAZIONE DI UNO SPRITE - TASTO DESTRO PER MUOVERLO
 
 
 	SECTION	CiriCop,CODE
 
-Inizio:
+Init:
 	move.l	4.w,a6		; Execbase
 	jsr	-$78(a6)	; Disable
 	lea	GfxName(PC),a1	; Nome lib
@@ -13,7 +14,7 @@ Inizio:
 	move.l	d0,a6
 	move.l	$26(a6),OldCop	; salviamo la vecchia COP
 
-;	Puntiamo la PIC "vuota"
+;	Setup 1 empty biplane
 
 	MOVE.L	#BITPLANE,d0	; dove puntare
 	LEA	BPLPOINTERS,A1	; puntatori COP
@@ -21,9 +22,9 @@ Inizio:
 	swap	d0
 	move.w	d0,2(a1)
 
-;	Puntiamo lo sprite
+;	Setup 1 sprite
 
-	MOVE.L	#MIOSPRITE,d0		; indirizzo dello sprite in d0
+	MOVE.L	#MYSPRITE,d0		; indirizzo dello sprite in d0
 	LEA	SpritePointers,a1	; Puntatori in copperlist
 	move.w	d0,6(a1)
 	swap	d0
@@ -38,16 +39,16 @@ mouse:
 	cmpi.b	#$ff,$dff006	; Linea 255?
 	bne.s	mouse
 
-	btst	#2,$dff016	; Tasto destro del mouse premuto?
-	bne.s	Aspetta		; se no, salta la routine che muove lo sprite
+	btst	#2,$dff016	; Right mouse button pressed?
+	bne.s	Wait		; se no, salta la routine che muove lo sprite
 
-	bsr.s	MuoviSprite	; Muovi lo sprite 0 a destra
+	bsr.s	MoveSprite	; Muovi lo sprite 0 a destra
 
-Aspetta:
+Wait:
 	cmpi.b	#$ff,$dff006	; linea 255?
-	beq.s	Aspetta
+	beq.s	Wait
 
-	btst	#6,$bfe001	; mouse premuto?
+	btst	#6,$bfe001	; left mouse pressed?
 	bne.s	mouse
 
 	move.l	OldCop(PC),$dff080	; Puntiamo la cop di sistema
@@ -55,7 +56,7 @@ Aspetta:
 
 	move.l	4.w,a6
 	jsr	-$7e(a6)	; Enable
-	move.l	gfxbase(PC),a1
+	move.l	GfxBase(PC),a1
 	jsr	-$19e(a6)	; Closelibrary
 	rts
 
@@ -74,8 +75,13 @@ OldCop:
 ; il byte della sua posizione X. Da notare che scorre di 2 pixel ogni volta
 
 
-MuoviSprite:
-	addq.b	#1,HSTART	; (come scrivere addq.b #1,MIOSPRITE+1)
+MoveSprite:
+	;addq.b	#1,HSTART	; (come scrivere addq.b #1,MYSPRITE+1)
+
+	ADDQ.B	#1,HSTART	;\
+	ADDQ.B	#8,VSTART	; \ move diagonally bottom-right
+	ADDQ.B	#8,VSTOP	; /
+
 	rts
 
 
@@ -117,7 +123,7 @@ BPLPOINTERS:
 
 ; ************ Ecco lo sprite: OVVIAMENTE deve essere in CHIP RAM! ************
 
-MIOSPRITE:		; lunghezza 13 linee
+MYSPRITE:		; lunghezza 13 linee
 VSTART:
 	dc.b $30	; Posizione verticale di inizio sprite (da $2c a $f2)
 HSTART:
@@ -150,53 +156,51 @@ BITPLANE:
 
 	end
 
-Si puo' facilmente muovere lo sprite, provate con queste modifiche per la
-routine MuoviSprite:
+You can easily move the sprite, try these changes for the
+MoveSprite routine:
 
 
-	subq.b	#1,HSTART	; Spostamento a sinistra dello sprite
-
-*
-
-	ADDQ.B	#1,VSTART	; \ sposta lo sprite in basso
-	ADDQ.B	#1,VSTOP	; / (bisogna agire sia su VSTART che su VSTOP!)
+	subq.b	#1,HSTART	; Move the sprite to the left
 
 *
-	SUBQ.B	#1,VSTART	; \ sposta lo sprite in alto
-	SUBQ.B	#1,VSTOP	; / (bisogna agire sia su VSTART che su VSTOP!)
+
+	ADDQ.B	#1,VSTART	; \ move the sprite down
+	ADDQ.B	#1,VSTOP	; / (you have to act on both VSTART and VSTOP!)
+
+*
+	SUBQ.B	#1,VSTART	; \ move the sprite up
+	SUBQ.B	#1,VSTOP	; / (you have to act on both VSTART and VSTOP!)
 
 *
 
 	ADDQ.B	#1,HSTART	;\
-	ADDQ.B	#1,VSTART	; \ sposta in diagonale basso-destra
+	ADDQ.B	#1,VSTART	; \ move diagonally bottom-right
 	ADDQ.B	#1,VSTOP	; /
 
 *
 
 	SUBQ.B	#1,HSTART	;\
-	ADDQ.B	#1,VSTART	; \ sposta  in diagonale basso-sinistra
+	ADDQ.B	#1,VSTART	; \ move diagonally bottom-left
 	ADDQ.B	#1,VSTOP	; /
 
 *
 
 	ADDQ.B	#1,HSTART	;\
-	SUBQ.B	#1,VSTART	; \ sposta in diagonale alto-destra
+	SUBQ.B	#1,VSTART	; \ move diagonally up-right
 	SUBQ.B	#1,VSTOP	; /
 
 *
 
 	SUBQ.B	#1,HSTART	;\
-	SUBQ.B	#1,VSTART	; \ sposta  in diagonale alto-sinistra
+	SUBQ.B	#1,VSTART	; \ move diagonally up-left
 	SUBQ.B	#1,VSTOP	; /
 
 *
 
-Provate poi a cambiare il valore aggiunto/sottratto per fare traiettorie piu'
-insolite.
+; Then try to change the added / subtracted value to make more unusual trajectories.
 
 	SUBQ.B	#3,HSTART	;\
-	SUBQ.B	#1,VSTART	; \ sposta  in diagonale alto-molto sinistra
+	SUBQ.B	#1,VSTART	; \ move diagonally top-very left
 	SUBQ.B	#1,VSTOP	; /
 
-Eccetera Eccetera.
 
