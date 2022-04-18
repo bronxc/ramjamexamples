@@ -1,3 +1,4 @@
+;APS00000000000000000000000000000000000000000000000000000000000000000000000000000000
 
 ; Lezione7d.s	UNO SPRITE MOSSO VERTICALMENTE USANDO UNA TABELLA DI VALORI
 ;		(ossia di coordinate verticali) PRESTABILITI.
@@ -54,7 +55,7 @@ Aspetta:
 
 	move.l	4.w,a6
 	jsr	-$7e(a6)	; Enable
-	move.l	gfxbase(PC),a1
+	move.l	GfxBase(PC),a1
 	jsr	-$19e(a6)	; Closelibrary
 	rts
 
