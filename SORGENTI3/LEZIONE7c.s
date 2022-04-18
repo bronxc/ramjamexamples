@@ -86,6 +86,12 @@ MuoviSprite:
 	MOVE.L	#TABX-1,TABXPOINT ; You start from the first long
 NOBSTART:
 	MOVE.b	(A0),HSTART	; copy the byte from the table to HSTART
+	; NOTE: this MOVES/changes the X value rather than adding a certain
+	; amount as the table is precalcualted X values. For a jump action from
+	; an existing sprite position on screen the table would need to hold
+	; appropriate values to ADD to the current X position each time ie 
+	; move the sprite in relation to current position to give impression
+	; of velocity!
 	rts
 
 TABXPOINT:

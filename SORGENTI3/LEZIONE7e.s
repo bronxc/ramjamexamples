@@ -1,3 +1,4 @@
+;APS00000000000000000000000000000000000000000000000000000000000000000000000000000000
 
 ; Lezione7e.s	UNO SPRITE MOSSO SIA VERTICALMENTE CHE ORIZZONTALMENTE
 ; 		USANDO DUE TABELLE DI VALORI (ossia di coordinate verticali
@@ -56,7 +57,7 @@ Aspetta:
 
 	move.l	4.w,a6
 	jsr	-$7e(a6)	; Enable
-	move.l	gfxbase(PC),a1
+	move.l	GfxBase(PC),a1
 	jsr	-$19e(a6)	; Closelibrary
 	rts
 
@@ -71,21 +72,23 @@ GfxBase:
 OldCop:
 	dc.l	0
 
-; In questo esempio sono state incluse le routine e le tabelle dei due esempi
-; precedenti, dunque agiamo sia sulla x che sulla y dello sprite.
-; Essendo le due tabelle X ed Y entrambe formate da 200 coordinate, si
-; verifica sempre la stessa "accoppiata" di coordinate:
-; valore 1 della tabella X + valore 1 della tabella Y
-; valore 2 della tabella X + valore 2 della tabella Y
-; valore 3 della tabella X + valore 3 della tabella Y
+; In this example we have included the routines and tables of the 
+; two previous examples, so we act on both the x and y of the sprite.
+; Since the two tables X and Y are both made up of 200 coordinates, yes
+; always checks the same "pair" of coordinates:
+; value 1 of table X + value 1 of table Y
+; value 2 of table X + value 2 of table Y
+; value 3 of table X + value 3 of table Y
 ; ....
-; Dunque il risultato e' che lo sprite ondeggia in diagonale, come abbiamo gia'
-; visto mettendo insieme addq.b #1,HSTART e addq.b #1,VSTART/VSTOP.
+; So the result is that the sprite waves diagonally, as we have 
+; already seen by putting together addq.b # 1, 
+; HSTART and addq.b # 1, VSTART / VSTOP.
 
 
-; Questa routine sposta  lo sprite agendo sul suo byte HSTART, ossia
-; il byte della sua posizione X, immettendoci delle coordinate gia' stabilite
-; nella tabella TABX. (scatti di 2 pixel minimo e non 1 pixel)
+; This routine moves the sprite by acting on its HSTART byte, 
+; that is the byte of its X position, by entering the coordinates 
+; already established in the TABX table. (shots of 2 
+; pixels minimum and not 1 pixel)
 
 MuoviSpriteX:
 	ADDQ.L	#1,TABXPOINT	 ; Fai puntare al byte successivo
@@ -104,10 +107,10 @@ TABXPOINT:
 				; e non #2 come per quando sono word o con #4
 				; come quando sono longword.
 
-; Tabella con coordinate X dello sprite precalcolate.
-; Da notare che la posizione X per far entrare lo sprite nella finestra video
-; deve essere compresa tra $40 e $d8, infatti nella tabella ci sono byte non
-; piu' grandi di $d8 e non piu' piccoli di $40.
+; Table with pre-calculated sprite X coordinates.
+; Note that the X position to let the sprite enter 
+; the video window must be between $ 40 and $d8, in fact in 
+; the table there are bytes not bigger than $d8 and not smaller than $40.
 
 TABX:
 	dc.b	$91,$93,$96,$98,$9A,$9C,$9F,$A1,$A3,$A5,$A7,$A9 ; 200 valori
@@ -133,9 +136,10 @@ FINETABX:
 	even	; pareggia l'indirizzo seguente
 
 
-; Questa routine sposta in alto e in basso lo sprite agendo sui suoi byte
-; VSTART e VSTOP, ossia i byte della sua posizione Y di inizio e fine,
-; immettendoci delle coordinate gia' stabilite nella tabella TABY
+; This routine moves the sprite up and down by acting 
+; on its VSTART and VSTOP bytes, i.e. the bytes of its Y 
+; position of start and end, by entering the coordinates already 
+; established in the TABY table
 
 MuoviSpriteY:
 	ADDQ.L	#1,TABYPOINT	 ; Fai puntare al byte successivo
@@ -879,8 +883,8 @@ Per le coordinate X, che devono andare da $40 a $d8 al massimo
 
 --	--	--	--	--	--	--	--	--	--
 
-Dato che avete tutte queste tabelle XX ed YY pronte provate a sostituirle a
-quelle del listato, per creare molti effetti diversi, e provate a farne altre
-con 100, 120, 300 valori anziche' 200 ( AMOUNT> 100), per creare infinite
-traiettorie dello sprite.
+Since you have all these XX and YY tables ready, try replacing them with
+those in the listing, to create many different effects, and try making others
+with 100, 120, 300 values instead of 200 (AMOUNT> 100), to create infinite
+trajectories of the sprite.
 
