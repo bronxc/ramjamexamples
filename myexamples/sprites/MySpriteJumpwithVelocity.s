@@ -1,4 +1,5 @@
-; Sprite test
+; Sprite test - this is not working, just me having a 
+; play about with a sprite getting ahead of myself
 
 	SECTION CODE,CODE
 Init:
