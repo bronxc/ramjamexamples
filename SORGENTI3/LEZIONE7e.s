@@ -1,9 +1,9 @@
 ;APS00000000000000000000000000000000000000000000000000000000000000000000000000000000
 
-; Lezione7e.s	UNO SPRITE MOSSO SIA VERTICALMENTE CHE ORIZZONTALMENTE
-; 		USANDO DUE TABELLE DI VALORI (ossia di coordinate verticali
-;		e orizzontali) PRESTABILITI.
-;		Nella nota finale viene spiegato come farsi proprie tabelle.
+; Lesson 7e.s A SPRIT MOVED BOTH VERTICALLY AND HORIZONTALLY
+; USING TWO TABLES OF VALUES (i.e. vertical coordinates
+; and horizontal) PRESET.
+; The final note explains how to make your own tables.
 
 
 	SECTION	CiriCop,CODE
@@ -91,25 +91,25 @@ OldCop:
 ; pixels minimum and not 1 pixel)
 
 MuoviSpriteX:
-	ADDQ.L	#1,TABXPOINT	 ; Fai puntare al byte successivo
-	MOVE.L	TABXPOINT(PC),A0 ; indirizzo contenuto in long TABXPOINT
+	ADDQ.L	#1,TABXPOINT	 ; Point to the next byte
+	MOVE.L	TABXPOINT(PC),A0 ; contained in long TABXPOINT
 				 ; copiato in a0
-	CMP.L	#FINETABX-1,A0  ; Siamo all'ultima longword della TAB?
-	BNE.S	NOBSTARTX	; non ancora? allora continua
-	MOVE.L	#TABX-1,TABXPOINT ; Riparti a puntare dal primo byte-1
+	CMP.L	#FINETABX-1,A0  ; Are we at the last longword of the TAB?
+	BNE.S	NOBSTARTX	; not yet? then continue
+	MOVE.L	#TABX-1,TABXPOINT ; You start again from the first byte-1
 NOBSTARTX:
 	MOVE.b	(A0),HSTART	; copia il byte dalla tabella ad HSTART
 	rts
 
 TABXPOINT:
-	dc.l	TABX-1		; NOTA: i valori della tabella qua sono bytes,
-				; dunque lavoriamo con un ADDQ.L #1,TABXPOINT
-				; e non #2 come per quando sono word o con #4
-				; come quando sono longword.
+	dc.l	TABX-1		; NOTE: the values of the table here are bytes,
+; so we work with an ADDQ.L #1, TABXPOINT
+; and not #2 as for when they are word or with #4
+; like when I'm longword.
 
 ; Table with pre-calculated sprite X coordinates.
 ; Note that the X position to let the sprite enter 
-; the video window must be between $ 40 and $d8, in fact in 
+; the video window must be between $40 and $d8, in fact in 
 ; the table there are bytes not bigger than $d8 and not smaller than $40.
 
 TABX:
@@ -158,19 +158,19 @@ NOBSTARTY:
 	rts
 
 TABYPOINT:
-	dc.l	TABY-1		; NOTA: i valori della tabella qua sono bytes,
-				; dunque lavoriamo con un ADDQ.L #1,TABYPOINT
-				; e non #2 come per quando sono word o con #4
-				; come quando sono longword.
+	dc.l	TABY-1		; NOTE: the values of the table here are bytes,
+; so we work with an ADDQ.L # 1, TABYPOINT
+; and not # 2 as for when they are word or with # 4
+; like when I'm longword.
 
-; Tabella con coordinate Y dello sprite precalcolate.
-; Da notare che la posizione Y per far entrare lo sprite nella finestra video
-; deve essere compresa tra $2c e $f2, infatti nella tabella ci sono byte non
-; piu' grandi di $f2 e non piu' piccoli di $2c.
+; Table with pre-computed Y coordinates of the sprite. 
+; Note that the position Y to let the sprite enter the video 
+; window must be between $2c and $f2, in fact in the table 
+; there are bytes not bigger than $f2 and not smaller than $2c.
 
 TABY:
-	dc.b	$8E,$91,$94,$97,$9A,$9D,$A0,$A3,$A6,$A9,$AC,$AF ; ondeggio
-	dc.b	$B2,$B4,$B7,$BA,$BD,$BF,$C2,$C5,$C7,$CA,$CC,$CE ; 200 valori
+	dc.b	$8E,$91,$94,$97,$9A,$9D,$A0,$A3,$A6,$A9,$AC,$AF ; sway
+	dc.b	$B2,$B4,$B7,$BA,$BD,$BF,$C2,$C5,$C7,$CA,$CC,$CE ; 200 values
 	dc.b	$D1,$D3,$D5,$D7,$D9,$DB,$DD,$DF,$E0,$E2,$E3,$E5
 	dc.b	$E6,$E7,$E9,$EA,$EB,$EC,$EC,$ED,$EE,$EE,$EF,$EF
 	dc.b	$EF,$EF,$F0,$EF,$EF,$EF,$EF,$EE,$EE,$ED,$EC,$EC
@@ -260,32 +260,32 @@ BITPLANE:
 
 	end
 
-Fino ad adesso abbiamo fatto andare lo sprite in orizzontale, in verticale, e
-in diagonale, ma mai gli abbiamo fatto fare curve. Ebbene basta modificare
-questo listato per fargli fare tutte le curve possibili, infatti possiamo
-variare le sue coordinate X ed Y tramite due tabelle. In questo listato sono
-riportate due tabelle di uguale lunghezza (200 valori) per cui ogni volta
-avvengono sempre le stesse "accoppiate" di coordinate X ed Y:
+So far we have been running the sprite horizontally, vertically, and
+diagonally, but we never made it make turns. Well just edit
+this listing to make him make all possible curves, in fact we can
+vary its X and Y coordinates using two tables. In this listing they are
+reported two tables of equal length (200 values) so each time
+the same "coupled" X and Y coordinates always occur:
 
- valore 1 della tabella X + valore 1 della tabella Y
- valore 2 della tabella X + valore 2 della tabella Y
- valore 3 della tabella X + valore 3 della tabella Y
+	value 1 of table X + value 1 of table Y
+  value 2 of table X + value 2 of table Y
+  value 3 of table X + value 3 of table Y
  ....
 
-Dunque il risultato e' sempre la stessa oscillazione in diagonale.
-Se pero' una delle due tabelle fosse piu' corta, questa ripartirebbe prima da
-capo dell'altra creando nuove oscillazioni, e ogni volta le due tabelle
-farebbero delle accoppiate XX ed YY diverse, ad esempio:
+Therefore the result is always the same diagonal oscillation.
+However, if one of the two tables were shorter, it would start from first
+head of the other creating new swings, and each time the two tables
+would make XX and YY couplings different, for example:
 
- valore 23 della tabella X + valore 56 della tabella Y
- valore 24 della tabella X + valore 57 della tabella Y
- valore 25 della tabella X + valore 58 della tabella Y
+	value 23 of table X + value 56 of table Y
+  value 24 of table X + value 57 of table Y
+  value 25 of table X + value 58 of table Y
  ....
 
-Queste accoppiate si tradurrebbero in oscillazioni curvilinee dello sprite
+These couplings would translate into curvilinear oscillations of the sprite
 
-Provate a sostituire la tabella corrente delle coordinate XX con questa:
-(Amiga+b+c+i per copiare), (amiga+b+x per cancellare un pezzo)
+Try replacing the current XX coordinate table with this:
+(Amiga + b + c + i to copy), (amiga + b + x to delete a piece)
 
 
 TABX:
@@ -305,12 +305,12 @@ TABX:
 FINETABX:
 
 
-Ora potete ammirare lo sprite ondeggiare per lo schermo realisticamente e con
-un movimento variabile, a causa della differenza di lunghezza delle due tabelle
+Now you can see the sprite swaying around the screen realistically and with
+a variable movement, due to the difference in length of the two tables
 
-Con due tabelle, una per la posizione XX ed una per la posizione YY, vanno
-definiti i vari movimenti curvilinei dei giochi e delle dimostrazioni grafiche,
-ad esempio il lancio di una bomba:
+With two tables, one for position XX and one for position YY, they go
+defined the various curvilinear movements of the games and graphic demonstrations,
+for example throwing a bomb:
 
 		.  .
 	     .	     .
@@ -320,13 +320,13 @@ ad esempio il lancio di una bomba:
 	 /\	   BOOM!!
 
 
-La curva percorsa dalla bomba lanciata dal protagonista del nostro gioco e'
-stata simulata tramite il precalcolamento di essa in termini di XX ed YY.
-Dato che il personaggio al momento del lancio poteva trovarsi in posizioni
-diverse dello schermo, tutto spostato a destra o a sinistra, bastera'
-aggiungere la posizione del protagonista lanciatore alle coordinate della
-curva e la bomba partira' e cadra' nel posto giusto.
-Oppure i movimenti di una squadriglia di astronavi nemiche:
+The curve traveled by the bomb thrown by the protagonist of our game
+was simulated by pre-calculating it in terms of XX and YY.
+Since the character at the time of the launch could be in positions
+different of the screen, all shifted to the right or left, it will be enough
+add the position of the launcher protagonist to the coordinates of the
+curve and the bomb will start and fall in the right place.
+Or the movements of a squadron of enemy spaceships:
 
 
 			     @  @  @  @  @  @  @  @ <--
@@ -338,125 +338,124 @@ Oppure i movimenti di una squadriglia di astronavi nemiche:
 	   <--  @  @  @  @  @  @
 
 
-Gli utilizzi delle coordinate nelle tabelle sono infiniti.
+The uses of coordinates in tables are infinite.
 
-Vi starete chiedendo: ma le tabelle si fanno a mano calcolandosi ad occhio
-l'onda?? Ebbene NO, esiste un comando dell'ASMONE, il "CS" (oppure "IS"), che
-puo' bastare per fare le tabelle presenti in questo listato (infatti le ho
-fatte proprio con questo comando!). Oppure se serve qualche tabella "speciale"
-ci si puo' fare un programmino che la faccia.
+You may be wondering: but the tables are made by hand by calculating by eye
+the wave ?? Well NO, there is an ASMONE command, the "CS" (or "IS"), that
+may be enough to make the tables in this listing (in fact I have them
+done just with this command!). Or if you need some "special" table
+you can make a little program that does it.
 
-Anticipiamo l'argomento "come farsi una tabella":
-Il comando CS significa "CREATE SINUS", che per chi conosce la trigonometria
-significa "TUTTO LI'?", mentre per chi non la conosce significa "COSA E'?".
-Dato che questo deve essere solo un accenno, spieghero' soltanto come dare i
-parametri al comando "CS" o "IS".
+Let's anticipate the topic "how to make a table":
+The CS command means "CREATE SINUS", which for those who know trigonometry
+it means "ALL THERE?", while for those who don't know it it means "WHAT IS IT?".
+Since this is to be just a hint, I will only explain how to give i
+parameters to the "CS" or "IS" command.
 
-Il comando "CS" crea i valori in memoria dall'indirizzo o dalla label che viene
-specificata, ad esempio se e' gia' presente una tab di 200 bytes alla label
-TABX, se si crea all'indirizzo "TABX", dopo aver assemblato, un'altra tabella
-di 200 bytes, questa sara' "sovrapposta" a quella precedente in memoria, ed
-eseguendo il listato si vedra' l'effetto dell'ultima tabella creata.
-Ma assemblando nuovamente viene riassemblata la tabella precedente, in quanto
-non abbiamo cambiato il testo (dc.b $xx,$xx..).
-Per salvare la tabella allora si puo' creare sopra un'altra di uguale grandezza
-oppure si puo' fare un "buffer", ossia una zona di memoria dedicata alla
-creazione e al salvataggio su disco della tabella.
-Facciamo un esempio pratico: vogliamo fare una tabella particolare lunga 512
-bytes, e la vogliamo salvare su disco per poterla ricaricare col comando
-incbin cosi':
+The "CS" command creates the values in memory from the address or label that comes
+specified, for example if there is already a tab of 200 bytes at the label
+TABX, if you create at the address "TABX", after assembling, another table
+of 200 bytes, this will be "superimposed" on the previous one in memory, ed
+running the listing you will see the effect of the last table created.
+But re-assembling the previous table is reassembled, as
+we have not changed the text (dc.b $ xx, $ xx ..).
+To save the table then you can create another one of the same size on top
+or you can make a "buffer", that is a memory area dedicated to
+creation and saving on disk of the table.
+Let's take a practical example: we want to make a particular table 512 long
+bytes, and we want to save it to disk to be able to reload it with the command
+incbin like this:
 
 TABX:
 	incbin	"TABELLA1"
 
-Per fare la TABELLA1 da salvare dobbiamo prima crearci uno spazio vuoto di 512
-byte dove crearla col comando "CS":
+To make TABLE1 to be saved we first need to create an empty space of 512 for it
+byte where to create it with the "CS" command:
 
 SPAZIO:
 	dcb.b	512,0	; 512 byte azzerati dove sara' creata la tabella
 FINESPAZIO:
 
-Una volta assemblato, creeremo la tabella definendo come destinazione "SPAZIO":
+Once assembled, we will create the table by defining "SPAZIO" as the target:
 
  DEST> SPAZIO
 
-E naturalmente 512 valori da generare, di grandezza BYTE:
+And of course 512 values to generate, of size BYTE:
 
  AMOUNT> 512
  SIZE (B/W/L)> B
 
-A questo punto avremo la tabella generata nei 512 bytes che vanno da SPAZIO:
-a FINESPAZIO: , dunque dobbiamo salvare quel pezzo di memoria in un file.
-Per questo esisite un comando dell'ASMONE, il "WB" (ossia Write Binary, cioe'
-SCRIVI UN PEZZO DI MEMORIA). Per salvare la nostra tabella bastera' eseguire
-queste operazioni:
+At this point we will have the table generated in 512 bytes ranging from SPACE:
+to WINDOW:, so we have to save that piece of memory in a file.
+For this there is an ASMONE command, the "WB" (ie Write Binary, that is
+WRITE A PIECE OF MEMORY). To save our table just execute
+these operations:
 
-1) Scrivere "WB" e definire il nome che si vuole dare al file, es "TABELLA1"
-2) alla domanda BEG> (begin ossia da dove partire) scrivere SPAZIO
-3) alla domanda END> (ossia FINE) scrivere FINESPAZIO
+1) Write "WB" and define the name you want to give to the file, eg "TABLE1"
+2) to the question BEG> (begin or where to start) write SPACE
+3) to the END> question (ie END) write FINESPAZIO
 
-Otterremo in questo modo un file TABELLA1 lungo naturalmente 512 bytes che
-conterra' la tabella, ricaricabile con l'INCBIN.
+In this way we will obtain a TABLE1 file naturally 512 bytes long
+will contain the table, rechargeable with the INCBIN.
 
-Il comando WB puo' essere applicato per salvare qualsiasi pezzo di memoria!
-Potete provare a salvare uno sprite sprite e ricaricarlo con l'incbin.
+The WB command can be applied to save any piece of memory!
+You can try to save a sprite sprite and reload it with the incbin.
 
-L'altro sistema e' il comando "IS", ossia INSERT SINUS, inserisci il sinus
-nel testo. In questo caso la tabella viene creata direttamente nel listato in
-formato dc.b. Puo' essere comodo per piccole tabelle.
-Basta posizionarsi col cursore dove si vuole che venga scritta la tabella, ad
-esempio sotto la label "TABX:"; a questo punto di deve premere ESC per passare
-alla linea di comandi e fare la tabella col comando "IS" anziche' "CS", la
-procedura e i parametri da passare sono gli stessi.
-Premendo nuovamente ESC troveremo la tabella fatta di dc.b sotto TABX:.
+The other system is the "IS" command, that is INSERT SINUS, insert the sinus
+in the text. In this case the table is created directly in the listing in
+dc.b format It can be convenient for small tables.
+Just position yourself with the cursor where you want the table to be written, eg
+example under the label "TABX:"; at this point you have to press ESC to switch
+to the command line and make the table with the command "IS" instead of "CS", the
+procedure and parameters to pass are the same.
+Pressing ESC again we will find the table made of dc.b under TABX :.
 
-ma vediamo come CREARE una SONTAB usando il comando CS o IS dell'ASMONE:
-
-
- DEST> indirizzo o label di destinazione, esempio: DEST>tabx
- BEG> angolo di inizio (0-360) (si possono dare anche valori superiori a 360)
- END> angolo di fine (0-360)
- AMOUNT> numero di valori da generare (esempio: 200 come in questo listato)
- AMPLITUDE> ampiezza, ossia valore piu' alto da raggiungere
- YOFFSET> offset (numero aggiunto a tutti i valori per spostare in "alto")
- SIZE (B/W/L)> dimensione dei valori (byte,word,long)
- MULTIPLIER> "moltiplicatore" (moltiplica l'ampiezza)
- HALF CORRECTION>Y/N		\ questi si occupano di "lisciare" l'onda
- ROUND CORRECTION>Y/N		/ per "correggere" eventuali sbalzi.
+but let's see how to CREATE a SONTAB using the ASMONE CS or IS command:
 
 
-Chi sa cosa sono il SENO ed il COSENO capira' al volo come fare, per chi non
-lo sa posso dire che con BEG> ed END> si definisce l'angolo inizio e l'angolo
-fine dell'onda, ossia la forma dell'onda, se questa comincera' calando e poi
-risalendo, oppure se comincera' salendo e poi ricalando. Qua di seguito ci
-sono degli esempi con il disegno della curva a fianco.
-
-- Con AMOUNT> si decide quanti valori debba avere la tabella.
-- Con AMPLITUDE si definisce l'ampiezza dell'onda, ossia il valore massimo che
-  raggiungera' in alto, o in negativo, se e' presente la parte di curva
-  negativa.
-- Con YOFFSET si decide di quanto "alzare" l'intera curva, ossia quanto si deve
-  aggiungere ad ogni valore della tabella. Se per esempio una tabella fosse
-  composta da 0,1,2,3,4,5,4,3,2,1,0 con un YOFFSET di 0, mettendo un YOFFSET di
-  10 otterremmo 10,11,12,13,14,15,14,13,12,11,10. Nel caso delle posizioni
-  dello sprite, sappiamo che la X parte da $40 ed arriva a $d8, dunque
-  l'YOFFSET sara' di $40, per traformare gli eventuali $00 in $40, gli $01 in
-  $41 eccetera.
-- Con "SIZE" definiamo se i valori della tabella saranno byte, word o longword.
-  Nel caso delle coordinate dello sprite sono BYTE.
-- Il MULTIPLIER> e' un moltiplicatore dell'ampiezza, se non si vuole
-  moltiplicare basta definirlo come 1.
+ DEST> destination address or label, example: DEST> tabx
+ BEG> starting angle (0-360) (values greater than 360 can also be given)
+ END> end angle (0-360)
+ AMOUNT> number of values to generate (example: 200 as in this listing)
+ AMPLITUDE> amplitude, that is the highest value to reach
+ YOFFSET> offset (number added to all values to move "up")
+ SIZE (B/W/L)> size of values (byte, word, long)
+ MULTIPLIER> "multiplier" (multiplies the width)
+ HALF CORRECTION>Y/N		\ these take care of "smoothing" the wave
+ ROUND CORRECTION>Y/N		/ to "correct" any changes.
 
 
-Ora rimane da chiarire come definire la "forma dell'onda", ossia la cosa piu'
-importante, e per questo possiamo usare solo BEG> ed END> che si riferiscono
-all'angolo inizio e all'angolo di fine di tale curva dal punto di vista
-trigonometrico. Per chi non conosce la trigonometria consiglio di studiarla
-un poco, anche perche' e' importante per le routines tridimensionali.
-Brevemente posso sintetizzare cosi': immaginatevi una circonferenza con un
-centro O e raggio come vi pare (per motivi tecnici il cerchio non e' tondo..)
-inserito negli assi cartesiani X ed Y, per cui il centro O si trova alla
-posizione 0,0: (ridisegnate su carta questi passaggi)
+Who knows what SINE and COSINE are will understand immediately how to do it, for those who do not
+you know I can say that with BEG> and END> you define the starting angle and the angle
+end of the wave, that is the shape of the wave, if this will begin by decreasing and then
+going up, or if it will start going up and then going up again. Here below there
+are examples with the curve drawing alongside.
+
+- Con AMOUNT> you decide how many values the table should have.
+- Con AMPLITUDE the amplitude of the wave is defined, that is the 
+	maximum value that it will reach at the top, or in the negative, 
+	if the negative part of the curve is present.
+- With YOFFSET you decide how much to "raise" the entire curve, ie how much you have to
+   add to each table value. If for example a table were
+   composed of 0,1,2,3,4,5,4,3,2,1,0 with a YOFFSET of 0, putting a YOFFSET of
+   10 we would get 10,11,12,13,14,15,14,13,12,11,10. In the case of positions
+   of the sprite, we know that the X starts at $ 40 and goes up to $ d8, therefore
+   the YOFFSET will be $ 40, to transform any $ 00 into $ 40, $ 01 into
+   $ 41 etc.
+- With "SIZE" we define if the table values will be byte, word or longword.
+   In the case of the sprite coordinates, they are BYTE.
+- The MULTIPLIER> is an amplitude multiplier, if you don't want to
+   multiply just define it as 1.
+
+
+Now it remains to be clarified how to define the "wave shape", that is 
+the most important thing, and for this we can only use BEG> and END> 
+which refer to the starting angle and the ending angle of this curve 
+from the point of sight trigonometric. For those unfamiliar with trigonometry,
+ I recommend studying it a little, also because it is important for three-dimensional routines.
+I can briefly summarize as follows: imagine a circumference with a center O and a radius 
+as you like (for technical reasons the circle is not round ..) inserted in the 
+Cartesian axes X and Y, so the center O is at position 0, 0: (redraw these passages on paper)
 
 
 			   |
@@ -469,8 +468,8 @@ posizione 0,0: (ridisegnate su carta questi passaggi)
 			   |
 			   |
 
-Supponiamo ora che sia per un momento un orologio ad una sola lancetta che
-vada all'indietro (che esempio contorto!) partendo da questa posizione:
+Now suppose it is for a moment a single hand watch that
+go backwards (what a convoluted example!) starting from this position:
 
 
 			      90 gradi
@@ -485,9 +484,9 @@ vada all'indietro (che esempio contorto!) partendo da questa posizione:
 
 			 270 gradi
 
-(fate finta che sia un cerchio!!!) In pratica segna le 3. Al posto delle ore
-qua abbiamo i gradi formati dalla lancetta rispetto all'asse X, infatti quando
-segna le 12 e' a 90 gradi rispetto all'asse X:
+(Pretend it is a circle !!!) In practice it marks 3. Instead of the hours
+ here we have the degrees formed by the hand with respect to the X axis, 
+ in fact when it marks 12 it is at 90 degrees with respect to the X axis:
 
 			      90 gradi
 			    _____
@@ -516,17 +515,21 @@ Allo stesso modo, questi sono 45 gradi:
 
 			 270 gradi
 
-Ci siamo con questo balordo orologio che va al contrario e che ha i gradi al
-posto delle ore?? Ora veniamo al nesso con i BEG> ed END> del comando "CS".
-Disponendo di questo orologio, si puo' fare lo studio dell'andamento della
-funzione SENO (e COSENO, perche' no). Immaginiamo di far fare un giro completo
-alla lancetta, partendo da 0 gradi a 360, ossia la stessa posizione dopo un
-giro completo: se registriamo in un grafico accanto all'orologio i movimenti
-della punta della lancetta rispetto all'asse Y noteremo che parte da zero,
-poi sale fino alla massima altezza raggiunta ai 90 gradi, dopodiche' scende
-nuovamente ritornando a zero una volta giunto a 180 gradi, e continua a
-scendere sotto lo zero fino al minimo dei 270 gradi, per poi risalire fino
-allo zero iniziale dei 360 gradi (stessa posizione della partenza):
+Are we there with this stupid clock that goes backwards and 
+has degrees instead of hours? Now we come to the link 
+with the BEG> and END> of the "CS" command.
+Having this clock, you can study the trend of the SINUS 
+function (and COSINE, why not). Let's imagine making a 
+complete revolution of the hand, starting from 0 degrees 
+to 360, i.e. the same position after a complete revolution: 
+if we record the movements in a graph next to the clock
+of the tip of the hand with respect to the Y axis we will 
+notice that it starts from zero, then rises to the maximum 
+height reached at 90 degrees, after which it descends
+again returning to zero once it reaches 180 degrees, and 
+continues to drop below zero to the minimum of 270 degrees, 
+and then back up to the initial zero of 360 degrees 
+(same position as the start):
 
 
 	      90 gradi
@@ -637,17 +640,17 @@ allo zero iniziale dei 360 gradi (stessa posizione della partenza):
 	 270 gradi				       * *
 
 
-Spero di essere stato abbastanza chiaro per chi e' a digiuno di matematica:
-per fare una curva che sale e scende basta dare come angolo inizio 0 e come
-angolo di fine 180!!! Per fare una curva che scende e risale basta dare
-come angolo inizio BEG> 180 e come angolo fine END> 360, cosi' per tutte le
-altre curve. Cambiando AMPLITUDE, YOFFSET e MULTIPLIER farete curve piu'
-lunghe e strette o piu' o meno lunghe. Si possono usare anche valori superiori
-a 360 per utilizzare la curva del secondo "giro d'orologio", dato che la
-funzione e' continua: /\/\/\/\/\/\/\/\/\/\/\.....
+I hope I was clear enough for those who are fasting maths: to make a 
+curve that goes up and down just give the start angle 0 and the end 
+angle 180 !!! To make a curve that goes down and up, just give
+as BEG start angle> 180 and END as end angle> 360, so for all 
+other curves. By changing AMPLITUDE, YOFFSET and MULTIPLIER you 
+will make curves longer and tighter or shorter or longer. Values 
+greater than 360 can also be used to use the second "turn of the clock" curve, since the
+function is continuous: / \ / \ / \ / \ / \ / \ / \ / \ / \ / \ / \ .....
 
-Facciamo degli esempi:  (sotto il disegno viene dato un accenno sulla tabella
-			(effettiva: 0,1,2,3...999,1000.. ossia il suo contenuto
+Let's take some examples: (a hint on the table is given below the drawing
+(effective: 0,1,2,3 ... 999,1000 .. ie its content
 
   UN ESEMPIO DI SINUS:
 			   +	 __
@@ -722,10 +725,10 @@ UN ALTRO ESEMPIO:		 _	_
   HALF CORRECTION>Y
   ROUND CORRECTION>N
 
-Ecco a voi come rifarsi le tabelle delle coordinate XX ed YY usate negli esempi
-precedenti sugli sprite: (parametri per il CS e tabella finale)
+Here is how to refer to the tables of XX and YY coordinates used in the 
+previous examples on the sprites: (parameters for the CS and final table)
 
-Per le coordinate X, che devono andare da $40 a $d8 al massimo
+For the X coordinates, they must range from $ 40 to $ d8 at most
 
 ; DEST> tabx
 ; BEG> 0		 ___ $d0
@@ -818,9 +821,10 @@ Per le coordinate X, che devono andare da $40 a $d8 al massimo
 --	--	--	--	--	--	--	--	--	--
 
  TABELLA DELLE Y:
-; Da notare che la posizione Y per far entrare lo sprite nella finestra video
-; deve essere compresa tra $2c e $f2, infatti nella tabella ci sono byte non
-; piu' grandi di $f2 e non piu' piccoli di $2c.
+; Note that the position Y to let the sprite enter the 
+; video window must be between $2c and $f2, in fact in 
+; the table there are bytes not bigger than $ f2 and not 
+; smaller than $2c.
 
 ; DEST> taby			$f0 (d0)
 ; BEG> 180		\____/  $2c (40)
@@ -859,7 +863,7 @@ Per le coordinate X, che devono andare da $40 a $d8 al massimo
 ; END> 360
 ; AMOUNT> 200
 ; AMPLITUDE> ($f0-$2c)/2 ;
-; YOFFSET> $8e		; sarebbe $f0-(($f0-$2c)/2)
+; YOFFSET> $8e		; would $f0-(($f0-$2c)/2)
 ; SIZE (B/W/L)> b
 ; MULTIPLIER> 1
 

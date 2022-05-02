@@ -10,6 +10,9 @@ Google translated source files for the book, lightly tweaked as I make sense of 
 * [LEZIONE3c3.s](https://github.com/matthewdeaves/ramjamexamples/blob/main/SORGENTI/LEZIONE3c3.s)
 * [LEZIONE3c3_1.s](https://github.com/matthewdeaves/ramjamexamples/blob/main/SORGENTI/LEZIONE3c3_1.s)
 * [Lesson 6l](https://github.com/matthewdeaves/ramjamexamples/blob/main/SORGENTI2/LEZIONE6l.s)
+* [Lesson 7e (sprites)](https://github.com/matthewdeaves/ramjamexamples/blob/main/SORGENTI3/LEZIONE7e.s)
+
+
 
 Using images
 
