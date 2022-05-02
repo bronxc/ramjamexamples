@@ -41,6 +41,7 @@ MainLoop:
 	bne.s	DetectExitProgram
 
 	bsr.w MoveSpriteOnX
+	bsr.w MoveSpriteOnY
 
 ;Cleanup, put back old copper and exit
 DetectExitProgram:
@@ -96,7 +97,44 @@ TABX:
 ENDTABX:
 
 	EVEN;
-	
+
+MoveSpriteOnY:
+	ADDQ.L	#1,TABYPOINTER
+	MOVE.L	TABYPOINTER(PC),A0
+	CMP.L	#ENDTABY-1,A0
+	BNE.S	UPDATEY
+	MOVE.L	#TABY-1,TABYPOINTER
+UPDATEY:
+	moveq	#0,d0
+	MOVE.b	(A0),d0
+	MOVE.b	d0,VSTART
+	ADD.B	#13,D0 ; sprinte is 13 pixels high
+	move.b	d0,VSTOP
+	rts
+
+TABYPOINTER:
+	dc.l	TABY-1
+
+TABY:
+	dc.b	$8E,$91,$94,$97,$9A,$9D,$A0,$A3,$A6,$A9,$AC,$AF
+	dc.b	$B2,$B4,$B7,$BA,$BD,$BF,$C2,$C5,$C7,$CA,$CC,$CE
+	dc.b	$D1,$D3,$D5,$D7,$D9,$DB,$DD,$DF,$E0,$E2,$E3,$E5
+	dc.b	$E6,$E7,$E9,$EA,$EB,$EC,$EC,$ED,$EE,$EE,$EF,$EF
+	dc.b	$EF,$EF,$F0,$EF,$EF,$EF,$EF,$EE,$EE,$ED,$EC,$EC
+	dc.b	$EB,$EA,$E9,$E7,$E6,$E5,$E3,$E2,$E0,$DF,$DD,$DB
+	dc.b	$D9,$D7,$D5,$D3,$D1,$CE,$CC,$CA,$C7,$C5,$C2,$BF
+	dc.b	$BD,$BA,$B7,$B4,$B2,$AF,$AC,$A9,$A6,$A3,$A0,$9D
+	dc.b	$9A,$97,$94,$91,$8E,$8B,$88,$85,$82,$7F,$7C,$79
+	dc.b	$76,$73,$70,$6D,$6A,$68,$65,$62,$5F,$5D,$5A,$57
+	dc.b	$55,$52,$50,$4E,$4B,$49,$47,$45,$43,$41,$3F,$3D
+	dc.b	$3C,$3A,$39,$37,$36,$35,$33,$32,$31,$30,$30,$2F
+	dc.b	$2E,$2E,$2D,$2D,$2D,$2D,$2C,$2D,$2D,$2D,$2D,$2E
+	dc.b	$2E,$2F,$30,$30,$31,$32,$33,$35,$36,$37,$39,$3A
+	dc.b	$3C,$3D,$3F,$41,$43,$45,$47,$49,$4B,$4E,$50,$52
+	dc.b	$55,$57,$5A,$5D,$5F,$62,$65,$68,$6A,$6D,$70,$73
+	dc.b	$76,$79,$7C,$7F,$82,$85,$88,$8b
+ENDTABY:
+
 GfxName:
 	dc.b	"graphics.library",0,0
 
