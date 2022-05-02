@@ -25,7 +25,7 @@ Inizio:
 	swap	d0
 	move.w	d0,2(a1)
 
-;	Puntiamo lo sprite
+;	Setup the sprite
 
 	MOVE.L	#MIOSPRITE,d0		; indirizzo dello sprite in d0
 	LEA	SpritePointers,a1	; Puntatori in copperlist

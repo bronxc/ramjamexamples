@@ -1,8 +1,8 @@
 ;APS00000000000000000000000000000000000000000000000000000000000000000000000000000000
 
-; Lezione7g.s	UNO SPRITE A 16 COLORI IN MODO ATTACCHED MOSSO SULLO SCHERMO
-; 		USANDO DUE TABELLE DI VALORI (ossia di coordinate verticali
-;		e orizzontali) PRESTABILITI.
+; Lesson7g.s A 16-COLOR SPRITE IN ATTACCHED MODE MOVED ON THE SCREEN
+; USING TWO TABLES OF VALUES (i.e. vertical coordinates
+; and horizontal) PRESET.
 
 
 	SECTION	CiriCop,CODE
@@ -24,9 +24,9 @@ Inizio:
 	swap	d0
 	move.w	d0,2(a1)
 
-;	Puntiamo gli sprite 0 ed 1, che ATTACCATI formeranno un solo sprite
-;	a 16 colori. Lo sprite1, quello dispari, deve avere il bit 7 della
-;	seconda word ad 1.
+;	We target sprites 0 and 1, which ATTACCATI will form a 
+;	single 16-color sprite. Sprite1, the odd one, 
+;	must have bit 7 of the second word at 1.
 
 	MOVE.L	#MIOSPRITE0,d0		; indirizzo dello sprite in d0
 	LEA	SpritePointers,a1	; Puntatori in copperlist
@@ -39,10 +39,9 @@ Inizio:
 	swap	d0
 	move.w	d0,2(a1)
 
-	bset	#7,MIOSPRITE1+3		; Setta il bit dell'attacched allo
-					; sprite 1. Togliendo questa istruzione
-					; gli sprite non sono ATTACCHED, ma
-					; due a 3 colori sovrapposti.
+	bset	#7,MIOSPRITE1+3		; Set the attack bit to 
+	;	sprite 1. By removing this instruction, the sprites 
+	;	are not ATTACCHED, but two 3-color overlapping ones.
 
 	move.l	#COPPERLIST,$dff080	; nostra COP
 	move.w	d0,$dff088		; START COP
@@ -53,18 +52,19 @@ mouse:
 	cmpi.b	#$ff,$dff006	; Linea 255?
 	bne.s	mouse
 
-	bsr.s	MuoviSpriteX	; Muovi lo sprite 0 orizzontalmente
-	bsr.w	MuoviSpriteY	; Muovi lo sprite 0 verticalmente
+	bsr.s	MuoviSpriteX	; Move sprite 0 horizontally
+	bsr.w	MuoviSpriteY	; Move sprite 0 vertically
 
 Aspetta:
 	cmpi.b	#$ff,$dff006	; linea 255?
 	beq.s	Aspetta
 
-	btst	#6,$bfe001	; mouse premuto?
+	btst	#6,$bfe001	; mouse pressed?
 	bne.s	mouse
 
-	move.l	OldCop(PC),$dff080	; Puntiamo la cop di sistema
-	move.w	d0,$dff088		; facciamo partire la vecchia cop
+	; keep old copper, start my copper
+	move.l	OldCop(PC),$dff080	
+	move.w	d0,$dff088		
 
 	move.l	4.w,a6
 	jsr	-$7e(a6)	; Enable
@@ -83,9 +83,10 @@ GfxBase:
 OldCop:
 	dc.l	0
 
-; Questa routine sposta  lo sprite agendo sul suo byte HSTART, ossia
-; il byte della sua posizione X, immettendoci delle coordinate gia' stabilite
-; nella tabella TABX. (Scatti di 2 pixel alla volta)
+; This routine moves the sprite by acting on its 
+; HSTART byte, that is the byte of its X position, 
+; by entering the coordinates already established in the 
+; TABX table. (Shots of 2 pixels at a time)
 
 MuoviSpriteX:
 	ADDQ.L	#1,TABXPOINT	 ; Fai puntare al byte successivo
