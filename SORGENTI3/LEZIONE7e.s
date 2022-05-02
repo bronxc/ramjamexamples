@@ -341,7 +341,7 @@ Or the movements of a squadron of enemy spaceships:
 The uses of coordinates in tables are infinite.
 
 You may be wondering: but the tables are made by hand by calculating by eye
-the wave ?? Well NO, there is an ASMONE command, the "CS" (or "IS"), that
+the wave ?? Well NO, there is an AWESOME command, the "CS" (or "IS"), that
 may be enough to make the tables in this listing (in fact I have them
 done just with this command!). Or if you need some "special" table
 you can make a little program that does it.
@@ -369,11 +369,11 @@ incbin like this:
 TABX:
 	incbin	"TABELLA1"
 
-To make TABLE1 to be saved we first need to create an empty space of 512 for it
-byte where to create it with the "CS" command:
+To make TABLE1 to be saved we first need to create an empty space of 512 bytes for it
+where to create it with the "CS" command:
 
 SPAZIO:
-	dcb.b	512,0	; 512 byte azzerati dove sara' creata la tabella
+	dcb.b	512,0	; 512 bytes cleared where the table will be created
 FINESPAZIO:
 
 Once assembled, we will create the table by defining "SPAZIO" as the target:
@@ -392,7 +392,7 @@ WRITE A PIECE OF MEMORY). To save our table just execute
 these operations:
 
 1) Write "WB" and define the name you want to give to the file, eg "TABLE1"
-2) to the question BEG> (begin or where to start) write SPACE
+2) to the question BEG> (begin or where to start) write SPAZIO
 3) to the END> question (ie END) write FINESPAZIO
 
 In this way we will obtain a TABLE1 file naturally 512 bytes long

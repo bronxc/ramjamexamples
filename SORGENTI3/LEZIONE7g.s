@@ -39,9 +39,9 @@ Inizio:
 	swap	d0
 	move.w	d0,2(a1)
 
-	bset	#7,MIOSPRITE1+3		; Set the attack bit to 
+	bset	#7,MIOSPRITE1+3		; Set the attach bit to 
 	;	sprite 1. By removing this instruction, the sprites 
-	;	are not ATTACCHED, but two 3-color overlapping ones.
+	;	are not attached, but two 3-color overlapping ones.
 
 	move.l	#COPPERLIST,$dff080	; nostra COP
 	move.w	d0,$dff088		; START COP
@@ -110,9 +110,9 @@ TABX:
 FINETABX:
 
 
-; Questa routine sposta in alto e in basso lo sprite agendo sui suoi byte
-; VSTART e VSTOP, ossia i byte della sua posizione Y di inizio e fine,
-; immettendoci delle coordinate gia' stabilite nella tabella TABY
+; This routine moves the sprite up and down by acting on its VSTART and 
+; VSTOP bytes, i.e. the bytes of its Y position of start and end, 
+; by entering the coordinates already established in the TABY table
 
 MuoviSpriteY:
 	ADDQ.L	#1,TABYPOINT	 ; Fai puntare al byte successivo
@@ -240,14 +240,15 @@ BITPLANE:
 
 	end
 
-A parte la novita' del bit ATTACCHED per fare uno sprite a 16 colori anziche'
-due a 4 colori, sono da notare un paio di cose:
-1) Le tabelle X ed Y sono state salvate col comando "WB" e vengono caricate
-con l'incbin, in questo modo le tabelle possono essere caricate dai vari
-listati che le richiedono, basta che siano sul disco!
-2) Non vengono piu' usate le label VSTART0,VSTART1,HSTART0,HSTART1 ecc. per
-muovere lo sprite. Le label rimangono al loro posto nello sprite in questo
-listato, ma risulta piu' comodo "raggiungere" i byte di controllo cosi':
+Apart from the novelty of the ATTACCHED bit to make a 16-color sprite 
+instead of two 4-color sprites, a couple of things should be noted:
+1) The X and Y tables have been saved with the "WB" command and are 
+loaded with the incbin, in this way the tables can be loaded from the 
+various lists that require them, as long as they are on the disk!
+2) The labels VSTART0, VSTART1, HSTART0, HSTART1 etc. are no longer 
+used. to move the sprite. The labels remain in place in the sprite 
+in this listing, but it is more convenient to "reach" the control 
+bytes like this:
 
 	MIOSPRITE	; Per VSTART
 	MIOSPRITE+1	; Per HSTART
@@ -259,14 +260,14 @@ MIOSPRITE:
 	DC.W	0,0
 	..dati...
 
-Senza dividere le due word in singoli byte, ognuno con una LABEL che allunga
-il listato.
-Anche per settare il bit 7 della word 2 dello SPRITE1, quello dell'ATTACCHED,
-e' bastata questa istruzione:
+Without dividing the two words into single bytes, each with a LABEL that lengthens
+the listing.
+Also to set bit 7 of word 2 of SPRITE1, that of ATTACCHED, this instruction 
+was enough:
 
 	bset	#7,MIOSPRITE1+3
 
-Altrimento avremmo potuto settarlo "a mano" nel quarto byte:
+Otherwise we could have set it "by hand" in the fourth byte:
 
 MIOSPRITE1:
 VSTART1:
@@ -277,35 +278,37 @@ VSTOP1:
 	dc.b $00
 	dc.b %10000000		; oppure dc.b $80 ($80=%10000000)
 
-Se si devono usare tutti e 8 gli sprite si risparmiano un bel po' di label e
-di spazio. Ancora meglio sarebbe mettere in un registro Ax l'indirizzo dello
-sprite ed eseguire gli offset da quel registro:
+If you have to use all 8 sprites you save a lot of label e
+of space. Even better would be to put the address of the
+sprites and offsets from that register:
 
 	lea	MIOSPRITE,a0
 	MOVE.B	#yy,(a0)	; Per VSTART
 	MOVE.B	#xx,1(A0)	; Per HSTART
 	MOVE.B	#y2,2(A0)	; Per VSTOP
 
-Definirsi in binario uno sprite a 16 colori diventa problematico.
-Dunque bisogna ricorrere ad un programma di disegno, basta ricordarsi di
-usare uno schermo a 16 colori e di disegnare gli sprite non piu' larghi di 16
-pixel. Una volta salvata la PIC a 16 colori (o un BRUSH piu' piccolo con lo
-sprite) in formato IFF, convertirlo con l'IFFCONVERTER e' facile come
-convertire una figura.
+Defining a 16-color sprite in binary becomes problematic.
+So you have to resort to a drawing program, just remember 
+to use a 16-color screen and to draw sprites no wider than 
+16 pixels. Once you have saved the 16-color PIC (or a 
+smaller BRUSH with the sprite) in IFF format, 
+converting it with the IFFCONVERTER is as easy as converting a figure.
 
-NOTA: Per BRUSH si intende un pezzo di figura di dimensioni variabili.
+NOTE: By BRUSH we mean a piece of figure of variable size.
 
-Ecco come potete convertirvi uno sprite col KEFCON:
+Here's how you can convert a sprite with KEFCON:
 
-1) Caricate il file IFF, che deve essere a 16 colori
-2) Dovete selezionare solo lo sprite, per fare cio' premete il tasto destro,
-poi posizionatevi sull'angolo in alto a sinistra del futuro sprite, e premete
-il tasto sinistro. Muovendo il mouse vi apparira' una griglia che, guarda caso,
-e' divisa a strisce larghe 16 pixel. Potete comunque controllare la larghezza
-e la lunghezza del blocco selezionato. Per includere bene lo sprite dovete
-considerare che dovete passare per il bordo dello sprite con la "striscia" di
-selezione del rettangolo, l'ultima linea inclusa nel rettangolo e' quella che
-passa per la striscia di confine, non e' quella interna alla striscia:
+1) Load the IFF file, which must be 16 colors
+2) You have to select only the sprite, to do this press the 
+right button, then position yourself on the upper left corner 
+of the future sprite, and press the left button. By moving the 
+mouse, a grid will appear which, as it happens, is divided into 
+strips 16 pixels wide. However, you can control the width and 
+length of the selected block. To include the sprite well you have to
+consider that you have to pass through the sprite border with the 
+rectangle selection "strip", the last line included in the 
+rectangle is the one that passes through the border strip, it 
+is not the one inside the strip:
 
 	<----- 16 pixel ----->
 
@@ -324,16 +327,16 @@ passa per la striscia di confine, non e' quella interna alla striscia:
 	|========####========| \/
 
 
-Se lo sprite e' piu' piccolo di 16 pixel dovete lasciare un margine vuoto ai
-lati, o ad un solo lato, in modo che la larghezza del blocco sia sempre 16.
+If the sprite is smaller than 16 pixels you must leave an empty margin 
+on the sides, or on one side only, so that the width of the block is always 16.
 
-Una volta selezionato lo sprite dentro il rettangolo, occorre salvarlo come
-SPRITE16 se e' uno sprite a 16 colori, o come SPRITE4 se e' uno sprite a
-quattro colori. Lo sprite viene salvato in "dc.b", ossia in formato TESTO, che
-potete includere nel listato col comando "I" dell'Asmone o caricandolo in un
-altro buffer di testo e copiandolo con Amiga+b+c+i.
+Once the sprite inside the rectangle has been selected, it must be 
+saved as SPRITE16 if it is a 16-color sprite, or as SPRITE4 if it is 
+a four-color sprite. The sprite is saved in "dc.b", ie in TEXT format, 
+which you can include in the listing with the "I" command of the 
+Asmone or by loading it in another text buffer and copying it with Amiga + b + c + i.
 
-Ecco come il KEFCON salva lo sprite attacched (16 colori):
+Here's how the KEFCON saves the attacked sprite (16 colors):
 
 	dc.w $0000,$0000
 	dc.w $0380,$0650,$04e8,$07d0,$0534,$1868,$1e5c,$1636
@@ -349,35 +352,36 @@ Ecco come il KEFCON salva lo sprite attacched (16 colori):
 	dc.w $1c3c,$1ffc,$0ff8,$0ff8,$03e0,$03e0
 	dc.w 0,0
 
-Come potete notare, questi sono i due sprite con le due word di controllo
-azzerate, i dati in formato esadecimale e le due word azzerate di FINE SPRITE.
-Basta mettere le due label "MIOSPRITE0:" e "MIOSPRITE1:" all'inizio dei due
-sprite, dopodiche' lavorando con MIOSPRITE+x per raggiungere i byte delle
-coordinate non occorre aggiungere altre LABEL. L'unico particolare e' che
-bisogna settare il bit dell'ATTACCHED con un BSET #7,MIOSPRITE+3 oppure
-direttamente nello sprite:
+As you can see, these are the two sprites with the two control words
+cleared, the data in hexadecimal format and the two words cleared of END SPRITE.
+Just put the two labels "MIOSPRITE0:" and "MIOSPRITE1:" at the beginning 
+of the two sprites, after which working with MIOSPRITE + x to reach 
+the byte of the coordinates it is not necessary to add other LABELS. 
+The only particular is that you have to set the ATTACCHED bit 
+with a BSET # 7, MIOSPRITE + 3 or directly in the sprite:
 
 MIOSPRITE1:
 	dc.w $0000,$0080	; $80, ossia %10000000 -> ATTACCHED!
 	dc.w $0430,$07f0,$0fc8,$0838,$0fe4,$101c,$39f2,$200e
 	...
 
-Se volete disegnarvi e convertirvi anche gli sprite a 4 colori, il problema non
-sussiste, perche' viene salvato un solo sprite e non occorre settare il bit!
+If you want to draw and convert the sprites to 4 colors too, the 
+problem does not exist, because only one sprite is saved and t
+here is no need to set the bit!
 
-Per quanto riguarda la palette dei colori degli sprite, bisogna salvarli dal
-KEFCON dopo aver salvato lo SPRITE16 o SPRITE4, con l'opzione COPPER, proprio
-come per le figure normali. Il problemuccio e' che viene salvata la palette
-intesa come FIGURA a 16 COLORI, e non come SPRITE.
-Ecco come il KEFCON salva la palette:
+As for the color palette of the sprites, you have to save them 
+from the KEFCON after saving the SPRITE16 or SPRITE4, with the 
+COPPER option, just like for normal figures. The problem is 
+that the palette is saved as a 16-COLOR FIGURE, and not as a SPRITE.
+Here's how the KEFCON saves the palette:
 
 	dc.w $0180,$0000,$0182,$0ffc,$0184,$0eeb,$0186,$0cd9
 	dc.w $0188,$0ac8,$018a,$08b6,$018c,$06a5,$018e,$0494
 	dc.w $0190,$0384,$0192,$0274,$0194,$0164,$0196,$0154
 	dc.w $0198,$0044,$019a,$0033,$019c,$0012,$019e,$0001
 
-I colori sono giusti, ma i registri colore si riferiscono ai primi 16 colori
-e non gli ultimi 16. Basta riscriverli "a mano" nei registri colore giusti:
+The colors are fair, but the color registers refer to the first 16 colors
+and not the last 16. Just rewrite them "by hand" in the right color registers:
 
 	dc.w	$1A2,$FFC	; color17, COLORE 1 per gli sprite attaccati
 	dc.w	$1A4,$EEB	; color18, COLORE 2 per gli sprite attaccati
@@ -395,10 +399,9 @@ e non gli ultimi 16. Basta riscriverli "a mano" nei registri colore giusti:
 	dc.w	$1BC,$012	; color30, COLORE 14 per gli sprite attaccati
 	dc.w	$1BE,$001	; color31, COLORE 15 per gli sprite attaccati
 
-Si noti che in $1a2 bisogna copiare il colore in $182, in $1a4 quello in $184
-e cosi' via.
+Note that in $1a2 you have to copy the color in $182, in $1a4 the color in $184 and so on.
 
-Provate a sostituire lo sprite a 16 colori di questo listato con uno vostro,
-con la vostra palette colori, e anche a convertirne uno a 4 colori da
-sostituire a quello delle lezioni precedenti. Farlo servira' da verifica!!!
+Try replacing the 16-color sprite in this listing with your own, 
+with your own color palette, and also converting a 4-color sprite from
+replace that of the previous lessons. Doing it will serve as verification !!!
 
