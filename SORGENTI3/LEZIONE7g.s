@@ -1,3 +1,4 @@
+;APS00000000000000000000000000000000000000000000000000000000000000000000000000000000
 
 ; Lezione7g.s	UNO SPRITE A 16 COLORI IN MODO ATTACCHED MOSSO SULLO SCHERMO
 ; 		USANDO DUE TABELLE DI VALORI (ossia di coordinate verticali
@@ -67,7 +68,7 @@ Aspetta:
 
 	move.l	4.w,a6
 	jsr	-$7e(a6)	; Enable
-	move.l	gfxbase(PC),a1
+	move.l	GfxBase(PC),a1
 	jsr	-$19e(a6)	; Closelibrary
 	rts
 
@@ -104,7 +105,7 @@ TABXPOINT:
 ; Tabella con coordinate X dello sprite precalcolate.
 
 TABX:
-	incbin	"XCOORDINAT.TAB"	; 334 valori
+	incbin	"hd1:develop/projects/dischi/SORGENTI3/XCOORDINAT.TAB"	; 334 valori
 FINETABX:
 
 
@@ -136,7 +137,7 @@ TABYPOINT:
 ; Tabella con coordinate Y dello sprite precalcolate.
 
 TABY:
-	incbin	"YCOORDINAT.TAB"	; 200 valori
+	incbin	"hd1:develop/projects/dischi/SORGENTI3/YCOORDINAT.TAB"	; 200 valori
 FINETABY:
 
 

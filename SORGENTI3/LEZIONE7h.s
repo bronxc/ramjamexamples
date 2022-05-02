@@ -105,7 +105,7 @@ Mouse1:
 				; ritorna.
 
 	btst	#6,$bfe001	; tasto sinistro del mouse premuto?
-	bne.s	mouse1
+	bne.s	Mouse1
 
 	MOVE.L	#TABX+170,TABXPOINT0
 	MOVE.L	#TABX+130,TABXPOINT1
@@ -121,7 +121,7 @@ Mouse2:
 				; ritorna.
 
 	btst	#2,$dff016	; tasto destro del mouse premuto?
-	bne.s	mouse2
+	bne.s	Mouse2
 
 ; SPRITE IN FILA INDIANA
 
@@ -139,7 +139,7 @@ Mouse3:
 				; ritorna.
 
 	btst	#6,$bfe001	; tasto sinistro del mouse premuto?
-	bne.s	mouse3
+	bne.s	Mouse3
 
 ; SPRITE UBRIACHI PER LO SCHERMO
 
@@ -158,7 +158,7 @@ Mouse4:
 				; ritorna.
 
 	btst	#2,$dff016	; tasto destro del mouse premuto?
-	bne.s	mouse4
+	bne.s	Mouse4
 
 	move.l	OldCop(PC),$dff080	; Puntiamo la cop di sistema
 	move.w	d0,$dff088		; facciamo partire la vecchia cop
@@ -166,7 +166,7 @@ Mouse4:
 
 	move.l	4.w,a6
 	jsr	-$7e(a6)	; Enable
-	move.l	gfxbase(PC),a1
+	move.l	GfxBase(PC),a1
 	jsr	-$19e(a6)	; Closelibrary
 	rts
 
@@ -394,14 +394,14 @@ TABYPOINT3:
 ; Tabella con coordinate X dello sprite precalcolate.
 
 TABX:
-	incbin	""hd1:develop/projects/dischi/SORGENTI3/XCOORDINAT.TAB"	; 334 valori
+	incbin	"hd1:develop/projects/dischi/SORGENTI3/XCOORDINAT.TAB"	; 334 valori
 FINETABX:
 
 
 ; Tabella con coordinate Y dello sprite precalcolate.
 
 TABY:
-	incbin	"YCOORDINAT.TAB"	; 200 valori
+	incbin	"hd1:develop/projects/dischi/SORGENTI3/YCOORDINAT.TAB"	; 200 valori
 FINETABY:
 
 
@@ -460,28 +460,28 @@ BPLPOINTERS:
 ; ************ Ecco gli sprite: OVVIAMENTE in CHIP RAM! **********
 
 MIOSPRITE0:				; lunghezza 15 linee
-	incbin	"Sprite16Col.PARI"
+	incbin	"hd1:develop/projects/dischi/sorgenti3/Sprite16Col.PARI"
 
 MIOSPRITE1:				; lunghezza 15 linee
-	incbin	"Sprite16Col.DISPARI"
+	incbin	"hd1:develop/projects/dischi/sorgenti3/Sprite16Col.DISPARI"
 
 MIOSPRITE2:				; lunghezza 15 linee
-	incbin	"Sprite16Col.PARI"
+	incbin	"hd1:develop/projects/dischi/sorgenti3/Sprite16Col.PARI"
 
 MIOSPRITE3:				; lunghezza 15 linee
-	incbin	"Sprite16Col.DISPARI"
+	incbin	"hd1:develop/projects/dischi/sorgenti3/Sprite16Col.DISPARI"
 
 MIOSPRITE4:				; lunghezza 15 linee
-	incbin	"Sprite16Col.PARI"
+	incbin	"hd1:develop/projects/dischi/sorgenti3/Sprite16Col.PARI"
 
 MIOSPRITE5:				; lunghezza 15 linee
-	incbin	"Sprite16Col.DISPARI"
+	incbin	"hd1:develop/projects/dischi/sorgenti3/Sprite16Col.DISPARI"
 
 MIOSPRITE6:				; lunghezza 15 linee
-	incbin	"Sprite16Col.PARI"
+	incbin	"hd1:develop/projects/dischi/sorgenti3/Sprite16Col.PARI"
 
 MIOSPRITE7:				; lunghezza 15 linee
-	incbin	"Sprite16Col.DISPARI"
+	incbin	"hd1:develop/projects/dischi/sorgenti3/Sprite16Col.DISPARI"
 
 
 	SECTION	PLANEVUOTO,BSS_C	; Il bitplane azzerato che usiamo,
