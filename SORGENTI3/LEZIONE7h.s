@@ -1,3 +1,4 @@
+;APS00000000000000000000000000000000000000000000000000000000000000000000000000000000
 
 ; Lezione7h.s	4 SPRITE A 16 COLORI IN MODO ATTACCHED MOSSI SULLO SCHERMO
 ; 		USANDO DUE TABELLE DI VALORI (ossia di coordinate verticali
@@ -393,7 +394,7 @@ TABYPOINT3:
 ; Tabella con coordinate X dello sprite precalcolate.
 
 TABX:
-	incbin	"XCOORDINAT.TAB"	; 334 valori
+	incbin	""hd1:develop/projects/dischi/SORGENTI3/XCOORDINAT.TAB"	; 334 valori
 FINETABX:
 
 

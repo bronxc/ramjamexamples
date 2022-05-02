@@ -61,14 +61,17 @@ DetectExitProgram:
 
 MoveSprite:
 	addq.l #1,TABLE_VELOCITY_JUMP_PTR
-	move.l TABLE_VELOCITY_JUMP_PTR(pc),A0
+	move.l TABLE_VELOCITY_JUMP_PTR,A0
 
 	cmp.l END_TABLE_VELOCITY_JUMP-1,A0
 	bne.s DoMove
 	move.l #TABLE_VELOCITY_JUMP-1,TABLE_VELOCITY_JUMP_PTR
 DoMove:
-	addi.b 	(A0),HSTART
-	addi.b 	(A0),VSTART
+	moveq #0,d0
+	move.b (A0),d0
+	add.b d0,VSTART
+	add.b #13,d0
+	add.b d0,VSTOP
 	rts
 
 GfxName:
@@ -86,7 +89,7 @@ TABLE_VELOCITY_JUMP_PTR:
 	dc.l TABLE_VELOCITY_JUMP-1
 
 TABLE_VELOCITY_JUMP:
-	dc.b	#8,#7,#6,#5,#4,#3,#2,#1
+	dc.b	$10,$8,$6,$4,$3,$2
 END_TABLE_VELOCITY_JUMP
 
 CopperList:
